@@ -2,25 +2,47 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Point Of Sale</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/logo.jpg" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/logo.jpg" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link href="/assets/img/Logo_Web.svg" rel="apple-touch-icon-precomposed">
+    <link href="/assets/img/Logo_Web.svg" rel="shortcut icon" type="image/png">
+    <meta name="author" content="">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>Kayan</title>
+    <link rel="stylesheet" href="/assets/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/fonts/Linearicons/Font/demo-files/demo.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com/">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Jost:400,500,600,700&amp;display=swap&amp;ver=1607580870">
+    <link rel="stylesheet" href="/assets/plugins/bootstrap4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/plugins/owl-carousel/assets/owl.carousel.css">
+    <link rel="stylesheet" href="/assets/plugins/slick/slick/slick.css">
+    <link rel="stylesheet" href="/assets/plugins/lightGallery/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="/assets/plugins/jquery-bar-rating/dist/themes/fontawesome-stars.css">
+    <link rel="stylesheet" href="/assets/plugins/select2/dist/css/select2.min.css">
+    <link rel="stylesheet" href="/assets/plugins/lightGallery/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="/assets/plugins/noUiSlider/nouislider.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/home-4.css">
     <link rel="stylesheet" href="{{ mix('css/app.css') }}" />
 </head>
 
-<body id="body" dir="ltr">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<body id="body" dir="rtl">
     <div id="app">
         <app></app>
     </div>
     <script src="{{ mix('js/app.js') }}"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="/assets/plugins/popper.min.js"></script>
+    <script src="/assets/plugins/bootstrap4/js/bootstrap.min.js"></script>
+    <script src="/assets/plugins/select2/dist/js/select2.full.min.js"></script>
+    <script src="/assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+    <script src="/assets/plugins/jquery-bar-rating/dist/jquery.barrating.min.js"></script>
+    <script src="/assets/plugins/lightGallery/dist/js/lightgallery-all.min.js"></script>
+    <script src="/assets/plugins/slick/slick/slick.min.js"></script>
+    <script src="/assets/plugins/noUiSlider/nouislider.min.js"></script>
 </body>
 
 </html>

@@ -1,24 +1,30 @@
 <template>
   <Loader />
-  <router-view />
+  <div class="ps-page">
+    <Header />
+    <router-view />
+    <Footer />
+  </div>
 </template>
 <script>
 import authClient from "./shared/http-clients/auth-client";
 import TokenUtil from "./shared/utils/token-util";
 import Loader from "./shared/components/loader.vue";
-import LangUtil from "./shared/utils/lang-util";
+import Header from "./shared/components/header.vue";
+import Footer from "./shared/components/footer.vue";
 import { inject } from "vue-demi";
 export default {
   components: {
     Loader,
+    Header,
+    Footer,
   },
+  
   setup() {
-    const lang = LangUtil.setup();
     const store = inject("store");
     onCreated();
     //Commons
     function onCreated() {
-      lang.changeLang(LangUtil.get());
       if (TokenUtil.get()) {
         authClient
           .getCurrentUser()
@@ -33,5 +39,4 @@ export default {
   },
 };
 </script>
-<style lang="scss">
-</style>
+<style lang="scss"></style>

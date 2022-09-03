@@ -1,5 +1,5 @@
 window._ = require('lodash');
-window.$ = window.jQuery = jQuery = require("../../public/assets/js/jquery-3.6.0.min.js");
+window.$ = window.jQuery = jQuery = require("../../public/assets/plugins/jquery.min.js");
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
  * to our Laravel back-end. This library automatically handles sending the

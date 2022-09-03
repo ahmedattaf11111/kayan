@@ -1,11 +1,6 @@
 <template>
   <div class="user">
-    <a
-      href=""
-      class="menu-toggler border"
-      @click.prevent="toggleMenu"
-      type="button"
-    >
+    <a href="" class="menu-toggler border" @click.prevent="toggleMenu" type="button">
       <img v-if="currentUser && currentUser.image" :src="currentUser.image" />
       <img v-else src="../../../../public/assets/images/empty-image.png" />
     </a>
@@ -23,11 +18,7 @@
       </div>
       <div class="header">
         <div class="mt-1">
-          {{
-            currentUser
-              ? currentUser.first_name + " " + currentUser.last_name
-              : ""
-          }}
+          {{ currentUser ? currentUser.first_name + " " + currentUser.last_name : "" }}
         </div>
         <div class="email mb-1">
           {{ currentUser ? currentUser.email : "" }}
@@ -42,9 +33,7 @@
         >
           {{ $t("VERIFY_EMAIL") }}
         </router-link>
-        <a class="text-secondary" href="" @click.prevent="logout">{{
-          $t("LOGOUT")
-        }}</a>
+        <a class="text-secondary" href="" @click.prevent="logout">{{ $t("LOGOUT") }}</a>
       </div>
     </div>
   </div>
@@ -74,6 +63,7 @@ export default {
         .then((response) => {
           TokenUtil.remove();
           this.$router.push(global.GUEST_REDIRECT);
+          this.currentUser = null;
         })
         .catch((error) => {});
     },
