@@ -7,7 +7,6 @@
           <input
             type="text"
             class="form-control"
-            id="exampleInputEmail1"
             aria-describedby="emailHelp"
           />
         </div>
@@ -18,7 +17,6 @@
           <input
             type="text"
             class="form-control"
-            id="exampleInputEmail1"
             aria-describedby="emailHelp"
           />
         </div>
@@ -26,7 +24,7 @@
       <div class="col-md-6">
         <div class="form-group">
           <label for="exampleFormControlSelect1">Example select</label>
-          <select class="form-control" id="exampleFormControlSelect1">
+          <select class="form-control">
             <option>1</option>
             <option>2</option>
             <option>3</option>
@@ -38,7 +36,7 @@
       <div class="col-md-6">
         <div class="form-group">
           <label for="exampleFormControlSelect1">Example select</label>
-          <select class="form-control" id="exampleFormControlSelect1">
+          <select class="form-control" >
             <option>1</option>
             <option>2</option>
             <option>3</option>

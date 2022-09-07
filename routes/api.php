@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+//Auth
 Route::prefix("auth")->group(function () {
     Route::post("register", "AuthController@register");
     Route::post("login", "AuthController@login");
@@ -28,9 +28,22 @@ Route::prefix("auth")->group(function () {
     Route::post('update-profile', "AuthController@updateProfile");
 });
 
-Route::prefix("hellos")->group(function () {
-    Route::post("", "HelloController@store");
-    Route::post("update", "HelloController@update");
-    Route::delete("{id}", "HelloController@delete");
-    Route::get("", "HelloController@index");
+//Categories
+Route::prefix("categories")->group(function () {
+    Route::get("", "CategoryController@getCategories");
+});
+
+//Newsletters
+Route::prefix("newsletters")->group(function () {
+    Route::post("", "NewsletterController@store");
+});
+
+//Sliders
+Route::prefix("sliders")->group(function () {
+    Route::get("", "SliderController@index");
+});
+
+//Simple advertises
+Route::prefix("simple-advertises")->group(function () {
+    Route::get("", "SimpleAdvertiseController@index");
 });

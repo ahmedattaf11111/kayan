@@ -2802,6 +2802,11 @@ textarea.form-control {
     grid-template-columns: repeat(6, 1fr);
   }
 }
+@media (max-width: 992px) {
+  .ps-section--category-horizontal {
+    display: inline-block !important;
+  }
+}
 
 .ps-widget--related-product {
   margin-bottom: 60px;
@@ -5303,7 +5308,7 @@ textarea.form-control {
   .ps-banner .ps-banner__thumnail .ps-banner__image {
     position: absolute;
     bottom: 0;
-    left: -5%;
+    left: 5%;
     height: 100%;
     -o-object-fit: cover;
     object-fit: cover;
@@ -17484,7 +17489,9 @@ html .bg--parallax {
   -webkit-animation-name: fadeInRight;
   animation-name: fadeInRight;
 }
-
+a.bg-warning:focus{
+  background-color: #00dd2f !important;
+}
 @-webkit-keyframes fadeInLeft {
   from {
     opacity: 0;

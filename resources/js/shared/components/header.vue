@@ -348,6 +348,9 @@ export default {
     width: 200px;
   }
 }
+.ps-header--sticky {
+  z-index: 1000 !important;
+}
 @media screen and (min-width: 821px) {
   .mega-menu {
     width: 600px !important;
