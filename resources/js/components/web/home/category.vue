@@ -20,7 +20,7 @@
 <script>
 import "vue3-carousel/dist/carousel.css";
 import { Carousel, Slide } from "vue3-carousel";
-import categoryClient from "../../../shared/http-clients/category-client";
+import homeClient from "../../../shared/http-clients/home-client";
 import { reactive, toRefs } from "vue-demi";
 import store from "../../../shared/store";
 import global from "../../../shared/global";
@@ -50,7 +50,7 @@ export default {
     //Commons
     function onCreated() {
       store.showLoader = true;
-      categoryClient.getCategories().then((response) => {
+      homeClient.getCategories().then((response) => {
         store.showLoader = false;
         data.categories = response.data;
       });

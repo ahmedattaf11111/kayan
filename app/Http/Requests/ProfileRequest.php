@@ -23,12 +23,20 @@ class ProfileRequest extends FormRequest
      */
     public function rules()
     {
+        //Contains all inputs with validations
         return [
             "first_name" => 'required',
             "last_name" => 'required',
+            //Optional fields
             "phone" => 'nullable|regex:/^01[0125][0-9]{8}$/',
-            "age"=>"nullable|integer",
-            "image"=>"nullable|image"
+            "age" => "nullable|integer",
+            "image" => "nullable|image",
+            "address" => "nullable",
+            "city" => "nullable",
+            "age" => "nullable",
+            "education" => "nullable",
+            "job" => "nullable",
+            "about_me" => "nullable",
         ];
     }
 }

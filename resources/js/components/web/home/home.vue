@@ -33,7 +33,7 @@
 import Category from "./category";
 import Newsletter from "./newsletter";
 import Slider from "./slider";
-import simpleAdvertisesClient from "../../../shared/http-clients/simple-advertises-client";
+import homeClient from "../../../shared/http-clients/home-client";
 import FirstThreeSimpleAdvertises from "./simple-advertises/first-three-advertises";
 import FourthSimpleAdvertise from "./simple-advertises/fourth-advertise";
 import FifthSimpleAdvertise from "./simple-advertises/fifth-advertise";
@@ -60,7 +60,7 @@ export default {
     //Commons
     function created() {
       store.showLoader = true;
-      simpleAdvertisesClient.getSimpleAdvertises().then((response) => {
+      homeClient.getSimpleAdvertises().then((response) => {
         store.showLoader = false;
         data.simpleAdvertises = response.data;
       });

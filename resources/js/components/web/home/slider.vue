@@ -1,5 +1,5 @@
 <template>
-  <div class="slider-container">
+  <div v-if="sliders.length > 0" class="slider-container">
     <section class="ps-section--banner">
       <div class="ps-section__overlay">
         <div class="ps-section__loading"></div>
@@ -40,7 +40,7 @@
 <script>
 import "vue3-carousel/dist/carousel.css";
 import { Carousel, Slide, Navigation } from "vue3-carousel";
-import sliderClient from "../../../shared/http-clients/slider-client";
+import homeClient from "../../../shared/http-clients/home-client";
 import { reactive, toRefs } from "vue-demi";
 import store from "../../../shared/store";
 import global from "../../../shared/global";
@@ -62,7 +62,7 @@ export default {
     //Commons
     function created() {
       store.showLoader = true;
-      sliderClient.getSliders().then((response) => {
+      homeClient.getSliders().then((response) => {
         store.showLoader = false;
         data.sliders = response.data;
       });

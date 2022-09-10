@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class NewsletterRequest extends FormRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +23,9 @@ class NewsletterRequest extends FormRequest
      */
     public function rules()
     {
-        //Contains all request inputs with their rules if exist 
         return [
-            "email" => "required|email|unique:newsletters",
+            "email"=>"required|email",
+            "password"=>"required"
         ];
     }
 }

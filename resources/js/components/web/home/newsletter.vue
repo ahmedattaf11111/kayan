@@ -25,7 +25,7 @@
   </section>
 </template>
 <script>
-import newsletterClient from "../../../shared/http-clients/newsletter-client";
+import homeClient from "../../../shared/http-clients/home-client";
 import { inject, reactive, toRefs } from "vue-demi";
 import store from "../../../shared/store";
 import { required, email } from "@vuelidate/validators";
@@ -49,8 +49,8 @@ export default {
         return;
       }
       store.showLoader = true;
-      newsletterClient
-        .store(getForm())
+      homeClient
+        .storeNewsletter(getForm())
         .then((response) => {
           v$.value.$reset();
           form.email = "";
