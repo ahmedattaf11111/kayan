@@ -6,17 +6,14 @@
       </div>
       <carousel dir="rtl" :items-to-show="1">
         <slide v-for="slider in sliders" :key="slider.id">
-          <div class="ps-banner" style="background: #daecfa">
+          <div class="ps-banner" :style="`background-color:${slider.color}`">
             <div class="container container-initial">
               <div class="ps-banner__block">
                 <div class="ps-banner__content">
                   <h2 class="ps-banner__title">{{ slider.title }}</h2>
-                  <a
-                    class="bg-white ps-banner__shop"
-                    target="_blank"
-                    :href="slider.url"
-                    >{{ $t("SHOW_DETAILS") }}</a
-                  >
+                  <a class="bg-white ps-banner__shop" target="_blank" :href="slider.url"
+                    >{{ $t("SHOW_DETAILS") }}
+                  </a>
                 </div>
                 <div class="ps-banner__thumnail">
                   <img

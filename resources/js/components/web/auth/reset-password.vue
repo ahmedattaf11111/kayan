@@ -1,89 +1,70 @@
 <template>
-  <div class="reset-password">
-    <div class="reset-password-box col-lg-7 col-md-9 m-auto">
-      <div class="row">
-        <div class="logo mb-3 text-center">
-          <router-link to="/home">
-            <img
-              class="border"
-              src="../../../../../public/assets/img/logo.jpg"
-            />
-          </router-link>
-        </div>
-        <!--Header-->
-        <div class="header">
-          <h6>{{ $t("RESET_PASSWORD") }}</h6>
-        </div>
-        <!--Form-->
-        <form @submit.prevent="resetPassword">
-          <div class="row">
-            <div class="mb-3 col-12">
-              <label class="form-label"
-                >{{ $t("PASSWORD") }} <span class="text-danger">*</span></label
-              >
-              <input
-                v-model="v$.password.$model"
-                :type="passwordHidden ? 'password' : 'text'"
-                class="form-control"
-                :class="{
-                  'is-invalid': v$.password.$error,
-                }"
-              />
-              <div class="invalid-feedback">
-                <div v-for="error in v$.password.$errors" :key="error">
-                  {{ $t("PASSWORD") + " " + $t(error.$validator) }}
+  <div class="reset-password-container">
+    <div class="ps-account">
+      <div class="container">
+        <div class="row">
+          <div class="mx-auto col-md-8 col-lg-6">
+            <!--Form-->
+            <form @submit.prevent="resetPassword">
+              <div class="ps-form--review">
+                <div class="header">
+                  <h2 class="ps-form__title">{{ $t("RESET_PASSWORD") }}</h2>
+                  <router-link class="mt-3" to="/login">{{ $t("CANCEL") }}</router-link>
+                </div>
+                <div class="ps-form__group">
+                  <label class="ps-form__label">{{ $t("PASSWORD") }} </label>
+                  <div class="input-group">
+                    <input
+                      v-model="v$.password.$model"
+                      :type="passwordHidden ? 'password' : 'text'"
+                      class="form-control ps-form__input"
+                    />
+                    <div class="input-group-append">
+                      <a
+                        class="fa fa-eye-slash toogle-password"
+                        href="javascript: void(0);"
+                        @click="passwordHidden = !passwordHidden"
+                      >
+                      </a>
+                    </div>
+                  </div>
+                  <div class="text-danger">
+                    <div v-for="error in v$.password.$errors" :key="error">
+                      {{ $t("PASSWORD") + " " + $t(error.$validator) }}
+                    </div>
+                  </div>
+                </div>
+                <div class="ps-form__group">
+                  <label class="ps-form__label">{{ $t("PASSWORD_CONFIRMATION") }} </label>
+                  <div class="input-group">
+                    <input
+                      v-model="v$.password_confirmation.$model"
+                      :type="passwordConfirmationHidden ? 'password' : 'text'"
+                      class="form-control ps-form__input"
+                    />
+                    <div class="input-group-append">
+                      <a
+                        class="fa fa-eye-slash toogle-password"
+                        href="javascript: void(0);"
+                        @click="passwordConfirmationHidden = !passwordConfirmationHidden"
+                      ></a>
+                    </div>
+                  </div>
+                  <div class="text-danger">
+                    <div v-for="error in v$.password_confirmation.$errors" :key="error">
+                      {{ $t("PASSWORD_CONFIRMATION") + " " + $t(error.$validator) }}
+                    </div>
+                  </div>
+                </div>
+                <div class="ps-form__submit">
+                  <button class="ps-btn ps-btn--warning">
+                    {{ $t("SUBMIT") }}
+                  </button>
                 </div>
               </div>
-            </div>
-            <div class="mb-3 col-12">
-              <label class="form-label"
-                >{{ $t("PASSWORD_CONFIRMATION") }}
-                <span class="text-danger">*</span></label
-              >
-              <input
-                v-model="v$.password_confirmation.$model"
-                :type="passwordHidden ? 'password' : 'text'"
-                class="form-control"
-                :class="{
-                  'is-invalid': v$.password_confirmation.$error,
-                }"
-              />
-              <div class="invalid-feedback">
-                <div
-                  v-for="error in v$.password_confirmation.$errors"
-                  :key="error"
-                >
-                  {{ $t("PASSWORD_CONFIRMATION") + " " + $t(error.$validator) }}
-                </div>
-              </div>
-            </div>
-            <div class="col-12">
-              <div class="form-check mt-2 mb-4">
-                <input
-                  @change="passwordHidden = !passwordHidden"
-                  class="form-check-input"
-                  type="checkbox"
-                  value=""
-                  id="flexCheckDefault"
-                />
-                <label class="form-check-label" for="flexCheckDefault">
-                  {{ $t("SHOW_PASSWORD") }}
-                </label>
-              </div>
-            </div>
+            </form>
           </div>
-          <button type="submit" class="btn confirm">
-            {{ $t("SUBMIT") }}
-          </button>
-          <div class="links">
-            <router-link to="/login">
-              {{ $t("LOGIN_INSTEAD") }}
-            </router-link>
-            <router-link to="/register">
-              {{ $t("REGISTER_INSTEAD") }}
-            </router-link>
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   </div>
@@ -93,6 +74,8 @@ import strong from "../../../shared/validators/strong-password-validator";
 import { required, sameAs } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import authClient from "../../../shared/http-clients/auth-client";
+import global from "../../../shared/global";
+import TokenUtil from "../../../shared/utils/token-util"
 export default {
   setup() {
     return { v$: useVuelidate() };
@@ -102,6 +85,7 @@ export default {
       password: "",
       password_confirmation: "",
       passwordHidden: true,
+      passwordConfirmationHidden: true,
     };
   },
   methods: {
@@ -110,10 +94,17 @@ export default {
         this.v$.$touch();
         return;
       }
+      this.store.showLoader = true;
       authClient
         .resetPassword(this.getForm())
-        .then(() => {})
+        .then((response) => {
+          this.store.showLoader = false;
+          TokenUtil.set(response.data.access_token);
+          this.$router.push(global.AUTH_REDIRECT);
+          this.store.currentUser = TokenUtil.getUser();
+        })
         .catch((error) => {
+          this.store.showLoader = false;
           this.$toast.error(this.$t("TOKEN") + " " + this.$t("INVALID"));
         });
     },
@@ -131,7 +122,12 @@ export default {
       password: { required, strong },
       password_confirmation: {
         required,
-        sameAsPassword: sameAs(this.password),
+        sameAsPassword(value) {
+          if (!value) {
+            return true;
+          }
+          return this.password == value;
+        },
       },
     };
   },
@@ -140,58 +136,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.reset-password {
-  padding: 0 0 100px 0;
-  .links {
-    margin-top: 10px;
-    a {
-      display: block;
-      text-decoration: none;
-    }
-  }
-  .logo {
-    img {
-      width: 135px;
-      height: 124px;
-      border-radius: 50%;
-    }
-  }
-  .reset-password-box {
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
-      rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
-    @media (max-width: 767px) {
-      //For small devices
-      & {
-        box-shadow: none !important;
-      }
-    }
-    input {
-      border-radius: 0;
-      padding: 8px;
-    }
-    padding: 36px;
-    .header {
-      margin-bottom: 22px;
-    }
-    .password-hint {
-      font-size: 14px;
-      color: #5f6368;
-    }
-    .confirm {
-      width: 150px;
-      border-radius: 0;
-      color: #fff;
-      background-color: #2caae2 !important;
-    }
-    .form-check {
-      label {
-        position: relative;
-        top: 2px;
-      }
-      input {
-        border-radius: 0;
-      }
-    }
+.reset-password-container {
+  margin-top: 50px;
+  .header {
+    display: flex;
+    justify-content: space-between;
   }
 }
 </style>

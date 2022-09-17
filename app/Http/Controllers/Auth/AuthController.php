@@ -25,7 +25,11 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
         $this->authService->register($request->validated());
-        return $this->attempt($request->input("email", "password"));
+        return $this->attempt($request->only("email", "password"));
+    }
+    public function getCitiesWithAreas()
+    {
+        return $this->authService->getCitiesWithAreas();
     }
     public function logout()
     {

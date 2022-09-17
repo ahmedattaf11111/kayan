@@ -26,10 +26,10 @@ class ForgetPasswordController extends Controller
     public function resetPassword(ResetPassword $request)
     {
         $passwordReset = $this->forgetPasswordService->resetPassword($request->validated());
-        if (empty($passwordReset)) {
+        if (!$passwordReset) {
             return response()->json(["error" => "Token isn't valid"], 400);
         }
         $request->merge(["email" => $passwordReset->email]);
-        return $this->attempt($request->input("email", "password"));
+        return $this->attempt($request->only("email", "password"));
     }
 }

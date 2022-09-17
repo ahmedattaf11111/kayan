@@ -25,12 +25,10 @@
     <div class="ps-header__middle">
       <div class="container">
         <div class="ps-logo">
-          <a href="index.html">
-            <img src="/assets/img/Logo_Web.svg" alt /><img
-              class="sticky-logo"
-              src="/assets/img/Logo_Web.svg"
-              alt
-          /></a>
+          <router-link to="/home">
+            <img src="/assets/img/Logo_Web.svg" alt />
+            <img class="sticky-logo" src="/assets/img/Logo_Web.svg" alt />
+          </router-link>
         </div>
         <a class="ps-menu--sticky" href="#"><i class="fa fa-bars"></i></a>
         <div class="ps-header__right">
@@ -41,9 +39,12 @@
               ></a>
             </li>
             <li>
-              <a class="ps-header__item" href="#" id="login-modal"
-                ><i class="icon-user"></i
-              ></a>
+              <router-link v-if="!currentUser" to="/login" class="ps-header__item">
+                <i class="icon-user"></i>
+              </router-link>
+              <a @click="logout" v-if="currentUser" class="ps-header__item" href="#">
+                <i class="fa fa-sign-out"></i>
+              </a>
               <div class="ps-login--modal">
                 <form method="get" action="http://nouthemes.net/html/mymedi/do_action">
                   <div class="form-group">
@@ -163,7 +164,9 @@
           </ul>
         </div>
         <div class="ps-logo">
-          <a href="index.html"> <img src="/assets/img/Logo_Web.svg" alt /></a>
+          <router-link to="/home">
+            <img src="/assets/img/Logo_Web.svg" alt />
+          </router-link>
         </div>
         <div class="ps-header__right">
           <ul class="ps-header__icons">
@@ -205,10 +208,21 @@
       ><a href="#" id="close-menu"><i class="icon-cross"></i></a>
     </div>
     <div class="ps-nav__item">
-      <a href="index.html"><i class="icon-home2"></i></a>
+      <router-link to="/home"><i class="icon-home2"></i></router-link>
     </div>
     <div class="ps-nav__item">
-      <a href="my-account.html"><i class="icon-user"></i></a>
+      <router-link
+        v-if="!currentUser"
+        to="/login"
+        class="ps-header__item"
+        href="#"
+        id="login-modal"
+      >
+        <i class="icon-user"></i>
+      </router-link>
+      <a @click="logout" v-if="currentUser" class="ps-header__item" href="#">
+        <i class="fa fa-sign-out"></i>
+      </a>
     </div>
     <div class="ps-nav__item">
       <a href="shopping-cart.html"
@@ -219,13 +233,19 @@
 </template>
 
 <script>
-import { onMounted } from "vue-demi";
+import { inject, onMounted, toRefs } from "vue-demi";
 import Filter from "./filter";
+import authClient from "../http-clients/auth-client";
+import TokenUtil from "../../shared/utils/token-util";
+import global from "../../shared/global";
+import { useRouter } from "vue-router";
 export default {
   components: {
     Filter,
   },
   setup() {
+    const store = inject("store");
+    const router = useRouter();
     onMounted(() => {
       stickyMenu();
       toggleMobileMenu();
@@ -233,6 +253,16 @@ export default {
       toggleSearchVisibility();
       closeNoti();
     });
+    function logout(event) {
+      event.preventDefault();
+      store.showLoader = true;
+      authClient.logout().then(() => {
+        store.showLoader = false;
+        TokenUtil.remove();
+        router.push(global.GUEST_REDIRECT);
+        store.currentUser = null;
+      });
+    }
     //Commons
     function toggleSearchVisibility() {
       $(".open-search").on("click", function (event) {
@@ -329,6 +359,7 @@ export default {
         $("html,body").animate({ scrollTop: 0 }, 500);
       });
     }
+    return { logout, ...toRefs(store) };
   },
 };
 </script>

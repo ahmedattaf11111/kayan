@@ -19,18 +19,23 @@ class EmailVerificationRepository
     }
     public function verifyUser($email, $verificationCode, $expirationTime)
     {
-        $emailVerification = $this->getEmailVerificationQuery($email, $verificationCode, $expirationTime);
+        $emailVerificationQuery = $this->getEmailVerificationQuery(
+            $email,
+            $verificationCode,
+            $expirationTime
+        );
+        $emailVerification = $emailVerificationQuery->first();
         if ($emailVerification) {
-            $emailVerification->toQuery()->delete();
+            $emailVerificationQuery->delete();
             User::where("email", $email)->update(["email_verified_at" => Carbon::now()]);
         }
         return $emailVerification;
     }
     //Commons
-    private function getEmailVerificationQuery($email, $verificationCode, $expirationTime): EmailVerification
+    private function getEmailVerificationQuery($email, $verificationCode, $expirationTime)
     {
         return EmailVerification::where("email", $email)
             ->where("verification_code", $verificationCode)
-            ->where('created_at', '>', Carbon::now()->subMinutes($expirationTime))->first();
+            ->where('created_at', '>', Carbon::now()->subMinutes($expirationTime));
     }
 }

@@ -29,6 +29,8 @@ export default {
     },
     getCurrentUser() {
         return axios.get(`${BASE_URL}/current-user`);
+    },
+    getCitiesWithAreas() {
+        return axios.get(`${BASE_URL}/cities-with-areas`);
     }
-    
 }

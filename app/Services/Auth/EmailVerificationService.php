@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class EmailVerificationService
 {
-    const EXPIRED_AT = 15; //In minutes
+    const EXPIRATION_DURATION = 15; //In minutes
     private $emailVerificationRepository;
     public function __construct(EmailVerificationRepository $emailVerificationRepository)
     {
@@ -18,7 +18,7 @@ class EmailVerificationService
     public function verifyEmail(string $email, string $verificationCode): string
     {
         return $this->emailVerificationRepository
-            ->verifyUser($email, $verificationCode, self::EXPIRED_AT);
+            ->verifyUser($email, $verificationCode, self::EXPIRATION_DURATION);
     }
     public function resendVerificationCode(string $email)
     {

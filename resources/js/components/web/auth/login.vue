@@ -1,85 +1,69 @@
 <template>
-  <div class="login">
-    <div class="login-box col-lg-7 col-md-9 m-auto">
-      <div class="row">
-        <div class="logo mb-3 text-center">
-          <router-link to="/home">
-            <img
-              class="border"
-              src="../../../../../public/assets/img/logo.jpg"
-            />
-          </router-link>
-        </div>
-        <!--Header-->
-        <div class="header text-center">
-          <h6>{{ $t("LOGIN") }}</h6>
-        </div>
-        <!--Form-->
-        <form @submit.prevent="login">
-          <div class="row">
-            <div class="mb-3 col-12">
-              <label class="form-label"
-                >{{ $t("EMAIL") }} <span class="text-danger">*</span></label
-              >
-              <input
-                v-model="v$.email.$model"
-                type="text"
-                class="form-control"
-                :class="{
-                  'is-invalid': v$.email.$error,
-                }"
-              />
-              <div class="invalid-feedback">
-                <div v-for="error in v$.email.$errors" :key="error">
-                  {{ $t("EMAIL") + " " + $t(error.$validator) }}
+  <div class="login-container">
+    <div class="ps-account">
+      <div class="container">
+        <div class="row">
+          <div class="mx-auto col-md-8 col-lg-6">
+            <form @submit.prevent="login">
+              <div class="ps-form--review">
+                <h2 class="ps-form__title">{{ $t("LOGIN") }}</h2>
+                <div class="ps-form__group">
+                  <label class="ps-form__label">{{ $t("EMAIL") }} </label>
+                  <input
+                    v-model="v$.email.$model"
+                    class="form-control ps-form__input"
+                    type="text"
+                  />
+                  <div class="text-danger">
+                    <div v-for="error in v$.email.$errors" :key="error">
+                      {{ $t("EMAIL") + " " + $t(error.$validator) }}
+                    </div>
+                  </div>
+                </div>
+                <div class="ps-form__group password">
+                  <label class="ps-form__label">{{ $t("PASSWORD") }} </label>
+                  <div class="input-group">
+                    <input
+                      v-model="v$.password.$model"
+                      class="form-control ps-form__input"
+                      :type="passwordHidden ? 'password' : 'text'"
+                    />
+                    <div class="input-group-append">
+                      <a
+                        class="fa fa-eye-slash toogle-password"
+                        href="javascript: vois(0);"
+                        @click="passwordHidden = !passwordHidden"
+                      >
+                      </a>
+                    </div>
+                  </div>
+                  <div class="text-danger">
+                    <div v-for="error in v$.password.$errors" :key="error">
+                      {{ $t("PASSWORD") + " " + $t(error.$validator) }}
+                    </div>
+                  </div>
+                </div>
+                <div class="forget-password">
+                  <routerLink class="ps-account__link" to="/forget-password">{{
+                    $t("FORGET_PASSWORD_?")
+                  }}</routerLink>
+                </div>
+                <div class="ps-form__submit">
+                  <button class="ps-btn ps-btn--warning">{{ $t("LOGIN") }}</button>
+                </div>
+                <div class="footer">
+                  <h2 class="ps-form__title text-center">
+                    {{ $t("DONT_HAVE_ACCOUNT?") }}
+                  </h2>
+                  <div class="links">
+                    <router-link to="/register">{{ $t("REGISTER_NOW") }}</router-link>
+                    <router-link to="/home">{{ $t("CONTINUE_AS_GUEST") }}</router-link>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="mb-3 col-12">
-              <label class="form-label"
-                >{{ $t("PASSWORD") }} <span class="text-danger">*</span></label
-              >
-              <input
-                v-model="v$.password.$model"
-                :type="passwordHidden ? 'password' : 'text'"
-                class="form-control"
-                :class="{
-                  'is-invalid': v$.password.$error,
-                }"
-              />
-              <div class="invalid-feedback">
-                <div v-for="error in v$.password.$errors" :key="error">
-                  {{ $t("PASSWORD") + " " + $t(error.$validator) }}
-                </div>
-              </div>
-            </div>
-            <div class="col-12">
-              <div class="form-check mt-2 mb-4">
-                <input
-                  @change="passwordHidden = !passwordHidden"
-                  class="form-check-input"
-                  type="checkbox"
-                  value=""
-                  id="flexCheckDefault"
-                />
-                <label class="form-check-label" for="flexCheckDefault">
-                  {{ $t("SHOW_PASSWORD") }}
-                </label>
-              </div>
-            </div>
+            </form>
           </div>
-          <button type="submit" class="btn confirm">
-            {{ $t("LOGIN") }}
-          </button>
-          <div class="links">
-            <router-link to="/register">
-              {{ $t("REGISTER_INSTEAD") }}
-            </router-link>
-            <router-link to="/forget-password">
-              {{ $t("FORGET_PASSWORD_?") }}
-            </router-link>
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   </div>
@@ -92,7 +76,7 @@ import TokenUtil from "../../../shared/utils/token-util";
 import global from "../../../shared/global";
 export default {
   setup() {
-    return { v$: useVuelidate()};
+    return { v$: useVuelidate() };
   },
   data: function () {
     return {
@@ -107,14 +91,17 @@ export default {
         this.v$.$touch();
         return;
       }
+      this.store.showLoader = true;
       authClient
         .login(this.getForm())
         .then((response) => {
+          this.store.showLoader = false;
           TokenUtil.set(response.data.access_token);
           this.$router.push(global.AUTH_REDIRECT);
           this.store.currentUser = TokenUtil.getUser();
         })
         .catch((error) => {
+          this.store.showLoader = false;
           this.$toast.error(this.$t("LOGIN_FAILED"));
         });
     },
@@ -126,69 +113,47 @@ export default {
       };
     },
   },
-  inject: ["store"],
   validations() {
     return {
       email: { required, email },
-      password: { required },
+      password: {
+        required,
+      },
     };
   },
   created() {},
+  inject: ["store"],
 };
 </script>
 
 <style lang="scss" scoped>
-.login {
-  padding: 0 0 100px 0;
-  .links {
-    margin-top: 10px;
+.login-container {
+  margin-top: 50px;
+  .password {
+    margin-bottom: 0 !important;
+  }
+  .forget-password {
+    display: flex;
+    justify-content: right;
     a {
-      display: block;
+      margin-right: auto;
       text-decoration: none;
+      margin-top: 5px !important;
+      margin-bottom: 25px;
     }
   }
-  .logo {
-    img {
-      width: 135px;
-      height: 124px;
-      border-radius: 50%;
+  .footer {
+    margin-top: 35px;
+    .ps-form__title {
+      font-size: 20px;
     }
-  }
-  .login-box {
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
-      rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
-    @media (max-width: 767px) {
-      //For small devices
-      & {
-        box-shadow: none !important;
+    .links {
+      font-size: 18px;
+      a {
+        padding: 0 30px;
       }
-    }
-    input {
-      border-radius: 0;
-      padding: 8px;
-    }
-    padding: 36px;
-    .header {
-      margin-bottom: 22px;
-    }
-    .password-hint {
-      font-size: 14px;
-      color: #5f6368;
-    }
-    .confirm {
-      width: 150px;
-      border-radius: 0;
-      color: #fff;
-      background-color: #2caae2 !important;
-    }
-    .form-check {
-      label {
-        position: relative;
-        top: 2px;
-      }
-      input {
-        border-radius: 0;
-      }
+      display: flex;
+      justify-content: space-between;
     }
   }
 }

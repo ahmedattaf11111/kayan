@@ -17,6 +17,7 @@ Route::prefix("auth")->group(function () {
     Route::post("register", "AuthController@register");
     Route::post("login", "AuthController@login");
     Route::get("logout", "AuthController@logout");
+    Route::get("cities-with-areas", "AuthController@getCitiesWithAreas");
     Route::get('current-user', "AuthController@getCurrentUser");
     Route::get("verify-token", "EmailVerificationController@verifyToken");
     Route::post("verify-email", "EmailVerificationController@verifyEmail");

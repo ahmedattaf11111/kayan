@@ -11,13 +11,13 @@ use Illuminate\Support\Str;
 
 class ForgetPasswordService
 {
-    const EXPIRED_AT = 15;
+    const EXPIRATION_DURATION = 15;
     private $forgetPasswordRepository;
     public function __construct(ForgetPasswordRepository $forgetPasswordRepository)
     {
         $this->forgetPasswordRepository = $forgetPasswordRepository;
     }
-    public function forgetPassword(string $email): User
+    public function forgetPassword(string $email)
     {
         $user = User::where("email", $email)->first();
         if ($user) {
@@ -27,12 +27,17 @@ class ForgetPasswordService
         }
         return $user;
     }
-    public function resetPassword(array $resetPasswordInput): PasswordReset
+    public function resetPassword(array $resetPasswordInput)
     {
-        $passwordReset = $this->forgetPasswordRepository
-            ->getPasswordReset($resetPasswordInput["token"], self::EXPIRED_AT);
+        $passwordReset = $this->forgetPasswordRepository->getPasswordReset(
+            $resetPasswordInput["token"],
+            self::EXPIRATION_DURATION
+        );
         if ($passwordReset) {
-            $this->authRepository->changePassword($resetPasswordInput["password"], $passwordReset->email);
+            $this->forgetPasswordRepository->changePassword(
+                $resetPasswordInput["password"],
+                $passwordReset->email
+            );
         }
         return $passwordReset;
     }
