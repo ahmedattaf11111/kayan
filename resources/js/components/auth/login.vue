@@ -71,9 +71,9 @@
 <script>
 import { required, email } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
-import authClient from "../../../shared/http-clients/auth-client";
-import TokenUtil from "../../../shared/utils/token-util";
-import global from "../../../shared/global";
+import authClient from "../../shared/http-clients/auth-client";
+import TokenUtil from "../../shared/utils/token-util";
+import global from "../../shared/global";
 export default {
   setup() {
     return { v$: useVuelidate() };
@@ -121,7 +121,6 @@ export default {
       },
     };
   },
-  created() {},
   inject: ["store"],
 };
 </script>

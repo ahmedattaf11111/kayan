@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Home;
 
 use App\Repositories\HomeRepository;
 
@@ -10,11 +10,6 @@ class HomeService
     public function __construct(HomeRepository $homeRepository)
     {
         $this->homeRepository = $homeRepository;
-    }
-
-    public function getCategories()
-    {
-        return $this->homeRepository->getCategories();
     }
 
     public function storeNewsletter(array $newsLetterInput)
@@ -31,4 +26,5 @@ class HomeService
     {
         return $this->homeRepository->getSimpleAdvertises();
     }
+
 }

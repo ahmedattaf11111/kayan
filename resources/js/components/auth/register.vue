@@ -12,6 +12,21 @@
                 </div>
                 <div class="ps-form__group">
                   <label class="ps-form__label" for="exampleInputEmail1"
+                    >{{ $t("NAME") }} <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control ps-form__input"
+                    v-model="v$.name.$model"
+                  />
+                  <div class="text-danger">
+                    <div v-for="error in v$.name.$errors" :key="error">
+                      {{ $t("NAME") + " " + $t(error.$validator) }}
+                    </div>
+                  </div>
+                </div>
+                <div class="ps-form__group">
+                  <label class="ps-form__label" for="exampleInputEmail1"
                     >{{ $t("STORE_NAME") }} <span class="text-danger">*</span></label
                   >
                   <input
@@ -168,7 +183,6 @@
                   >
                   <div class="select-wrapper">
                     <select
-                      @change="onAreaSelected"
                       class="form-control ps-form__input"
                       v-model="v$.area_id.$model"
                     >
@@ -200,12 +214,12 @@
 <script>
 import useVuelidate from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
-import authClient from "../../../shared/http-clients/auth-client";
-import { inject, reactive, toRefs } from "@vue/runtime-core";
+import authClient from "../../shared/http-clients/auth-client";
+import { inject, onMounted, reactive, toRefs } from "@vue/runtime-core";
 import { useI18n } from "vue-i18n";
-import phone from "../../../shared/validators/phone-validator";
-import strong from "../../../shared/validators/strong-password-validator";
-import TokenUtil from "../../../shared/utils/token-util";
+import phone from "../../shared/validators/phone-validator";
+import strong from "../../shared/validators/strong-password-validator";
+import TokenUtil from "../../shared/utils/token-util";
 import { useRouter } from "vue-router";
 export default {
   setup(props, context) {
@@ -222,6 +236,7 @@ export default {
       phone: "",
       email: "",
       store_name: "",
+      name: "",
       address: "",
       password: "",
       password_confirmation: "",
@@ -252,12 +267,24 @@ export default {
       type: { required },
       city_id: { required },
       area_id: { required },
+      name: { required },
     };
     const v$ = useVuelidate(rules, form);
     let store = inject("store");
     let toast = inject("toast");
     const router = useRouter();
-    created();
+    onMounted(() => {
+      store.showLoader = true;
+      authClient
+        .getCitiesWithAreas(getForm())
+        .then((response) => {
+          store.showLoader = false;
+          data.cities = response.data;
+        })
+        .catch((error) => {
+          console.log(error.response);
+        });
+    });
     //Methods
     function save() {
       if (v$.value.$invalid) {
@@ -273,10 +300,6 @@ export default {
       let city = getSelectedCity();
       data.areas = city.areas;
       if (!city.available) toast.warning(t("NOT_AVIALABLE_NOW"));
-    }
-    function onAreaSelected() {
-      let area = getSelectedArea();
-      if (!area.available) toast.warning(t("NOT_AVIALABLE_NOW"));
     }
     //Commons
     function getSelectedCity() {
@@ -296,18 +319,6 @@ export default {
         }
       });
       return area;
-    }
-    function created() {
-      store.showLoader = true;
-      authClient
-        .getCitiesWithAreas(getForm())
-        .then((response) => {
-          store.showLoader = false;
-          data.cities = response.data;
-        })
-        .catch((error) => {
-          console.log(error.response);
-        });
     }
     function register() {
       authClient
@@ -330,6 +341,7 @@ export default {
         email: form.email,
         phone: form.phone,
         store_name: form.store_name,
+        name: form.name,
         address: form.address,
         password: form.password,
         type: form.type,
@@ -344,7 +356,6 @@ export default {
       locale,
       save,
       onCitySelected,
-      onAreaSelected,
     };
   },
 };
@@ -362,15 +373,15 @@ export default {
     appearance: none;
   }
   .select-wrapper {
-  position: relative;
-}
+    position: relative;
+  }
 
-.select-wrapper::after {
-  content: "▼";
-  font-size: 1.2rem;
-  top: 15px;
-  left: 18px;
-  position: absolute;
-}
+  .select-wrapper::after {
+    content: "▼";
+    font-size: 1.2rem;
+    top: 15px;
+    left: 18px;
+    position: absolute;
+  }
 }
 </style>

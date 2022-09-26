@@ -3135,7 +3135,7 @@ textarea.form-control {
   line-height: 26px;
 }
 
-.ps-widget--product .menu--mobile .active .sub-toggle::before {
+.ps-widget--product .menu--mobile .collapsed .sub-toggle::before {
   content: "-";
 }
 

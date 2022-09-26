@@ -18,17 +18,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com/">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Jost:400,500,600,700&amp;display=swap&amp;ver=1607580870">
     <link rel="stylesheet" href="/assets/plugins/bootstrap4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/plugins/owl-carousel/assets/owl.carousel.css">
     <link rel="stylesheet" href="/assets/plugins/slick/slick/slick.css">
     <link rel="stylesheet" href="/assets/plugins/lightGallery/dist/css/lightgallery.min.css">
     <link rel="stylesheet" href="/assets/plugins/jquery-bar-rating/dist/themes/fontawesome-stars.css">
     <link rel="stylesheet" href="/assets/plugins/select2/dist/css/select2.min.css">
     <link rel="stylesheet" href="/assets/plugins/lightGallery/dist/css/lightgallery.min.css">
     <link rel="stylesheet" href="/assets/plugins/noUiSlider/nouislider.css">
-    <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/assets/css/home-4.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" type="text/css" href="https://www.fontstatic.com/f=hanimation" />
     <style>
-        *,h1,h2,h3,h4,h5,h6{
+        *,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
             font-family: 'hanimation';
         }
     </style>
@@ -36,17 +43,17 @@
 </head>
 
 <body id="body" dir="rtl">
-    <div id="app">
-        <app></app>
-    </div>
+    <div id="app"></div>
     <script src="{{ mix('js/app.js') }}"></script>
     <script src="/assets/plugins/popper.min.js"></script>
     <script src="/assets/plugins/bootstrap4/js/bootstrap.min.js"></script>
     <script src="/assets/plugins/select2/dist/js/select2.full.min.js"></script>
+    <script src="/assets/plugins/owl-carousel/owl.carousel.min.js"></script>
     <script src="/assets/plugins/jquery-bar-rating/dist/jquery.barrating.min.js"></script>
     <script src="/assets/plugins/lightGallery/dist/js/lightgallery-all.min.js"></script>
     <script src="/assets/plugins/slick/slick/slick.min.js"></script>
     <script src="/assets/plugins/noUiSlider/nouislider.min.js"></script>
+
 </body>
 
 </html>

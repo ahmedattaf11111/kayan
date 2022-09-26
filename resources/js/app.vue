@@ -12,19 +12,16 @@ import TokenUtil from "./shared/utils/token-util";
 import Loader from "./shared/components/loader.vue";
 import Header from "./shared/components/header.vue";
 import Footer from "./shared/components/footer.vue";
-import { inject } from "vue-demi";
+import { inject, onMounted } from "vue-demi";
 export default {
   components: {
     Loader,
     Header,
     Footer,
   },
-  
   setup() {
     const store = inject("store");
-    onCreated();
-    //Commons
-    function onCreated() {
+    onMounted(() => {
       if (TokenUtil.get()) {
         authClient
           .getCurrentUser()
@@ -35,7 +32,7 @@ export default {
             console.log("err", error.response);
           });
       }
-    }
+    });
   },
 };
 </script>

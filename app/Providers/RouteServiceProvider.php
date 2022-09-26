@@ -31,6 +31,7 @@ class RouteServiceProvider extends ServiceProvider
     protected $modules = [
         "auth" => self::DEF_NAMESPACE . "\\Auth",
         "home" => self::DEF_NAMESPACE,
+        "product" => self::DEF_NAMESPACE,
     ];
     /**
      * Define your route model bindings, pattern filters, etc.

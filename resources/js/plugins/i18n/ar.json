@@ -84,5 +84,11 @@
     "DONT_HAVE_ACCOUNT?": "ليس لديك حساب؟",
     "CONTINUE_AS_GUEST":"الاستمرار كضيف",
     "CANCEL":"الغاء",
-    "REGISTER_NOW":"سجل الان"
+    "REGISTER_NOW":"سجل الان",
+    "POUND":"جنيه",
+    "SHOW_ALL":"عرض الكل",
+    "CATEGORIES":"الفئات",
+    "BEST_CLIENT_DISCOUNT_PRODUCTS":"منتجات اعلى خصومات",
+    "NO_DATA":"لاتوجد بيانات متوفرة الان",
+    "BEST_DEALS":"افضل العروض لفترة محدودة"
 }

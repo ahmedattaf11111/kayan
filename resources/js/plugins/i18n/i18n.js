@@ -8,5 +8,6 @@ const messages = {
 // 2. Create i18n instance with options
 export default createI18n({
     locale:"ar", // set locale
-    messages, // set locale messages
+    messages, // set locale messages,
+    legacy: false,
 })

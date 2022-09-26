@@ -25,9 +25,9 @@
   </section>
 </template>
 <script>
-import homeClient from "../../../shared/http-clients/home-client";
+import homeClient from "../../shared/http-clients/home-client";
 import { inject, reactive, toRefs } from "vue-demi";
-import store from "../../../shared/store";
+import store from "../../shared/store";
 import { required, email } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import { useI18n } from "vue-i18n";

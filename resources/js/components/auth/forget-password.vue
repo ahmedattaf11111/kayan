@@ -39,7 +39,7 @@
 <script>
 import { required, email } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
-import authClient from "../../../shared/http-clients/auth-client";
+import authClient from "../../shared/http-clients/auth-client";
 export default {
   setup() {
     return { v$: useVuelidate() };
@@ -74,7 +74,6 @@ export default {
       email: { required, email },
     };
   },
-  created() {},
 };
 </script>
 

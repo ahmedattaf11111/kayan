@@ -4,12 +4,19 @@
       <slide v-for="category in categories" :key="category.id">
         <section class="ps-section--category-horizontal">
           <div class="ps-category__item">
-            <a class="ps-category__link" href="category-grid.html"
-              ><img :src="getImagePath(category.media.file_name)" alt
-            /></a>
-
+            <router-link
+              class="ps-category__link"
+              @click="onSelectCategory(category.id)"
+              :to="'/best-client-discount-products'"
+              ><img :src="getImagePath(category.media.file_name)" alt />
+            </router-link>
             <h5 class="ps-category__name">
-              <a href="category-grid.html">{{ category.name }}</a>
+              <router-link
+                @click="onSelectCategory(category.id)"
+                :to="'/best-client-discount-products'"
+              >
+                {{ category.name }}
+              </router-link>
             </h5>
           </div>
         </section>
@@ -20,16 +27,15 @@
 <script>
 import "vue3-carousel/dist/carousel.css";
 import { Carousel, Slide } from "vue3-carousel";
-import homeClient from "../../../shared/http-clients/home-client";
 import { reactive, toRefs } from "vue-demi";
-import store from "../../../shared/store";
-import global from "../../../shared/global";
+import global from "../../shared/global";
+import productStore from "../view-all-products/store";
 export default {
   components: {
     Carousel,
     Slide,
   },
-  setup() {
+  setup(props) {
     let data = reactive({
       categories: [],
       breakPoints: {
@@ -42,21 +48,23 @@ export default {
         },
       },
     });
-    onCreated();
     //Methods
+    function onSelectCategory(categoryId) {
+      productStore.categoryId = categoryId;
+      productStore.categoryLevel = 1;
+    }
     function getImagePath(image) {
       return `${global.DASHBOARD_DOMAIN}/upload/category/${image}`;
     }
-    //Commons
-    function onCreated() {
-      store.showLoader = true;
-      homeClient.getCategories().then((response) => {
-        store.showLoader = false;
-        data.categories = response.data;
-      });
-    }
-    return { getImagePath, ...toRefs(data) };
+    return {
+      categories: props.categories,
+      getImagePath,
+      ...toRefs(data),
+      ...toRefs(productStore),
+      onSelectCategory,
+    };
   },
+  props: ["categories"],
 };
 </script>
 

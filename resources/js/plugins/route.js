@@ -1,11 +1,12 @@
 import { createWebHistory, createRouter } from "vue-router";
-import Register from '../components/web/auth/register';
-import Login from '../components/web/auth/login';
-import ForgetPassword from '../components/web/auth/forget-password';
-import ResetPassword from '../components/web/auth/reset-password';
-import EmailVerification from '../components/web/auth/email-verification';
-import Profile from '../components/web/auth/profile';
-import Home from '../components/web/home/home';
+import Register from '../components/auth/register';
+import Login from '../components/auth/login';
+import ForgetPassword from '../components/auth/forget-password';
+import ResetPassword from '../components/auth/reset-password';
+import EmailVerification from '../components/auth/email-verification';
+import Profile from '../components/auth/profile';
+import Home from '../components/home/home';
+import ViewAllProduct from '../components/view-all-products/view-all-products';
 import AuthenticatedGuard from "../shared/guards/authenticated-guard";
 import GuestGuard from "../shared/guards/guest-guard";
 import PageNotFound from "../shared/components/page-not-found";
@@ -15,6 +16,7 @@ const routes = [
     redirect: "/home"
   },
   { path: "/home", component: Home },
+  { path: "/best-client-discount-products", component: ViewAllProduct },
   //Guest Routes
   {
     path: "",

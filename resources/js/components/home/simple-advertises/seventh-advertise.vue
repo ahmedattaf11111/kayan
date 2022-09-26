@@ -1,5 +1,5 @@
 <template>
-  <div class="fifth-simple-advertise-container">
+  <div class="seventh-simple-advertise-container">
     <div class="container">
       <section class="ps-home__banner">
         <div class="ps-banner" style="background: #ffcc00">
@@ -10,13 +10,16 @@
           />
           <div class="ps-banner__block">
             <div class="ps-banner__content">
-              <h2 class="ps-banner__title">{{ simpleAdvertise.title }}</h2>
+              <h2 class="ps-banner__title">
+                {{ simpleAdvertise.title }}
+              </h2>
               <a
                 class="bg-warning ps-banner__shop"
                 target="_blank"
                 :href="simpleAdvertise.url"
-                >{{ $t("SHOW_DETAILS") }}</a
               >
+                {{ $t("SHOW_DETAILS") }}
+              </a>
             </div>
           </div>
         </div>
@@ -26,21 +29,21 @@
 </template>
 
 <script>
-import global from "../../../../shared/global";
+import global from "../../../shared/global";
 export default {
   setup(props, context) {
     //Methods
     function getImagePath(image) {
       return `${global.DASHBOARD_DOMAIN}/upload/${image}`;
     }
-    return { simpleAdvertise: props.fifthSimpleAdvertise, getImagePath };
+    return { simpleAdvertise: props.seventhSimpleAdvertise, getImagePath };
   },
-  props: ["fifthSimpleAdvertise"],
+  props: ["seventhSimpleAdvertise"],
 };
 </script>
 
 <style>
-.fifth-simple-advertise-container {
+.seventh-simple-advertise-container {
   margin: 5px 0;
 }
 </style>

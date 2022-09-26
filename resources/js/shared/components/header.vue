@@ -239,6 +239,13 @@ import authClient from "../http-clients/auth-client";
 import TokenUtil from "../../shared/utils/token-util";
 import global from "../../shared/global";
 import { useRouter } from "vue-router";
+import {
+  closeNoti,
+  stickyMenu,
+  subMenuToggle,
+  toggleMobileMenu,
+  toggleSearchVisibility,
+} from "../../custom";
 export default {
   components: {
     Filter,
@@ -263,116 +270,20 @@ export default {
         store.currentUser = null;
       });
     }
-    //Commons
-    function toggleSearchVisibility() {
-      $(".open-search").on("click", function (event) {
-        event.preventDefault();
-        $(".ps-search").addClass("active");
-      });
-      $("#close-search").on("click", function (event) {
-        event.preventDefault();
-        $(".ps-search").removeClass("active");
-      });
-    }
-    function closeNoti() {
-      $(".ps-noti__close").on("click", function (event) {
-        event.preventDefault();
-        $(".ps-noti").hide();
-      });
-    }
-    function subMenuToggle() {
-      $(".menu--mobile .sub-toggle").on("click", function (e) {
-        e.preventDefault();
-        var current = $(this).parent("li");
-        current.children(".sub-menu").slideToggle(350);
-        current.siblings().find(".sub-menu").slideUp(350);
-        current.toggleClass("active");
-      });
-
-      $(".ps-language-currency .sub-toggle").on("click", function (e) {
-        e.preventDefault();
-        var current = $(this).parent("li");
-
-        current.children(".sub-menu").slideToggle(350);
-        current.toggleClass("active");
-      });
-
-      // $('.ps-menu__sticky #menu-slide').on('click', function (e) {
-      //     e.preventDefault();
-      //     $('.ps-menu--slidebar').addClass('active');
-      //     $('#open-menu').parent().addClass('active');
-      // });
-
-      $(".menu-slide").on("click", function (e) {
-        e.preventDefault();
-        $(".ps-menu--slidebar").addClass("active");
-        $("#open-menu").parent().addClass("active");
-      });
-
-      $("#open-menu-top").on("click", function (e) {
-        e.preventDefault();
-        $(".ps-menu--slidebar").addClass("active");
-        $(this).parent().addClass("active");
-        $(".ps-header--mobile").addClass("slidebar-active");
-      });
-
-      $("#close-menu-top").on("click", function (e) {
-        e.preventDefault();
-        $(".ps-menu--slidebar").removeClass("active");
-        $(this).parent().removeClass("active");
-        $(".ps-header--mobile").removeClass("slidebar-active");
-      });
-    }
-
-    function toggleMobileMenu() {
-      $("#open-menu").on("click", function (e) {
-        e.preventDefault();
-        $(".ps-menu--slidebar").addClass("active");
-        $(this).parent().addClass("active");
-      });
-
-      $("#close-menu").on("click", function (e) {
-        e.preventDefault();
-        $(".ps-menu--slidebar").removeClass("active");
-        $(this).parent().removeClass("active");
-      });
-    }
-    function stickyMenu() {
-      $(window).scroll(function (event) {
-        var scroll = $(window).scrollTop();
-        var innerWidth = $(window).innerWidth();
-        if (scroll > 100 && innerWidth > 760) {
-          $(".ps-header").addClass("ps-header--sticky");
-        } else if (scroll > 300 && innerWidth < 760) {
-          $(".ps-header").addClass("ps-header--sticky");
-        } else {
-          $(".ps-header").removeClass("ps-header--sticky");
-        }
-        if (scroll > 100) {
-          $(".scroll-top").show();
-        } else {
-          $(".scroll-top").hide();
-        }
-      });
-      $(".scroll-top").on("click", function (e) {
-        e.preventDefault();
-        $("html,body").animate({ scrollTop: 0 }, 500);
-      });
-    }
     return { logout, ...toRefs(store) };
   },
 };
 </script>
 
 <style lang="scss">
-.ps-header--mobile {
-  z-index: 2 !important;
+.scroll-top {
+  z-index: 9997 !important;
 }
 .ps-menu--slidebar {
-  z-index: 3 !important;
+  z-index: 9998 !important;
 }
-.scroll-top {
-  z-index: 4 !important;
+.ps-navigation--footer {
+  z-index: 9999 !important;
 }
 .ps-header__middle {
   img {

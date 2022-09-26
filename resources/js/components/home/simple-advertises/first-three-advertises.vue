@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import global from "../../../../shared/global";
+import global from "../../../shared/global";
 export default {
   setup(props, context) {
     //Methods

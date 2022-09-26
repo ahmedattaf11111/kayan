@@ -37,10 +37,10 @@
 <script>
 import "vue3-carousel/dist/carousel.css";
 import { Carousel, Slide, Navigation } from "vue3-carousel";
-import homeClient from "../../../shared/http-clients/home-client";
-import { reactive, toRefs } from "vue-demi";
-import store from "../../../shared/store";
-import global from "../../../shared/global";
+import homeClient from "../../shared/http-clients/home-client";
+import { onMounted, reactive, toRefs } from "vue-demi";
+import store from "../../shared/store";
+import global from "../../shared/global";
 export default {
   components: {
     Carousel,
@@ -51,19 +51,18 @@ export default {
     let data = reactive({
       sliders: [],
     });
-    created();
-    //Methods
-    function getImagePath(image) {
-      return `${global.DASHBOARD_DOMAIN}/upload/${image}`;
-    }
-    //Commons
-    function created() {
+    onMounted(() => {
       store.showLoader = true;
       homeClient.getSliders().then((response) => {
         store.showLoader = false;
         data.sliders = response.data;
       });
+    });
+    //Methods
+    function getImagePath(image) {
+      return `${global.DASHBOARD_DOMAIN}/upload/${image}`;
     }
+    //Commons
     return { ...toRefs(data), getImagePath };
   },
 };

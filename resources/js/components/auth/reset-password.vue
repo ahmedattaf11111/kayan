@@ -70,12 +70,12 @@
   </div>
 </template>
 <script>
-import strong from "../../../shared/validators/strong-password-validator";
+import strong from "../../shared/validators/strong-password-validator";
 import { required, sameAs } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
-import authClient from "../../../shared/http-clients/auth-client";
-import global from "../../../shared/global";
-import TokenUtil from "../../../shared/utils/token-util"
+import authClient from "../../shared/http-clients/auth-client";
+import global from "../../shared/global";
+import TokenUtil from "../../shared/utils/token-util"
 export default {
   setup() {
     return { v$: useVuelidate() };
@@ -131,7 +131,6 @@ export default {
       },
     };
   },
-  created() {},
 };
 </script>
 

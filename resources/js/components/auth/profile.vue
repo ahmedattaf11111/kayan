@@ -15,7 +15,7 @@
               <img
                 class="rounded-circle border"
                 v-else
-                src="../../../../../public/assets/img/empty-image.png"
+                src="/assets/img/empty-image.png"
               />
               <div class="image-upload">
                 <input
@@ -158,9 +158,9 @@
 </template>
 
 <script>
-import phoneValidator from "../../../shared/validators/phone-validator";
+import phoneValidator from "../../shared/validators/phone-validator";
 import useVuelidate from "@vuelidate/core";
-import authClient from "../../../shared/http-clients/auth-client";
+import authClient from "../../shared/http-clients/auth-client";
 import { required, minValue } from "@vuelidate/validators";
 export default {
   setup() {

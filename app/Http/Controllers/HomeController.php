@@ -2,21 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\NewsletterRequest;
-use App\Services\HomeService;
+use App\Services\Home\HomeService;
 
 class HomeController extends Controller
 {
+    //This controller responsible for view items of some sections in the home
+    
     private $homeService;
 
     public function __construct(HomeService $homeService)
     {
         $this->homeService = $homeService;
-    }
-
-    public function getCategories()
-    {
-        return $this->homeService->getCategories();
     }
 
     public function storeNewsletter(NewsletterRequest $request)

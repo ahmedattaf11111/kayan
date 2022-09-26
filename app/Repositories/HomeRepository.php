@@ -21,8 +21,5 @@ class HomeRepository
     {
         return Slider::get();
     }
-    public function getCategories()
-    {
-        return Category::with("media")->where("status", 1)->get();
-    }
+  
 }

@@ -37,6 +37,7 @@ class AuthService
     private function getUserInput(array $registerInput): array
     {
         return [
+            "name" => $registerInput["name"],
             "email" => $registerInput["email"],
             "password" => $registerInput["password"],
             "phone" => $registerInput["phone"]

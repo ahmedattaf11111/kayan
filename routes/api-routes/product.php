@@ -13,8 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix("home")->group(function () {
-    Route::post("newsletters", "HomeController@storeNewsletter");
-    Route::get("simple-advertises", "HomeController@getSimpleAdvertises");
-    Route::get("sliders", "HomeController@getSliders");
+Route::prefix("products")->group(function () {
+    Route::get(
+        "biggest-client-discount/{categoryId}/{categoryLevel}",
+        "ProductController@getBiggestClientDiscountProducts"
+    );
+    Route::get("main-with-sub-categories", "ProductController@getMainWithSubCategories");
+    Route::get("deal", "ProductController@getDealProducts");
 });
