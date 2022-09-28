@@ -38,20 +38,33 @@
   </div>
 </template>
 <script>
-import { inject, onMounted, reactive, ref, toRefs } from "vue-demi";
+import { inject, onMounted, reactive, ref, toRefs, watch } from "vue-demi";
 import { toggleMobileSideCategroy, toggleSideCategory } from "../../custom";
 import { activateSideCategory } from "../../custom";
 import productClient from "../../shared/http-clients/product-client";
 import productStore from "./store";
+import { useRoute } from "vue-router";
+import From from "../../shared/from";
+
 export default {
   setup(props, contexts) {
     const store = inject("store");
+    const route = useRoute();
     let data = reactive({
       categories: [],
     });
-    onMounted(() => {
-      getMainWithSubCategories();
-    });
+    watch(
+      () => route,
+      () => {
+        data.page = 1;
+        if (productStore.from == From.SEARCH) productStore.categoryId = null;
+        getMainWithSubCategories();
+      },
+      {
+        deep: true,
+        immediate: true,
+      }
+    );
     //Methods
     function onCategorySelected(categoryId, categoryLevel) {
       productStore.categoryId = categoryId;

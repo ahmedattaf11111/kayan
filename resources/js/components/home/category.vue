@@ -30,6 +30,7 @@ import { Carousel, Slide } from "vue3-carousel";
 import { reactive, toRefs } from "vue-demi";
 import global from "../../shared/global";
 import productStore from "../view-all-products/store";
+import From from "../../shared/from";
 export default {
   components: {
     Carousel,
@@ -50,6 +51,7 @@ export default {
     });
     //Methods
     function onSelectCategory(categoryId) {
+      productStore.from = From.CATEGORY;
       productStore.categoryId = categoryId;
       productStore.categoryLevel = 1;
     }

@@ -116,26 +116,30 @@
             </li>
           </ul>
           <div class="ps-header__search">
-            <form action="http://nouthemes.net/html/mymedi/do_action" method="post">
-              <div class="ps-search-table">
-                <div class="input-group">
-                  <input
-                    class="form-control ps-input"
-                    type="text"
-                    placeholder="Search for products"
-                  />
-                  <div class="input-group-append">
-                    <a href="#"><i class="fa fa-search"></i></a>
-                  </div>
+            <div class="ps-search-table">
+              <div class="input-group">
+                <input
+                  class="form-control ps-input"
+                  type="text"
+                  v-model="name"
+                  :placeholder="$t('SEARCH_FOR_PRODUCTS')"
+                />
+                <div class="input-group-append">
+                  <router-link
+                    :to="{ path: '/best-client-discount-products', force: true }"
+                    @click="onSearchClicked"
+                    href="#"
+                    ><i class="fa fa-search"></i
+                  ></router-link>
                 </div>
               </div>
-            </form>
+            </div>
           </div>
           <div class="ps-header__menu">
             <ul class="menu">
               <li class="has-mega-menu">
                 <a href="#">
-                  <i class="fa fa-filter" aria-hidden="true"></i>Filter<span
+                  <i class="fa fa-filter" aria-hidden="true"></i>{{$t("FILTER")}}<span
                     class="sub-toggle"
                     ><i class="fa fa-chevron-down"></i></span
                 ></a>
@@ -186,20 +190,23 @@
         ><i class="icon-cross"></i
       ></a>
       <h3>Search</h3>
-      <form action="http://nouthemes.net/html/mymedi/do_action" method="post">
-        <div class="ps-search-table">
-          <div class="input-group">
-            <input
-              class="form-control ps-input"
-              type="text"
-              placeholder="Search for products"
-            />
-            <div class="input-group-append">
-              <a href="#"><i class="fa fa-search"></i></a>
-            </div>
+      <div class="ps-search-table">
+        <div class="input-group">
+          <input
+            class="form-control ps-input"
+            type="text"
+            placeholder="Search for products"
+          />
+          <div class="input-group-append">
+            <router-link
+              :to="{ path: '/best-client-discount-products', force: true }"
+              @click="onSearchClicked"
+              href="#"
+              ><i class="fa fa-search"></i
+            ></router-link>
           </div>
         </div>
-      </form>
+      </div>
     </div>
   </div>
   <div class="ps-navigation--footer">
@@ -239,6 +246,8 @@ import authClient from "../http-clients/auth-client";
 import TokenUtil from "../../shared/utils/token-util";
 import global from "../../shared/global";
 import { useRouter } from "vue-router";
+import From from "../../shared/from";
+import productStore from "../../components/view-all-products/store";
 import {
   closeNoti,
   stickyMenu,
@@ -260,6 +269,9 @@ export default {
       toggleSearchVisibility();
       closeNoti();
     });
+    function onSearchClicked() {
+      productStore.from = From.SEARCH;
+    }
     function logout(event) {
       event.preventDefault();
       store.showLoader = true;
@@ -270,7 +282,7 @@ export default {
         store.currentUser = null;
       });
     }
-    return { logout, ...toRefs(store) };
+    return { logout, ...toRefs(store), onSearchClicked, ...toRefs(productStore) };
   },
 };
 </script>

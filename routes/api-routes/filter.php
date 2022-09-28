@@ -13,11 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix("products")->group(function () {
-    Route::get(
-        "biggest-client-discount",
-        "ProductController@getBiggestClientDiscountProducts"
-    );
-    Route::get("main-with-sub-categories", "ProductController@getMainWithSubCategories");
-    Route::get("deal", "ProductController@getDealProducts");
+Route::prefix("filter")->group(function () {
+    Route::get("suppliers", "FilterController@getSuppliers");
+    Route::get("companies", "FilterController@getCompanies");
+    Route::get("pharmacological-forms", "FilterController@getPharmacologicalForms");
 });

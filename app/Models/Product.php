@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Utils\Models\ProductScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ class Product extends Model
 
     protected $with = ['productName'];
 
-    use HasFactory;
+    use HasFactory, ProductScope;
 
     public function biggestClientDiscountPrice()
     {
@@ -43,5 +44,9 @@ class Product extends Model
     public function price()
     {
         return $this->hasOne(Price::class)->latestOfMany();
+    }
+    public function prices()
+    {
+        return $this->hasMany(Price::class);
     }
 }

@@ -7,16 +7,25 @@ use App\Models\Product;
 
 class ProductRepository
 {
-    public function getBiggestClientDiscountProducts($categoryId, $categoryLevel, $pageSize)
-    {
-        return Product::with("biggestClientDiscountPrice")
-            ->has("biggestClientDiscountPrice")
-            ->when($categoryLevel == 1, function ($query) use ($categoryId) {
-                $query->whereRelation("category", "id", $categoryId);
-            })
-            ->when($categoryLevel == 2, function ($query) use ($categoryId) {
-                $query->whereRelation("sub_category", "id", $categoryId);
-            })
+    public function getBiggestClientDiscountProducts(
+        $categoryId,
+        $categoryLevel,
+        $name,
+        $effectiveMaterial,
+        $pharmacologicalFormId,
+        $companyId,
+        $supplierId,
+        $discount,
+        $pageSize
+    ) {
+        return Product::biggestDiscountProducts()
+            ->searchByName($name)
+            ->searchByEffectiveMaterial($effectiveMaterial)
+            ->searchByPharmacistFormId($pharmacologicalFormId)
+            ->searchByCompanyId($companyId)
+            ->searchBySupplierId($supplierId)
+            ->searchByDiscount($discount)
+            ->searchByCategory($categoryId, $categoryLevel)
             ->paginate($pageSize);
     }
 
@@ -28,6 +37,6 @@ class ProductRepository
     }
     public function getDealProducts($limit)
     {
-        return Product::has("deal")->has("price")->with("deal","price")->take($limit)->get();
+        return Product::has("deal")->has("price")->with("deal", "price")->take($limit)->get();
     }
 }

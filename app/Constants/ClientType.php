@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Constants;
+
 class ClientType
 {
     const PHARMACIST = "PHARMACIST";

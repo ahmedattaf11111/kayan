@@ -28,8 +28,7 @@
             </div>
             <div class="ps-countdown__block ps-countdown___days">
               <div class="ps-countdown__number">
-                <span class="first-1st">0</span><span class="last">0</span
-                >
+                <span class="first-1st">0</span><span class="last">0</span>
                 <span class="first">0</span>
               </div>
               <div class="ps-countdown__ref">Days</div>

@@ -12,10 +12,29 @@ class ProductService
         $this->productRepository = $productRepository;
     }
 
-    public function getBiggestClientDiscountProducts($categoryId, $mainCategory, $pageSize)
-    {
+    public function getBiggestClientDiscountProducts(
+        $categoryId,
+        $categoryLevel,
+        $name,
+        $effectiveMaterial,
+        $pharmacologicalFormId,
+        $companyId,
+        $supplierId,
+        $discount,
+        $pageSize
+    ) {
         return $this->productRepository
-            ->getBiggestClientDiscountProducts($categoryId, $mainCategory, $pageSize);
+            ->getBiggestClientDiscountProducts(
+                $categoryId,
+                $categoryLevel,
+                $name,
+                $effectiveMaterial,
+                $pharmacologicalFormId,
+                $companyId,
+                $supplierId,
+                $discount,
+                $pageSize
+            );
     }
 
     public function getMainWithSubCategories()

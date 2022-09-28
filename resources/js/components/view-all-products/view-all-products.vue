@@ -15,7 +15,6 @@
   </div>
 </template>
 <script>
-import { useRoute } from "vue-router";
 import Category from "./category";
 import Products from "./products";
 export default {

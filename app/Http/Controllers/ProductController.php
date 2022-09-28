@@ -15,13 +15,6 @@ class ProductController extends Controller
         $this->productService = $productService;
     }
 
-    /*
-    Get biggest client discount products based on
-    * $categoryId
-    * $categoryLevel
-        if $categoryLevel is 1 then the products of main category will returned
-        else if $categoryLevel is 2 then the products of sub categories will returned
-    */
     public function getBiggestClientDiscountProducts()
     {
         return $this->productService
@@ -30,7 +23,7 @@ class ProductController extends Controller
                 request()->category_level,
                 request()->name,
                 request()->effective_material,
-                request()->pharmacological_form,
+                request()->pharmacological_form_id,
                 request()->company_id,
                 request()->supplier_id,
                 request()->discount,

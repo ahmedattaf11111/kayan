@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Models\Category;
 use App\Models\Newsletter;
 use App\Models\SimpleAdvertise;
 use App\Models\Slider;

@@ -32,6 +32,8 @@ class RouteServiceProvider extends ServiceProvider
         "auth" => self::DEF_NAMESPACE . "\\Auth",
         "home" => self::DEF_NAMESPACE,
         "product" => self::DEF_NAMESPACE,
+        "filter" => self::DEF_NAMESPACE,
+        "order" => self::DEF_NAMESPACE . "\\Order",
     ];
     /**
      * Define your route model bindings, pattern filters, etc.

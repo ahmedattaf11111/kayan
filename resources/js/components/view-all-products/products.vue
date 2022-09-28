@@ -18,19 +18,6 @@
                     <img :src="getImagePath(product.image)" alt="alt" />
                   </figure>
                 </a>
-                <div class="ps-product__actions">
-                  <div
-                    class="ps-product__item"
-                    data-toggle="tooltip"
-                    data-placement="left"
-                    title="Add to cart"
-                  >
-                    <a href="#" data-toggle="modal" data-target="#popupAddcart"
-                      ><i class="fa fa-shopping-basket"></i
-                    ></a>
-                  </div>
-                </div>
-                <div class="ps-product__badge"></div>
                 <div class="ps-product__percent">
                   {{ product.biggest_client_discount_price.clientDiscount }}%
                 </div>
@@ -53,24 +40,32 @@
                     {{ $t("POUND") }}
                   </span>
                 </div>
-                <div class="ps-product__actions ps-product__group-mobile">
-                  <div class="ps-product__cart">
-                    <a
-                      class="ps-btn ps-btn--warning"
-                      href="#"
-                      data-toggle="modal"
-                      data-target="#popupAddcart"
-                      >Add to cart</a
-                    >
-                  </div>
-                  <div
-                    class="ps-product__item cart"
-                    data-toggle="tooltip"
-                    data-placement="left"
-                    title="Add to cart"
-                  >
-                    <a href="#"><i class="fa fa-shopping-basket"></i></a>
-                  </div>
+                <div
+                  v-if="!product.cartClicked"
+                  class="ps-product__item cart"
+                  data-toggle="tooltip"
+                  data-placement="left"
+                  :title="$t('ADD_TO_CART')"
+                >
+                  <a @click.prevent="addToCart(product)" href="#"
+                    ><i class="fa fa-shopping-basket"></i
+                  ></a>
+                </div>
+                <div v-if="product.cartClicked" class="cart-quantity">
+                  <button @click="onIncrementClicked(product)" class="increment mr-2">
+                    <span>+</span>
+                  </button>
+                  <input
+                    @blur="updateCartQuantity(product)"
+                    v-model="product.quantity"
+                    class="form-control text-center"
+                  />
+                  <button @click="onDecrementClicked(product)" class="decrement ml-2">
+                    <span>-</span>
+                  </button>
+                  <button class="mr-2 delete">
+                    <i class="fa fa-trash"></i>
+                  </button>
                 </div>
               </div>
             </div>
@@ -100,36 +95,73 @@
 </template>
 
 <script>
-import { inject, reactive, toRefs, watch } from "vue-demi";
+import { inject, onMounted, reactive, toRefs, watch } from "vue-demi";
 import productClient from "../../shared/http-clients/product-client";
+import cartClient from "../../shared/http-clients/cart-client";
 import global from "../../shared/global";
 import Paginate from "vuejs-paginate-next";
 import productStore from "./store";
+import { useRoute } from "vue-router";
+import From from "../../shared/from";
 export default {
   components: {
     Paginate,
   },
   setup() {
     const store = inject("store");
+    const route = useRoute();
     let data = reactive({
-      categoryId: null,
-      categoryLevel: null,
       products: [],
       page: 1,
       pageSize: 8,
       pageCount: 0,
     });
     watch(
-      productStore,
+      () => {
+        productStore.categoryId;
+        productStore.categoryLevel;
+      },
       (value) => {
-        data.categoryId = productStore.categoryId;
-        data.categoryLevel = productStore.categoryLevel;
         data.page = 1;
         getBiggestClientDiscountProducts();
       },
-      { deep: true, immediate: true }
+      { deep: true }
+    );
+    watch(
+      () => route,
+      () => {
+        data.page = 1;
+        if (productStore.from == From.SEARCH) productStore.categoryId = null;
+        getBiggestClientDiscountProducts();
+      },
+      {
+        deep: true,
+        immediate: true,
+      }
     );
     //Methods
+    function onIncrementClicked(product) {
+      product.quantity++;
+      updateCartQuantity(product);
+    }
+    function onDecrementClicked(product) {
+      product.quantity--;
+      updateCartQuantity(product);
+    }
+    function addToCart(product) {
+      store.showLoader = true;
+      cartClient
+        .addToCart({
+          product_id: product.id,
+          supplier_id: product.biggest_client_discount_price.supplier_id,
+          company_id: product.biggest_client_discount_price.company_id,
+        })
+        .then(() => {
+          store.showLoader = false;
+          product.cartClicked = true;
+          product.quantity = 1;
+        });
+    }
     function getImagePath(image) {
       return `${global.DASHBOARD_DOMAIN}/upload/product/${image}`;
     }
@@ -137,8 +169,14 @@ export default {
       store.showLoader = true;
       productClient
         .getBiggestClientDiscountProducts(
-          data.categoryId,
-          data.categoryLevel,
+          productStore.categoryId,
+          productStore.categoryLevel,
+          productStore.name,
+          productStore.effectiveMaterial,
+          productStore.pharmacologicalFormId,
+          productStore.companyId,
+          productStore.supplierId,
+          productStore.discount,
           data.page,
           data.pageSize
         )
@@ -148,10 +186,27 @@ export default {
           data.pageCount = Math.ceil(response.data.total / data.pageSize);
         });
     }
+    function updateCartQuantity(product) {
+      store.showLoader = true;
+      cartClient
+        .updateCartQuantity({
+          product_id: product.id,
+          supplier_id: product.biggest_client_discount_price.supplier_id,
+          company_id: product.biggest_client_discount_price.company_id,
+          quantity: product.quantity,
+        })
+        .then(() => {
+          store.showLoader = false;
+        });
+    }
     return {
       ...toRefs(data),
       getBiggestClientDiscountProducts,
       getImagePath,
+      addToCart,
+      onIncrementClicked,
+      onDecrementClicked,
+      updateCartQuantity,
     };
   },
 };
@@ -169,6 +224,10 @@ export default {
     &:focus {
       box-shadow: none;
     }
+  }
+  .cart {
+    margin-top: 18px;
+    color: #0e67d0 !important;
   }
   .empty {
     margin: 100px 0;
@@ -189,8 +248,37 @@ export default {
       border-radius: 50px;
     }
   }
-  .ps-section--seller-diagnosis {
-    padding-bottom: 0 !important;
+  .cart-quantity {
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    .form-control {
+      border-radius: 5px;
+      width: 90px;
+      height: 30px;
+    }
+    .decrement,
+    .increment {
+      height: 25px;
+      width: 25px;
+      border: none;
+      background-color: #0e67d0 !important;
+      color: #fff !important;
+      border-radius: 50%;
+      font-size: 18px;
+      span{
+        position: relative;
+        bottom: 5px;
+      }
+    }
+    .delete {
+      background: none;
+      border: none;
+      color: #0e67d0;
+      background: none;
+      font-size: 22px;
+      margin-right: 7px;
+    }
   }
 }
 </style>
