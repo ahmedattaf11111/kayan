@@ -21,14 +21,12 @@ class CartService
         $this->cartRepository->createCart($this->getCartInput($order->id, $cartInput));
     }
 
-    public function removeCartItem($userId, $productId, $supplierId, $companyId)
+    public function removeCartItems($userId, $productId, $supplierId)
     {
-        $order = $this->cartRepository->getCartStatusOrder($userId, true);
+        $order = $this->cartRepository->getCartStatusOrder($userId, false);
         if ($order) {
-            $this->cartRepository->removeCartItem($order->id, $productId, $supplierId, $companyId);
-            if (count($order->products) == 1) {
-                $this->cartRepository->removeOrder($order->id);
-            }
+            $this->cartRepository->removeCartItems($order->id, $productId, $supplierId);
+            $this->cartRepository->removeOrderIfNoItems($order->id);
         }
     }
 
@@ -36,10 +34,21 @@ class CartService
     {
         return $this->cartRepository->getCartStatusOrder($userId, true);
     }
+
     public function updateCartQuantity($userId, $cartQuantityInput)
     {
-        $order = $this->cartRepository->getCartStatusOrder($userId, false);
-        $this->cartRepository->updateCartQuantity($order->id, $cartQuantityInput);
+        $this->cartRepository->updateCartQuantity($userId, $cartQuantityInput);
+    }
+
+    public function getUserCart($userId)
+    {
+        $cartItems = $this->cartRepository->getCartItems($userId);
+        return $this->sortCartsOfEachItemByDiscount($cartItems);
+    }
+
+    public function getCartItemsCount($userId)
+    {
+        return $this->cartRepository->getCartItemsCount($userId);
     }
     //Commons
     private function getOrderInput($userId)
@@ -49,7 +58,17 @@ class CartService
             "order_status" => OrderStatus::CART,
         ];
     }
-
+    public function sortCartsOfEachItemByDiscount($cartItems)
+    {
+        return $cartItems->map(function ($cartItem) {
+            $carts = $cartItem->carts->sortByDesc("price.clientDiscount")->values();
+            //Idont know why laravel force me to type those 2 ugly lines
+            unset($cartItem->carts);
+            $cartItem->carts = $carts;
+            //Idont know why laravel force me to type those 2 ugly lines
+            return $cartItem;
+        });
+    }
     private function getCartInput($orderId, &$cartInput)
     {
         $cartInput["order_id"] = $orderId;

@@ -33,6 +33,10 @@ class AuthService
     {
         return $this->authRepository->getCitiesWithAreas();
     }
+    public function getUser($userId)
+    {
+        return $this->authRepository->getUser($userId);
+    }
     //Commons
     private function getUserInput(array $registerInput): array
     {

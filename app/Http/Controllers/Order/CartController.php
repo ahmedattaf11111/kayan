@@ -14,6 +14,7 @@ class CartController extends Controller
     public function __construct(CartService $cartService)
     {
         $this->cartService = $cartService;
+        $this->middleware("auth");
     }
 
     public function addToCart(CartRequest $request)
@@ -21,13 +22,12 @@ class CartController extends Controller
         $this->cartService->addToCart($request->user()->id, $request->validated());
     }
 
-    public function removeCartItem()
+    public function removeCartItems()
     {
-        $this->cartService->removeCartItem(
+        $this->cartService->removeCartItems(
             request()->user()->id,
             request()->product_id,
             request()->supplier_id,
-            request()->company_id
         );
     }
 
@@ -39,5 +39,15 @@ class CartController extends Controller
     public function updateCartQuantity(UpdateCartQuantity $request)
     {
         $this->cartService->updateCartQuantity(request()->user()->id, $request->validated());
+    }
+
+    public function getUserCart()
+    {
+        return $this->cartService->getUserCart(request()->user()->id);
+    }
+
+    public function getCartItemsCount()
+    {
+        return $this->cartService->getCartItemsCount(request()->user()->id);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Constants\OrderStatus;
 use App\Models\Category;
 use App\Models\Product;
 
@@ -13,16 +14,17 @@ class ProductRepository
         $name,
         $effectiveMaterial,
         $pharmacologicalFormId,
-        $companyId,
         $supplierId,
         $discount,
-        $pageSize
+        $pageSize,
+        $userId
     ) {
-        return Product::biggestDiscountProducts()
+        return Product::with("biggestClientDiscountPrice")
+            ->has("biggestClientDiscountPrice")
+            ->withCartInfo($userId)
             ->searchByName($name)
             ->searchByEffectiveMaterial($effectiveMaterial)
             ->searchByPharmacistFormId($pharmacologicalFormId)
-            ->searchByCompanyId($companyId)
             ->searchBySupplierId($supplierId)
             ->searchByDiscount($discount)
             ->searchByCategory($categoryId, $categoryLevel)
@@ -35,8 +37,35 @@ class ProductRepository
             $query->where("status", 1);
         }, "media"])->where("status", 1)->get();
     }
+
     public function getDealProducts($limit)
     {
         return Product::has("deal")->has("price")->with("deal", "price")->take($limit)->get();
+    }
+
+    public function getProductDetails($productId)
+    {
+        $user = request()->user();
+        return Product::with(["prices" => function ($query) use ($user, $productId) {
+            $query->with(["supplier" => function ($query) use ($user, $productId) {
+                $this->withCart($query, $user, $productId);
+            }])->orderBy("clientDiscount", 'desc');
+        }])->find($productId);
+    }
+
+    //Commons
+    private function withCart($query, $user, $productId)
+    {
+        $query->when($user, function ($query) use ($user, $productId) {
+            $query->with(["cart_info" => function ($query) use ($user, $productId) {
+                $this->whereCartOfUserAndProduct($query, $user->id, $productId);
+            }]);
+        });
+    }
+    private function whereCartOfUserAndProduct($query, $userId, $productId)
+    {
+        $query->whereHas("order", function ($query) use ($userId) {
+            $query->where("user_id", $userId)->where("order_status", OrderStatus::CART);
+        })->where("product_id", $productId);
     }
 }

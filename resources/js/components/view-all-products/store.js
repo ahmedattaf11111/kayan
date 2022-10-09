@@ -7,7 +7,6 @@ export default reactive({
     name: null,
     effectiveMaterial: null,
     pharmacologicalFormId: null,
-    companyId: null,
     supplierId: null,
     discount: null,
     pageSize: null

@@ -44,7 +44,7 @@ import { activateSideCategory } from "../../custom";
 import productClient from "../../shared/http-clients/product-client";
 import productStore from "./store";
 import { useRoute } from "vue-router";
-import From from "../../shared/from";
+import From from "../../shared/consts/from";
 
 export default {
   setup(props, contexts) {

@@ -40,7 +40,7 @@ import { Carousel, Slide, Navigation } from "vue3-carousel";
 import homeClient from "../../shared/http-clients/home-client";
 import { onMounted, reactive, toRefs } from "vue-demi";
 import store from "../../shared/store";
-import global from "../../shared/global";
+import global from "../../shared/consts/global";
 export default {
   components: {
     Carousel,

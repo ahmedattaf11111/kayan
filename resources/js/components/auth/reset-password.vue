@@ -74,8 +74,9 @@ import strong from "../../shared/validators/strong-password-validator";
 import { required, sameAs } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import authClient from "../../shared/http-clients/auth-client";
-import global from "../../shared/global";
-import TokenUtil from "../../shared/utils/token-util"
+import cartClient from "../../shared/http-clients/cart-client";
+import global from "../../shared/consts/global";
+import TokenUtil from "../../shared/utils/token-util";
 export default {
   setup() {
     return { v$: useVuelidate() };
@@ -98,10 +99,10 @@ export default {
       authClient
         .resetPassword(this.getForm())
         .then((response) => {
-          this.store.showLoader = false;
           TokenUtil.set(response.data.access_token);
+          this.getCurrentUser();
+          this.getCartItemsCount();
           this.$router.push(global.AUTH_REDIRECT);
-          this.store.currentUser = TokenUtil.getUser();
         })
         .catch((error) => {
           this.store.showLoader = false;
@@ -114,6 +115,28 @@ export default {
         password: this.password,
         token: this.$route.params.token,
       };
+    },
+    getCurrentUser() {
+      authClient
+        .getCurrentUser()
+        .then((response) => {
+          this.store.currentUser = response.data;
+          this.store.showLoader = false;
+        })
+        .catch((error) => {
+          console.log("err", error.response);
+        });
+    },
+    getCartItemsCount() {
+      cartClient
+        .getCartItemsCount()
+        .then((response) => {
+          this.store.cartItemsCount = response.data;
+          this.store.showLoader = false;
+        })
+        .catch((error) => {
+          console.log("err", error.response);
+        });
     },
   },
   inject: ["store"],

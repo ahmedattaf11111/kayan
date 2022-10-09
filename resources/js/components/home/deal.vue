@@ -90,12 +90,7 @@
               </h5>
               <div class="ps-product__meta">
                 <span class="ps-product__price sale">
-                  {{
-                    calculatePharmacyPrice(
-                      product.price.publicPrice,
-                      product.deal.discount
-                    )
-                  }}
+                  {{ product.price.pharmacyPrice }},
                   {{ $t("POUND") }}
                 </span>
 
@@ -135,7 +130,7 @@
 import { inject, onMounted, reactive, toRefs } from "vue-demi";
 import { owlCarouselFunction, initializeClock } from "../../custom";
 import productClient from "../../shared/http-clients/product-client";
-import global from "../../shared/global";
+import global from "../../shared/consts/global";
 export default {
   setup(props, context) {
     let data = reactive({

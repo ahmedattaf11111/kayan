@@ -73,7 +73,8 @@ import { required, email } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import authClient from "../../shared/http-clients/auth-client";
 import TokenUtil from "../../shared/utils/token-util";
-import global from "../../shared/global";
+import global from "../../shared/consts/global";
+import cartClient from "../../shared/http-clients/cart-client";
 export default {
   setup() {
     return { v$: useVuelidate() };
@@ -95,17 +96,38 @@ export default {
       authClient
         .login(this.getForm())
         .then((response) => {
-          this.store.showLoader = false;
           TokenUtil.set(response.data.access_token);
+          this.getCurrentUser();
+          this.getCartItemsCount();
           this.$router.push(global.AUTH_REDIRECT);
-          this.store.currentUser = TokenUtil.getUser();
         })
         .catch((error) => {
-          this.store.showLoader = false;
           this.$toast.error(this.$t("LOGIN_FAILED"));
         });
     },
     //Commons
+    getCurrentUser() {
+      authClient
+        .getCurrentUser()
+        .then((response) => {
+          this.store.currentUser = response.data;
+          this.store.showLoader = false;
+        })
+        .catch((error) => {
+          console.log("err", error.response);
+        });
+    },
+    getCartItemsCount() {
+      cartClient
+        .getCartItemsCount()
+        .then((response) => {
+          this.store.cartItemsCount = response.data;
+          this.store.showLoader = false;
+        })
+        .catch((error) => {
+          console.log("err", error.response);
+        });
+    },
     getForm() {
       return {
         email: this.email,

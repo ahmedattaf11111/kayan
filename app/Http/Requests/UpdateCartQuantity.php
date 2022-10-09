@@ -23,13 +23,10 @@ class UpdateCartQuantity extends FormRequest
      */
     public function rules()
     {
-        $rules = [
+        return [
             "product_id" => "required|numeric",
+            "supplier_id" => "required|numeric",
             "quantity" => "required|integer|min:1"
         ];
-        $this->supplier_id ?
-            $rules["supplier_id"] = "required_without:company_id|numeric"
-            : $rules["company_id"] = "required_without:company_id|numeric";
-        return $rules;
     }
 }

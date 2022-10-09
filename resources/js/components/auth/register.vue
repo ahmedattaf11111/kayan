@@ -302,6 +302,15 @@ export default {
       if (!city.available) toast.warning(t("NOT_AVIALABLE_NOW"));
     }
     //Commons
+    function getCurrentUser() {
+      authClient
+        .getCurrentUser()
+        .then((response) => {
+          store.currentUser = response.data;
+          store.showLoader = false;
+        })
+        .catch((error) => {});
+    }
     function getSelectedCity() {
       let city = null;
       data.cities.forEach((_city) => {
@@ -311,23 +320,13 @@ export default {
       });
       return city;
     }
-    function getSelectedArea() {
-      let area = null;
-      data.areas.forEach((_area) => {
-        if (form.area_id == _area.id) {
-          return (area = _area);
-        }
-      });
-      return area;
-    }
     function register() {
       authClient
         .register(getForm())
         .then((response) => {
-          store.showLoader = false;
           TokenUtil.set(response.data.access_token);
+          getCurrentUser();
           router.push("/verify-email");
-          store.currentUser = TokenUtil.getUser();
         })
         .catch((error) => {
           store.showLoader = false;

@@ -18,8 +18,4 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-    protected $attributes = [
-        "transaction_id" => 0
-    ];
 }

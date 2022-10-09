@@ -1,7 +1,7 @@
 <template>
   <div class="filter">
     <div class="row">
-      <div class="col-12">
+      <div class="col-md-6">
         <div class="form-group">
           <label for="exampleFormControlSelect1">{{ $t("EFFECTIVE_MATERIAL") }}</label>
           <input
@@ -46,23 +46,11 @@
       </div>
       <div class="col-md-6">
         <div class="form-group">
-          <label for="exampleFormControlSelect1">{{ $t("COMPANY") }}</label>
-          <div class="select-wrapper">
-            <select v-model="companyId" class="form-control">
-              <option v-for="company in companies" :key="company.id" :value="company.id">
-                {{ company.name }}
-              </option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="form-group">
           <label for="exampleFormControlSelect1">{{ $t("DISCOUNT") }}</label>
           <div class="select-wrapper">
             <select v-model="discount" class="form-control">
-              <option :value="item * 10" v-for="item in 10" :key="item">
-                {{ item * 10 }}
+              <option :value="item" v-for="item in 100" :key="item">
+                {{ `${item}%` }}
               </option>
             </select>
           </div>
@@ -72,10 +60,10 @@
         <router-link
           :to="{ path: '/best-client-discount-products', force: true }"
           @click="onSearchClicked"
-          class="btn btn-primary"
+          class="btn"
           >{{ $t("SEARCH") }}</router-link
         >
-        <button @click="reset" class="btn btn-primary">{{ $t("DELETE") }}</button>
+        <button @click="reset" class="btn">{{ $t("DELETE") }}</button>
       </div>
     </div>
   </div>
@@ -85,6 +73,7 @@
 import { inject, onMounted, reactive, toRefs } from "vue-demi";
 import filterClient from "../http-clients/filter-client";
 import productStore from "../../components/view-all-products/store";
+import From from "../../shared/consts/from";
 export default {
   setup() {
     const data = reactive({
@@ -95,20 +84,18 @@ export default {
     const store = inject("store");
     onMounted(() => {
       getSuppliers();
-      getCompanies();
       getPharmacologicalForms();
     });
     //Methods
     function onSearchClicked() {
       productStore.from = From.SEARCH;
     }
-    function reset(){
-      productStore.name=null;
-      productStore.effectiveMaterial=null;
-      productStore.pharmacologicalFormId=null;
-      productStore.companyId=null;
-      productStore.supplierId=null;
-      productStore.discount=null;
+    function reset() {
+      productStore.name = null;
+      productStore.effectiveMaterial = null;
+      productStore.pharmacologicalFormId = null;
+      productStore.supplierId = null;
+      productStore.discount = null;
     }
     //Commons
     function getSuppliers() {
@@ -118,14 +105,6 @@ export default {
         data.suppliers = response.data;
       });
     }
-    function getCompanies() {
-      store.showLoader = true;
-      filterClient.getCompanies().then((response) => {
-        store.showLoader = false;
-        data.companies = response.data;
-      });
-    }
-
     function getPharmacologicalForms() {
       store.showLoader = true;
       filterClient.getPharmacologicalForms().then((response) => {
@@ -133,7 +112,7 @@ export default {
         data.pharmacologicalForms = response.data;
       });
     }
-    return { ...toRefs(data), ...toRefs(productStore), onSearchClicked,reset };
+    return { ...toRefs(data), ...toRefs(productStore), onSearchClicked, reset };
   },
 };
 </script>
@@ -159,5 +138,7 @@ a {
   padding: 8px 16px;
   font-size: 12px;
   margin-left: 10px;
+  background-color: #0e67d0 !important;
+  color: #fff;
 }
 </style>

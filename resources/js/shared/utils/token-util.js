@@ -1,5 +1,5 @@
 export default {
-    KEY : 'TOKEN',
+    KEY: 'TOKEN',
     set(token) {
         localStorage.setItem(this.KEY, token);
     },
@@ -27,6 +27,7 @@ export default {
             about_me: this.payload().joabout_me,
             email_verified_at: this.payload().email_verified_at,
             image: this.payload().image,
+            cart_products: this.payload().cart_products
         };
     },
     //Commons

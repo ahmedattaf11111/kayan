@@ -4,6 +4,7 @@ namespace App\Utils\Repositories;
 
 use App\Constants\OrderStatus;
 use App\Models\Order;
+use App\Models\Product;
 
 trait OrderUtil
 {
@@ -15,5 +16,9 @@ trait OrderUtil
             })
             ->where("order_status", OrderStatus::CART)
             ->first();
+    }
+    public function getCartItems($userId)
+    {
+        return Product::cartItems($userId)->get();
     }
 }

@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import global from "../../../shared/global";
+import global from "../../../shared/consts/global";
 export default {
   setup(props, context) {
     //Methods

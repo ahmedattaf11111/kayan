@@ -44,7 +44,7 @@
 import { required } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import authClient from "../../shared/http-clients/auth-client";
-import global from "../../shared/global";
+import global from "../../shared/consts/global";
 export default {
   setup() {
     return { v$: useVuelidate() };

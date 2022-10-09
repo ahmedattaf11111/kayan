@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Commons\Constants;
+namespace App\Constants;
 
 class PaymentStatus
 {

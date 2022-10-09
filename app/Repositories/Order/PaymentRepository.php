@@ -2,9 +2,10 @@
 
 namespace App\Repositories\Order;
 
-use App\Commons\Constants\PaymentMethod;
-use App\Commons\Constants\PaymentStatus;
 use App\Constants\OrderStatus;
+use App\Constants\PaymentMethod;
+use App\Constants\PaymentStatus;
+use App\Models\Client;
 use App\Models\Order;
 use App\Utils\Repositories\OrderUtil;
 
@@ -16,9 +17,24 @@ class PaymentRepository
         $order = $this->getCartStatusOrder($userId, false);
         $this->makeOrdercashedPayment($order);
     }
-    public function insertOnlinePayment($paymentInput)
+    public function onlinePayment($paymentInput)
     {
-        Order::where("id", $paymentInput["order_id"])->update($paymentInput);
+        Order::where("id", $paymentInput["id"])->update($paymentInput);
+    }
+    public function saveOrderForm($userId, $orderInput)
+    {
+        Client::whereRelation("user", "id", $userId)->update($orderInput);
+    }
+    public function getTotalPrice($userId)
+    {
+        $totalPrice = 0;
+        $cartProducts = $this->getCartItems($userId);
+        foreach ($cartProducts as $product) {
+            foreach ($product->carts as $cart) {
+                $totalPrice += $cart->price->pharmacyPrice * $cart->quantity;
+            }
+        }
+        return $totalPrice;
     }
     //Commons
     public function makeOrdercashedPayment(&$order)

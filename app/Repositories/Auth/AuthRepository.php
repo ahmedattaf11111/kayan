@@ -21,4 +21,8 @@ class AuthRepository
     {
         return City::with("areas")->get();
     }
+    public function getUser($userId)
+    {
+        return User::with("client")->find($userId);
+    }
 }

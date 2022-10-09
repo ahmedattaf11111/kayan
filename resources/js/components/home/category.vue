@@ -28,9 +28,9 @@
 import "vue3-carousel/dist/carousel.css";
 import { Carousel, Slide } from "vue3-carousel";
 import { reactive, toRefs } from "vue-demi";
-import global from "../../shared/global";
+import global from "../../shared/consts/global";
 import productStore from "../view-all-products/store";
-import From from "../../shared/from";
+import From from "../../shared/consts/from";
 export default {
   components: {
     Carousel,

@@ -2,39 +2,41 @@
 
 namespace App\Http\Controllers\Order;
 
-use App\Commons\Constants\PaymentMethod;
-use App\Commons\Constants\PaymentStatus;
 use App\Constants\OrderStatus;
+use App\Constants\PaymentMethod;
+use App\Constants\PaymentStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OrderFormRequest;
 use App\Services\Order\PaymentService;
+use App\Utils\Controllers\MyFatoorahUtil;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
+    use MyFatoorahUtil;
     private $paymentService;
     public function __construct(PaymentService $paymentService)
     {
         $this->paymentService = $paymentService;
+        $this->middleware("auth")->except(["callback_error", "callback_success"]);
     }
-    public function cashPayment()
+    public function cashPayment(OrderFormRequest $request)
     {
-        $this->paymentService->cashPayment(request()->user()->id);
+        $this->paymentService->cashPayment(request()->user()->id, $request->validated());
     }
-    public function onlinePayment()
+    public function onlinePayment(OrderFormRequest $request)
     {
-        $callback_success = route('callback_success');
-        $callback_error = route('callback_error');
         $user = request()->user();
-        $order = $this->paymentService->getCartStatusOrder(request()->user()->id, false);
+        $this->paymentService->saveOrderForm($user->id, $request->validated());
+        $order = $this->paymentService->getCartStatusOrder($user->id, false);
+        $totalPrice = $this->paymentService->getTotalPrice($user->id);
         $response = $this->pay(
-            $order->total_price,
-            $user->first_name,
-            $user->phone,
-            $user->email,
+            $totalPrice,
+            $user,
             $order->id,
             "+2",
-            $callback_success,
-            $callback_error
+            env("SUCCESS_CALLBACK_URL"),
+            env("ERROR_CALLBACK_URL")
         );
         if (
             $order
@@ -54,7 +56,7 @@ class PaymentController extends Controller
                 && collect($data->Data->InvoiceTransactions)->last()->TransactionStatus == "Succss"
             ) {
                 $this->paymentService->onlinePayment($this->getSuccessPaymentInfo($data->Data));
-                redirect(env("UI_URL") . "/order-success");
+                return redirect(env("UI_URL") . "/order-success");
             }
         }
     }
@@ -67,7 +69,7 @@ class PaymentController extends Controller
                 && collect($data->Data->InvoiceTransactions)
                 ->last()->TransactionStatus == "Failed"
             ) {
-                $this->orderRepository->onlinePayment($this->getFailedPaymentInfo($data->Data));
+                $this->paymentService->onlinePayment($this->getFailedPaymentInfo($data->Data));
                 return redirect(env("UI_URL") . "/order-error");
             }
         }
@@ -84,9 +86,9 @@ class PaymentController extends Controller
     private function getSuccessPaymentInfo($data)
     {
         return [
-            "order_id" => $data->CustomerReference,
+            "id" => $data->CustomerReference,
             "invoice_id" => $data->InvoiceId,
-            "transaction_id" => $data->InvoiceTransactions[0]->TransactionId,
+            "transaction_id" =>  0,
             "order_status" => OrderStatus::PENDING,
             "payment_status" => PaymentStatus::PAID,
             "payment_method" => PaymentMethod::ONLINE,
@@ -95,7 +97,7 @@ class PaymentController extends Controller
     private function getFailedPaymentInfo($data)
     {
         return [
-            "order_id" => $data->CustomerReference,
+            "id" => $data->CustomerReference,
             "invoice_id" => $data->InvoiceId,
             "transaction_id" => $data->InvoiceTransactions[0]->TransactionId,
             "order_status" => OrderStatus::FAILD,

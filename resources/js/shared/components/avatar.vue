@@ -40,7 +40,7 @@
 </template>
 <script>
 import authClient from "../../shared/http-clients/auth-client";
-import global from "../../shared/global";
+import global from "../../shared/consts/global";
 import TokenUtil from "../../shared/utils/token-util";
 import { inject, toRefs, ref } from "vue-demi";
 export default {

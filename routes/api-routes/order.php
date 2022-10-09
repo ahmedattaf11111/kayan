@@ -12,17 +12,17 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
 Route::prefix("payment")->group(function () {
-    Route::get("cash", "PaymentController@cashPayment");
-    Route::get("online", "PaymentController@onlinePayment");
-    Route::get("callback-success", "PaymentController@callback_success")->name("callback_success");
-    Route::get("callback-error", "PaymentController@callback_error")->name("callback_error");
+    Route::post("cash", "PaymentController@cashPayment");
+    Route::post("online", "PaymentController@onlinePayment");
+    Route::get("callback-success", "PaymentController@callback_success");
+    Route::get("callback-error", "PaymentController@callback_error");
 });
 
 Route::prefix("cart")->group(function () {
     Route::post("", "CartController@addToCart");
-    Route::delete("", "CartController@removeCartItem");
-    Route::get("", "CartController@getCartItems");
+    Route::delete("", "CartController@removeCartItems");
     Route::put("", "CartController@updateCartQuantity");
+    Route::get("", "CartController@getUserCart");
+    Route::get("count", "CartController@getCartItemsCount");
 });

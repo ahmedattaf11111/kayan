@@ -2,13 +2,22 @@
 
 namespace App\Utils\Models;
 
+use App\Constants\OrderStatus;
+
 trait ProductScope
 {
-    public function scopeBiggestDiscountProducts($query)
+
+    public function scopeWithCartInfo($query, $userId)
     {
-        return $query->with("biggestClientDiscountPrice")
-            ->has("biggestClientDiscountPrice");
+        $query->when($userId, function ($query) use ($userId) {
+            $query->with(["carts" => function ($query) use ($userId) {
+                $query->whereHas("order", function ($query) use ($userId) {
+                    $query->where("user_id", $userId)->where("order_status", OrderStatus::CART);
+                });
+            }]);
+        });
     }
+
     public function scopeSearchByName($query, $name)
     {
         return $query->when($name, function ($query) use ($name) {
@@ -18,36 +27,35 @@ trait ProductScope
             });
         });
     }
+
     public function scopeSearchByEffectiveMaterial($query, $effectiveMaterial)
     {
         return $query->when($effectiveMaterial, function ($query) use ($effectiveMaterial) {
             $query->where("effectiveMaterial", $effectiveMaterial);
         });
     }
+
     public function scopeSearchByPharmacistFormId($query, $pharmacologicalFormId)
     {
         return $query->when($pharmacologicalFormId, function ($query) use ($pharmacologicalFormId) {
             $query->where("pharmacistForm_id", $pharmacologicalFormId);
         });
     }
-    public function scopeSearchByCompanyId($query, $companyId)
-    {
-        return $query->when($companyId, function ($query) use ($companyId) {
-            $query->where("company_id", $companyId);
-        });
-    }
+
     public function scopeSearchBySupplierId($query, $supplierId)
     {
         return $query->when($supplierId, function ($query) use ($supplierId) {
-            $query->where("supplier_id", $supplierId);
+            $query->whereRelation("prices", "supplier_id", $supplierId);
         });
     }
+
     public function scopeSearchByDiscount($query, $discount)
     {
         return $query->when($discount, function ($query) use ($discount) {
             $query->whereRelation("prices", "clientDiscount", $discount);
         });
     }
+
     public function scopeSearchByCategory($query, $categoryId, $categoryLevel)
     {
         return $query->when($categoryId, function ($query) use ($categoryId, $categoryLevel) {
@@ -57,5 +65,20 @@ trait ProductScope
                 $query->whereRelation("sub_category", "id", $categoryId);
             });
         });
+    }
+
+    public function scopeCartItems($query, $userId)
+    {
+        return $query->whereHas("carts", function ($query) use ($userId) {
+            $query->whereHas("order", function ($query) use ($userId) {
+                $query->where("user_id", $userId)->where("order_status", OrderStatus::CART);
+            });
+        })->with(["carts" => function ($query) use ($userId) {
+            $query->whereHas("order", function ($query) use ($userId) {
+                $query
+                    ->where("user_id", $userId)
+                    ->where("order_status", OrderStatus::CART);
+            });
+        }]);
     }
 }

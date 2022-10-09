@@ -13,6 +13,7 @@ class AuthController extends Controller
 {
     use AuthUtil;
     private $authService;
+
     public function __construct(AuthService $authService)
     {
         $this->middleware('auth', ['only' => ['getCurrentUser', 'logout']]);
@@ -37,6 +38,6 @@ class AuthController extends Controller
     }
     public function getCurrentUser(): User
     {
-        return request()->user();
+        return $this->authService->getUser(request()->user()->id);
     }
 }

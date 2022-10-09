@@ -13,22 +13,25 @@
           >
             <div class="ps-product ps-product--standard">
               <div class="ps-product__thumbnail">
-                <a class="ps-product__image" href="product1.html">
+                <router-link
+                  class="ps-product__image"
+                  :to="`/product-details/${product.id}`"
+                >
                   <figure>
                     <img :src="getImagePath(product.image)" alt="alt" />
                   </figure>
-                </a>
+                </router-link>
                 <div class="ps-product__percent">
                   {{ product.biggest_client_discount_price.clientDiscount }}%
                 </div>
               </div>
               <div class="ps-product__content">
                 <h5 class="ps-product__title">
-                  <a href="product1.html">
+                  <router-link :to="`/product-details/${product.id}`">
                     <span>{{ product.product_name.nameAr }}</span>
                     <br />
                     <span>{{ product.product_name.nameEn }}</span>
-                  </a>
+                  </router-link>
                 </h5>
                 <div class="ps-product__meta">
                   <span class="ps-product__price sale">
@@ -40,32 +43,34 @@
                     {{ $t("POUND") }}
                   </span>
                 </div>
-                <div
-                  v-if="!product.cartClicked"
-                  class="ps-product__item cart"
-                  data-toggle="tooltip"
-                  data-placement="left"
-                  :title="$t('ADD_TO_CART')"
-                >
-                  <a @click.prevent="addToCart(product)" href="#"
-                    ><i class="fa fa-shopping-basket"></i
-                  ></a>
-                </div>
-                <div v-if="product.cartClicked" class="cart-quantity">
-                  <button @click="onIncrementClicked(product)" class="increment mr-2">
-                    <span>+</span>
-                  </button>
-                  <input
-                    @blur="updateCartQuantity(product)"
-                    v-model="product.quantity"
-                    class="form-control text-center"
-                  />
-                  <button @click="onDecrementClicked(product)" class="decrement ml-2">
-                    <span>-</span>
-                  </button>
-                  <button class="mr-2 delete">
-                    <i class="fa fa-trash"></i>
-                  </button>
+                <div class="cart">
+                  <template v-if="product.cartClicked || product.cart_info">
+                    <button @click="onIncrementClicked(product)" class="increment mr-2">
+                      <span>+</span>
+                    </button>
+                    <input
+                      @blur="updateCartQuantity(product)"
+                      v-model="product.quantity"
+                      class="form-control text-center"
+                    />
+                    <button @click="onDecrementClicked(product)" class="decrement ml-2">
+                      <span>-</span>
+                    </button>
+                    <button @click="removeCartItem(product)" class="mr-2 delete">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </template>
+                  <div
+                    v-else
+                    class="ps-product__item cart"
+                    data-toggle="tooltip"
+                    data-placement="left"
+                    :title="$t('ADD_TO_CART')"
+                  >
+                    <a @click.prevent="addToCart(product)" href="#"
+                      ><i class="fa fa-shopping-basket"></i
+                    ></a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -98,11 +103,11 @@
 import { inject, onMounted, reactive, toRefs, watch } from "vue-demi";
 import productClient from "../../shared/http-clients/product-client";
 import cartClient from "../../shared/http-clients/cart-client";
-import global from "../../shared/global";
+import global from "../../shared/consts/global";
 import Paginate from "vuejs-paginate-next";
 import productStore from "./store";
-import { useRoute } from "vue-router";
-import From from "../../shared/from";
+import { useRoute, useRouter } from "vue-router";
+import From from "../../shared/consts/from";
 export default {
   components: {
     Paginate,
@@ -110,6 +115,7 @@ export default {
   setup() {
     const store = inject("store");
     const route = useRoute();
+    const router = useRouter();
     let data = reactive({
       products: [],
       page: 1,
@@ -140,26 +146,47 @@ export default {
       }
     );
     //Methods
+    function removeCartItem(product) {
+      store.showLoader = true;
+      cartClient
+        .removeCartItem(product.id, product.biggest_client_discount_price.supplier_id)
+        .then(() => {
+          store.showLoader = false;
+          product.cart_info = null;
+          product.cartClicked = false;
+          if (product.carts_length == 1) store.cartItemsCount--;
+          product.carts_length--;
+        });
+    }
     function onIncrementClicked(product) {
       product.quantity++;
       updateCartQuantity(product);
     }
     function onDecrementClicked(product) {
       product.quantity--;
+      if (product.quantity == 0) {
+        removeCartItem(product);
+        return;
+      }
       updateCartQuantity(product);
     }
     function addToCart(product) {
+      if (!store.currentUser) {
+        router.push("/login");
+        return;
+      }
       store.showLoader = true;
       cartClient
         .addToCart({
           product_id: product.id,
           supplier_id: product.biggest_client_discount_price.supplier_id,
-          company_id: product.biggest_client_discount_price.company_id,
         })
         .then(() => {
           store.showLoader = false;
           product.cartClicked = true;
           product.quantity = 1;
+          if (product.carts_length == 0) store.cartItemsCount++;
+          product.carts_length++;
         });
     }
     function getImagePath(image) {
@@ -174,7 +201,6 @@ export default {
           productStore.name,
           productStore.effectiveMaterial,
           productStore.pharmacologicalFormId,
-          productStore.companyId,
           productStore.supplierId,
           productStore.discount,
           data.page,
@@ -182,7 +208,7 @@ export default {
         )
         .then((response) => {
           store.showLoader = false;
-          data.products = response.data.data;
+          data.products = setCartsQuantitiesToProducts(response.data.data);
           data.pageCount = Math.ceil(response.data.total / data.pageSize);
         });
     }
@@ -192,12 +218,20 @@ export default {
         .updateCartQuantity({
           product_id: product.id,
           supplier_id: product.biggest_client_discount_price.supplier_id,
-          company_id: product.biggest_client_discount_price.company_id,
           quantity: product.quantity,
         })
         .then(() => {
           store.showLoader = false;
         });
+    }
+    //Commons
+    function setCartsQuantitiesToProducts(products) {
+      return products.map((product) => {
+        return {
+          ...product,
+          quantity: product.cart_info ? product.cart_info.quantity : 1,
+        };
+      });
     }
     return {
       ...toRefs(data),
@@ -207,6 +241,7 @@ export default {
       onIncrementClicked,
       onDecrementClicked,
       updateCartQuantity,
+      removeCartItem,
     };
   },
 };
@@ -214,6 +249,12 @@ export default {
 
 <style lang="scss">
 .all-products-container {
+  .ps-section--seller-diagnosis {
+    padding-bottom: 0 !important;
+  }
+  .ps-product__percent {
+    font-size: 14px;
+  }
   .page-link {
     color: #0e67d0 !important;
     padding: 5px 12px;
@@ -248,10 +289,11 @@ export default {
       border-radius: 50px;
     }
   }
-  .cart-quantity {
-    margin-top: 18px;
+  .cart {
+    margin-top: 5px;
     display: flex;
     align-items: center;
+    font-size: 18px;
     .form-control {
       border-radius: 5px;
       width: 90px;
@@ -266,9 +308,17 @@ export default {
       color: #fff !important;
       border-radius: 50%;
       font-size: 18px;
-      span{
+    }
+    .decrement {
+      span {
         position: relative;
-        bottom: 5px;
+        bottom: 6px;
+      }
+    }
+    .increment {
+      span {
+        position: relative;
+        bottom: 4px;
       }
     }
     .delete {

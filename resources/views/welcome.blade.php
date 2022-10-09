@@ -38,6 +38,29 @@
         h6 {
             font-family: 'hanimation';
         }
+
+        /* width */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 5px;
+
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
     <link rel="stylesheet" href="{{ mix('css/app.css') }}" />
 </head>

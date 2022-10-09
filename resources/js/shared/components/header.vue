@@ -64,9 +64,10 @@
               </div>
             </li>
             <li>
-              <a class="ps-header__item" href="#" id="cart-mini"
-                ><i class="icon-cart-empty"></i><span class="badge">2</span></a
-              >
+              <router-link class="ps-header__item" to="/cart" id="cart-mini">
+                <i class="icon-cart-empty"></i
+                ><span class="badge">{{ cartItemsCount }}</span>
+              </router-link>
               <div class="ps-cart--mini">
                 <ul class="ps-cart__items">
                   <li class="ps-cart__item">
@@ -139,9 +140,8 @@
             <ul class="menu">
               <li class="has-mega-menu">
                 <a href="#">
-                  <i class="fa fa-filter" aria-hidden="true"></i>{{$t("FILTER")}}<span
-                    class="sub-toggle"
-                    ><i class="fa fa-chevron-down"></i></span
+                  <i class="fa fa-filter" aria-hidden="true"></i>{{ $t("FILTER")
+                  }}<span class="sub-toggle"><i class="fa fa-chevron-down"></i></span
                 ></a>
                 <div class="mega-menu">
                   <div class="container">
@@ -232,9 +232,9 @@
       </a>
     </div>
     <div class="ps-nav__item">
-      <a href="shopping-cart.html"
-        ><i class="icon-cart-empty"></i><span class="badge">2</span></a
-      >
+      <router-link to="/cart"
+        ><i class="icon-cart-empty"></i><span class="badge">2</span>
+      </router-link>
     </div>
   </div>
 </template>
@@ -244,9 +244,9 @@ import { inject, onMounted, toRefs } from "vue-demi";
 import Filter from "./filter";
 import authClient from "../http-clients/auth-client";
 import TokenUtil from "../../shared/utils/token-util";
-import global from "../../shared/global";
+import global from "../../shared/consts/global";
 import { useRouter } from "vue-router";
-import From from "../../shared/from";
+import From from "../../shared/consts/from";
 import productStore from "../../components/view-all-products/store";
 import {
   closeNoti,
@@ -280,6 +280,7 @@ export default {
         TokenUtil.remove();
         router.push(global.GUEST_REDIRECT);
         store.currentUser = null;
+        store.cartItemsCount = 0;
       });
     }
     return { logout, ...toRefs(store), onSearchClicked, ...toRefs(productStore) };

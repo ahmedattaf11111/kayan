@@ -6,10 +6,15 @@ import ResetPassword from '../components/auth/reset-password';
 import EmailVerification from '../components/auth/email-verification';
 import Profile from '../components/auth/profile';
 import Home from '../components/home/home';
+import Cart from '../components/order/cart';
+import Order from '../components/order/order';
+import ProductDetails from '../components/product-details';
 import ViewAllProduct from '../components/view-all-products/view-all-products';
 import AuthenticatedGuard from "../shared/guards/authenticated-guard";
 import GuestGuard from "../shared/guards/guest-guard";
 import PageNotFound from "../shared/components/page-not-found";
+import SuccessCallback from "../components/order/success-callback";
+import ErrorCallback from "../components/order/error-callback";
 const routes = [
   {
     path: "",
@@ -17,6 +22,7 @@ const routes = [
   },
   { path: "/home", component: Home },
   { path: "/best-client-discount-products", component: ViewAllProduct },
+  { path: "/product-details/:id", component: ProductDetails },
   //Guest Routes
   {
     path: "",
@@ -35,6 +41,10 @@ const routes = [
     children: [
       { path: "verify-email", component: EmailVerification },
       { path: "profile", component: Profile },
+      { path: "cart", component: Cart },
+      { path: "order", component: Order },
+      { path: "/order-success", component: SuccessCallback },
+      { path: "/order-error", component: ErrorCallback },
     ]
   },
   {

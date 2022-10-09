@@ -8,23 +8,34 @@ use App\Utils\Controllers\MyFatoorahUtil;
 class PaymentService
 {
     use MyFatoorahUtil;
-    private $paymentService;
+    private $paymentRepository;
 
-    public function __construct(PaymentRepository $paymentService)
+    public function __construct(PaymentRepository $paymentRepository)
     {
-        $this->paymentRepository = $paymentService;
+        $this->paymentRepository = $paymentRepository;
     }
 
-    public function cashPayment($userId)
+    public function cashPayment($userId, $orderInput)
     {
         $this->paymentRepository->cashPayment($userId);
+        $this->saveOrderForm($userId, $orderInput);
+    }
+    public function saveOrderForm($userId, $orderInput)
+    {
+        $this->paymentRepository->saveOrderForm($userId, $orderInput);
     }
     public function onlinePayment($paymentInput)
     {
         $this->paymentRepository->onlinePayment($paymentInput);
     }
-    public function getCartStatusOrder($paymentInput)
+
+    public function getCartStatusOrder($userId)
     {
-        return $this->paymentRepository->getCartStatusOrder($paymentInput);
+        return $this->paymentRepository->getCartStatusOrder($userId, false);
+    }
+
+    public function getTotalPrice($userId)
+    {
+        return $this->paymentRepository->getTotalPrice($userId);
     }
 }

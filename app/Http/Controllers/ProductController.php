@@ -17,6 +17,7 @@ class ProductController extends Controller
 
     public function getBiggestClientDiscountProducts()
     {
+        $user = request()->user();
         return $this->productService
             ->getBiggestClientDiscountProducts(
                 request()->category_id,
@@ -24,16 +25,21 @@ class ProductController extends Controller
                 request()->name,
                 request()->effective_material,
                 request()->pharmacological_form_id,
-                request()->company_id,
                 request()->supplier_id,
                 request()->discount,
-                request()->page_size
+                request()->page_size,
+                $user ? $user->id : null
             );
     }
 
     public function getDealProducts()
     {
         return $this->productService->getDealProducts(self::LIMIT);
+    }
+
+    public function getProductDetails($productId)
+    {
+        return $this->productService->getProductDetails($productId);
     }
 
     public function getMainWithSubCategories()

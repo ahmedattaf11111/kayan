@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CartRequest extends FormRequest
+class OrderFormRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +23,14 @@ class CartRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            "product_id" => "required|numeric",
-            "supplier_id" => "required|numeric"
+        $rules = [
+            "same_address_shipping" => "required|boolean",
         ];
+        if (!$this->same_address_shipping) {
+            $rules["shipping_address"] = "required";
+            $rules["shipping_city_id"] = "required";
+            $rules["shipping_area_id"] = "required";
+        }
+        return $rules;
     }
 }

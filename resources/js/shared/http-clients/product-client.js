@@ -7,7 +7,6 @@ export default {
         name,
         effectiveMaterial,
         pharmacologicalFormId,
-        companyId,
         supplierId,
         discount,
         page,
@@ -19,8 +18,7 @@ export default {
         &name=${name ? name : ""}
         &effective_material=${effectiveMaterial ? effectiveMaterial : ""}
         &pharmacological_form_id=${pharmacologicalFormId ? pharmacologicalFormId : ""}
-        &company_id=${companyId ? companyId : ""}
-        &supplier_Id=${supplierId ? supplierId : ""}
+        &supplier_id=${supplierId ? supplierId : ""}
         &discount=${discount ? discount : ""}`
         );
     },
@@ -33,4 +31,7 @@ export default {
         return axios.get(`${BASE_URL}/main-with-sub-categories`);
     },
 
+    getProductDetails(productId){
+        return axios.get(`${BASE_URL}/${productId}`);
+    }
 }

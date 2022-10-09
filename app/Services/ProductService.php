@@ -18,23 +18,24 @@ class ProductService
         $name,
         $effectiveMaterial,
         $pharmacologicalFormId,
-        $companyId,
         $supplierId,
         $discount,
-        $pageSize
+        $pageSize,
+        $userId
     ) {
-        return $this->productRepository
+        $productsPage = $this->productRepository
             ->getBiggestClientDiscountProducts(
                 $categoryId,
                 $categoryLevel,
                 $name,
                 $effectiveMaterial,
                 $pharmacologicalFormId,
-                $companyId,
                 $supplierId,
                 $discount,
-                $pageSize
+                $pageSize,
+                $userId
             );
+        return $this->mapProductsPage($productsPage);
     }
 
     public function getMainWithSubCategories()
@@ -44,5 +45,24 @@ class ProductService
     public function getDealProducts($limit)
     {
         return $this->productRepository->getDealProducts($limit);
+    }
+    public function getProductDetails($productId)
+    {
+        return $this->productRepository->getProductDetails($productId);
+    }
+    //Commons
+    private function mapProductsPage(&$productsPage)
+    {
+        $productsPage->transform(function ($product) {
+            if ($product->relationLoaded("carts")) {
+                $product->cart_info = $product->carts->filter(function ($cart_info) use ($product) {
+                    return $cart_info->supplier_id == $product->biggestClientDiscountPrice->supplier_id;
+                })->first();
+                $product->carts_length = $product->carts->count();
+                unset($product->carts);
+            }
+            return $product;
+        });
+        return $productsPage;
     }
 }
