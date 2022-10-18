@@ -16,10 +16,16 @@
               <a
                 class="bg-warning ps-banner__shop"
                 target="_blank"
+                v-if="simpleAdvertise.external"
                 :href="simpleAdvertise.url"
-              >
-                {{ $t("SHOW_DETAILS") }}
+                >{{ $t("SHOW_DETAILS") }}
               </a>
+              <router-link
+                class="bg-warning ps-banner__shop"
+                v-if="!simpleAdvertise.external"
+                :to="`/product-details/${simpleAdvertise.product_id}`"
+                >{{ $t("SHOW_DETAILS") }}
+              </router-link>
             </div>
           </div>
         </div>

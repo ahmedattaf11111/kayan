@@ -1,56 +1,24 @@
 <template>
-  <div
-    v-if="products.length && endAtGreaterThanCurrentDate()"
-    class="deal-container container"
-  >
+  <div v-if="products.length" class="deal-container container">
     <section class="ps-section--deals">
       <div class="ps-section__header">
-        <h3 class="ps-section__title">{{ $t("BEST_DEALS") }}</h3>
-        <div class="ps-countdown">
-          <div class="ps-countdown__content">
-            <div class="ps-countdown__block ps-countdown__seconds">
-              <div class="ps-countdown__number">
-                <span class="last">0</span><span class="first">0</span>
-              </div>
-              <div class="ps-countdown__ref">Secs</div>
-            </div>
-            <div class="ps-countdown__block ps-countdown__minutes">
-              <div class="ps-countdown__number">
-                <span class="last">0</span><span class="first">0</span>
-              </div>
-              <div class="ps-countdown__ref">Mins</div>
-            </div>
-            <div class="ps-countdown__block ps-countdown__hours">
-              <div class="ps-countdown__number">
-                <span class="last">0</span><span class="first">0</span>
-              </div>
-              <div class="ps-countdown__ref">Hours</div>
-            </div>
-            <div class="ps-countdown__block ps-countdown___days">
-              <div class="ps-countdown__number">
-                <span class="first-1st">0</span><span class="last">0</span>
-                <span class="first">0</span>
-              </div>
-              <div class="ps-countdown__ref">Days</div>
-            </div>
-          </div>
-        </div>
+        <h5 class="ps-section__title">{{ $t("CUSTOMER_ALSO_BOUGHT") }}</h5>
       </div>
       <div class="ps-section__carousel">
         <div
           class="owl-carousel"
           data-owl-auto="false"
           data-owl-loop="false"
-          data-owl-speed="13000"
+          data-owl-speed="15000"
           data-owl-gap="0"
           data-owl-nav="true"
           data-owl-dots="true"
-          data-owl-item="5"
-          data-owl-item-xs="2"
+          data-owl-item="3"
+          data-owl-item-xs="1"
           data-owl-item-sm="2"
-          data-owl-item-md="3"
-          data-owl-item-lg="5"
-          data-owl-item-xl="5"
+          data-owl-item-md="2"
+          data-owl-item-lg="3"
+          data-owl-item-xl="3"
           data-owl-duration="1000"
           data-owl-mousedrag="on"
         >
@@ -60,25 +28,17 @@
             class="ps-product ps-product--standard border-right"
           >
             <div class="ps-product__thumbnail">
-              <a class="ps-product__image" href="product1.html">
+              <router-link
+                class="ps-product__image"
+                :to="`/product-details/${product.id}`"
+              >
                 <figure>
                   <img :src="getImagePath(product.image)" alt="alt" />
-                </figure>
-              </a>
-              <div class="ps-product__actions">
-                <div
-                  class="ps-product__item"
-                  data-toggle="tooltip"
-                  data-placement="left"
-                  title="Add to cart"
-                >
-                  <a href="#" data-toggle="modal" data-target="#popupAddcart"
-                    ><i class="fa fa-shopping-basket"></i
-                  ></a>
-                </div>
+              </figure>
+              </router-link>
+              <div class="ps-product__percent">
+                {{ product.biggest_client_discount_price.clientDiscount }}%
               </div>
-              <div class="ps-product__badge"></div>
-              <div class="ps-product__percent">% {{ product.deal.discount }}</div>
             </div>
             <div class="ps-product__content">
               <h5 class="ps-product__title">
@@ -90,11 +50,11 @@
               </h5>
               <div class="ps-product__meta">
                 <span class="ps-product__price sale">
-                  {{ product.deal.clientPrice }},
+                  {{ product.biggest_client_discount_price.pharmacyPrice }}
                   {{ $t("POUND") }}
                 </span>
                 <span class="ps-product__del">
-                  {{ product.deal.publicPrice }}
+                  {{ product.biggest_client_discount_price.publicPrice }}
                   {{ $t("POUND") }}
                 </span>
               </div>
@@ -137,38 +97,34 @@
 
 <script>
 import { inject, onMounted, reactive, toRefs } from "vue-demi";
-import { owlCarouselFunction, initializeClock } from "../../custom";
 import productClient from "../../shared/http-clients/product-client";
 import cartClient from "../../shared/http-clients/cart-client";
 import global from "../../shared/consts/global";
+import { useRoute, useRouter } from "vue-router";
+import { owlCarouselFunction } from "../../custom";
 export default {
-  setup(props, context) {
+  setup() {
+    const store = inject("store");
+    const route = useRoute();
+    const router = useRouter();
     let data = reactive({
       products: [],
     });
-    let store = inject("store");
     onMounted(() => {
-      getDealProducts();
+      getBoughtProducts();
     });
-    function calculatePharmacyPrice(publicPrice, dealDiscount) {
-      return publicPrice - (publicPrice * dealDiscount) / 100;
-    }
     //Methods
-    function getImagePath(image) {
-      return `${global.DASHBOARD_DOMAIN}/upload/product/${image}`;
-    }
-
-    function endAtGreaterThanCurrentDate() {
-      return getEndAt() > new Date();
-    }
-
     function removeCartItem(product) {
       store.showLoader = true;
-      cartClient.removeCartItem(product.id, null).then(() => {
-        store.showLoader = false;
-        product.cart_info = null;
-        product.cartClicked = false;
-      });
+      cartClient
+        .removeCartItem(product.id, product.biggest_client_discount_price.supplier_id)
+        .then(() => {
+          store.showLoader = false;
+          product.cart_info = null;
+          product.cartClicked = false;
+          if (product.carts_length == 1) store.cartItemsCount--;
+          product.carts_length--;
+        });
     }
     function onIncrementClicked(product) {
       product.quantity++;
@@ -191,11 +147,29 @@ export default {
       cartClient
         .addToCart({
           product_id: product.id,
+          supplier_id: product.biggest_client_discount_price.supplier_id,
         })
         .then(() => {
           store.showLoader = false;
           product.cartClicked = true;
           product.quantity = 1;
+          if (product.carts_length == 0) store.cartItemsCount++;
+          product.carts_length++;
+        });
+    }
+    function getImagePath(image) {
+      return `${global.DASHBOARD_DOMAIN}/upload/product/${image}`;
+    }
+    function getBoughtProducts() {
+      store.showLoader = true;
+      productClient
+        .getBoughtProducts()
+        .then((response) => {
+          data.products = setCartsQuantitiesToProducts(response.data);
+        })
+        .finally(() => {
+          store.showLoader = false;
+          owlCarouselFunction();
         });
     }
     function updateCartQuantity(product) {
@@ -203,27 +177,14 @@ export default {
       cartClient
         .updateCartQuantity({
           product_id: product.id,
+          supplier_id: product.biggest_client_discount_price.supplier_id,
           quantity: product.quantity,
         })
         .then(() => {
           store.showLoader = false;
         });
     }
-
     //Commons
-
-    function getDealProducts() {
-      productClient
-        .getDealProducts()
-        .then((response) => {
-          data.products = setCartsQuantitiesToProducts(response.data);
-        })
-        .finally(() => {
-          owlCarouselFunction();
-          initializeClock(getEndAt());
-        });
-    }
-
     function setCartsQuantitiesToProducts(products) {
       return products.map((product) => {
         return {
@@ -232,16 +193,9 @@ export default {
         };
       });
     }
-
-    function getEndAt() {
-      return data.products.length ? new Date(data.products[0].deal.end_at) : null;
-    }
-
     return {
       ...toRefs(data),
       getImagePath,
-      calculatePharmacyPrice,
-      endAtGreaterThanCurrentDate,
       addToCart,
       onIncrementClicked,
       onDecrementClicked,
@@ -251,7 +205,6 @@ export default {
   },
 };
 </script>
-
 <style scoped lang="scss">
 .ps-product__percent {
   font-size: 14px;

@@ -34,12 +34,19 @@ class ProductController extends Controller
 
     public function getDealProducts()
     {
-        return $this->productService->getDealProducts(self::LIMIT);
+        $user = request()->user();
+        return $this->productService->getDealProducts($user ? $user->id : null, self::LIMIT);
     }
 
     public function getProductDetails($productId)
     {
         return $this->productService->getProductDetails($productId);
+    }
+
+    public function getBoughtProducts()
+    {
+        $user = request()->user();
+        return $this->productService->getBoughtProducts($user ? $user->id : null);
     }
 
     public function getMainWithSubCategories()

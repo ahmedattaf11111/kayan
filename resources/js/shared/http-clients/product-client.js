@@ -22,7 +22,6 @@ export default {
         &discount=${discount ? discount : ""}`
         );
     },
-
     getDealProducts() {
         return axios.get(`${BASE_URL}/deal`);
     },
@@ -31,7 +30,10 @@ export default {
         return axios.get(`${BASE_URL}/main-with-sub-categories`);
     },
 
-    getProductDetails(productId){
+    getProductDetails(productId) {
         return axios.get(`${BASE_URL}/${productId}`);
+    },
+    getBoughtProducts() {
+        return axios.get(`${BASE_URL}/bought`);
     }
 }

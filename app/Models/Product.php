@@ -10,8 +10,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-
-    protected $with = ['productName'];
-
     use HasFactory, ProductScope, ProductRelation;
 }

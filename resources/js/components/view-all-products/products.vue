@@ -28,9 +28,9 @@
               <div class="ps-product__content">
                 <h5 class="ps-product__title">
                   <router-link :to="`/product-details/${product.id}`">
-                    <span>{{ product.product_name.nameAr }}</span>
+                    <span>{{ product.nameAr }}</span>
                     <br />
-                    <span>{{ product.product_name.nameEn }}</span>
+                    <span>{{ product.nameEn }}</span>
                   </router-link>
                 </h5>
                 <div class="ps-product__meta">
@@ -67,9 +67,9 @@
                     data-placement="left"
                     :title="$t('ADD_TO_CART')"
                   >
-                    <a @click.prevent="addToCart(product)" href="#"
-                      ><i class="fa fa-shopping-basket"></i
-                    ></a>
+                    <a @click.prevent="addToCart(product)" href="#">
+                      <i class="fa fa-shopping-basket"></i>
+                    </a>
                   </div>
                 </div>
               </div>

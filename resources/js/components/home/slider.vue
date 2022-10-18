@@ -11,9 +11,20 @@
               <div class="ps-banner__block">
                 <div class="ps-banner__content">
                   <h2 class="ps-banner__title">{{ slider.title }}</h2>
-                  <a class="bg-white ps-banner__shop" target="_blank" :href="slider.url"
+                  <a
+                    v-if="slider.external"
+                    class="bg-white ps-banner__shop"
+                    target="_blank"
+                    :href="slider.url"
                     >{{ $t("SHOW_DETAILS") }}
                   </a>
+                  <router-link
+                    class="bg-white ps-banner__shop"
+                    v-if="!slider.external"
+                    :to="`product-details/${slider.product_id}`"
+                  >
+                    {{ $t("SHOW_DETAILS") }}
+                  </router-link>
                 </div>
                 <div class="ps-banner__thumnail">
                   <img
@@ -54,8 +65,10 @@ export default {
     onMounted(() => {
       store.showLoader = true;
       homeClient.getSliders().then((response) => {
-        store.showLoader = false;
         data.sliders = response.data;
+        setTimeout(() => {
+          store.showLoader = false;
+        }, 1000);
       });
     });
     //Methods

@@ -37,19 +37,24 @@ class ProductService
             );
         return $this->mapProductsPage($productsPage);
     }
-
     public function getMainWithSubCategories()
     {
         return $this->productRepository->getMainWithSubCategories();
     }
-    public function getDealProducts($limit)
+    public function getDealProducts($userId, $limit)
     {
-        return $this->productRepository->getDealProducts($limit);
+        return $this->productRepository->getDealProducts($userId, $limit);
     }
     public function getProductDetails($productId)
     {
         return $this->productRepository->getProductDetails($productId);
     }
+    public function getBoughtProducts($userId)
+    {
+        $boughtProducts = $this->productRepository->getBoughtProducts($userId);
+        return $this->mapProductsPage($boughtProducts);
+    }
+
     //Commons
     private function mapProductsPage(&$productsPage)
     {

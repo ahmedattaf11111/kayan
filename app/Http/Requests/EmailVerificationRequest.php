@@ -24,7 +24,7 @@ class EmailVerificationRequest extends FormRequest
     public function rules()
     {
         return [
-            "verification_code"=>'required'
+            "verification_code" => 'required'
         ];
     }
 }

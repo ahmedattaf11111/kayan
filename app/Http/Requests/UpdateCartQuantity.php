@@ -25,7 +25,7 @@ class UpdateCartQuantity extends FormRequest
     {
         return [
             "product_id" => "required|numeric",
-            "supplier_id" => "required|numeric",
+            "supplier_id" => "nullable|numeric",
             "quantity" => "required|integer|min:1"
         ];
     }

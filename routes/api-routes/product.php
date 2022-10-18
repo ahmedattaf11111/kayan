@@ -20,5 +20,6 @@ Route::prefix("products")->group(function () {
     );
     Route::get("main-with-sub-categories", "ProductController@getMainWithSubCategories");
     Route::get("deal", "ProductController@getDealProducts");
+    Route::get("bought", "ProductController@getBoughtProducts");
     Route::get("{productId}", "ProductController@getProductDetails");
 });

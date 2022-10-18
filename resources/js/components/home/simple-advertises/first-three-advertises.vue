@@ -18,9 +18,21 @@
                 <h4 class="text-white ps-promo__name">
                   {{ advertise.title }}
                 </h4>
-                <a class="ps-promo__btn" target="_blank" :href="advertise.url">
+                <a
+                  v-if="advertise.external"
+                  class="ps-promo__btn"
+                  target="_blank"
+                  :href="advertise.url"
+                >
                   {{ $t("SHOW_DETAILS") }}
                 </a>
+                <router-link
+                  class="ps-promo__btn"
+                  v-if="!advertise.external"
+                  :to="`product-details/${advertise.product_id}`"
+                >
+                  {{ $t("SHOW_DETAILS") }}
+                </router-link>
               </div>
             </div>
           </div>

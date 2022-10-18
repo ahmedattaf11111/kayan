@@ -21,7 +21,7 @@ class ProductRepository
     ) {
         return Product::with("biggestClientDiscountPrice")
             ->has("biggestClientDiscountPrice")
-            ->withCartInfo($userId)
+            ->withCarts($userId)
             ->searchByName($name)
             ->searchByEffectiveMaterial($effectiveMaterial)
             ->searchByPharmacistFormId($pharmacologicalFormId)
@@ -38,9 +38,9 @@ class ProductRepository
         }, "media"])->where("status", 1)->get();
     }
 
-    public function getDealProducts($limit)
+    public function getDealProducts($userId, $limit)
     {
-        return Product::has("deal")->has("price")->with("deal", "price")->take($limit)->get();
+        return Product::has("deal")->with("deal")->withCartInfo($userId)->take($limit)->get();
     }
 
     public function getProductDetails($productId)
@@ -53,6 +53,15 @@ class ProductRepository
         }])->find($productId);
     }
 
+    public function getBoughtProducts($userId)
+    {
+        return Product::with("biggestClientDiscountPrice")
+            ->has("biggestClientDiscountPrice")
+            ->withCarts($userId)
+            ->whereRelation("carts.order", "order_status", OrderStatus::COMPLETED)
+            ->get();
+    }
+
     //Commons
     private function withCart($query, $user, $productId)
     {
@@ -62,6 +71,7 @@ class ProductRepository
             }]);
         });
     }
+
     private function whereCartOfUserAndProduct($query, $userId, $productId)
     {
         $query->whereHas("order", function ($query) use ($userId) {

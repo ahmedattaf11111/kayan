@@ -14,9 +14,21 @@
                 <h2 class="ps-banner__title text-white">
                   {{ simpleAdvertise.title }}
                 </h2>
-                <a class="bg-yellow ps-banner__shop" :href="simpleAdvertise.url">{{
-                  $t("SHOW_DETAILS")
-                }}</a>
+                <a
+                  v-if="simpleAdvertise.external"
+                  class="bg-warning ps-banner__shop"
+                  target="_blank"
+                  :href="simpleAdvertise.url"
+                >
+                  {{ $t("SHOW_DETAILS") }}
+                </a>
+                <router-link
+                  class="bg-warning ps-banner__shop"
+                  v-if="!simpleAdvertise.external"
+                  :to="`/product-details/${simpleAdvertise.product_id}`"
+                >
+                  {{ $t("SHOW_DETAILS") }}
+                </router-link>
               </div>
             </div>
           </div>

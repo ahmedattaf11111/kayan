@@ -2,7 +2,7 @@
 
 namespace App\Services\Auth;
 
-use App\Mail\EmailVerification;
+use App\Mail\TokenVerification;
 use App\Repositories\Auth\EmailVerificationRepository;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -24,6 +24,6 @@ class EmailVerificationService
     {
         $verificationCode = Str::random(5);
         $this->emailVerificationRepository->updateEmailVerification($email, $verificationCode);
-        Mail::to($email)->send(new EmailVerification($verificationCode));
+        Mail::to($email)->send(new TokenVerification($verificationCode));
     }
 }

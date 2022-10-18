@@ -58,7 +58,7 @@ class CartService
             "order_status" => OrderStatus::CART,
         ];
     }
-    public function sortCartsOfEachItemByDiscount($cartItems)
+    private function sortCartsOfEachItemByDiscount($cartItems)
     {
         return $cartItems->map(function ($cartItem) {
             $carts = $cartItem->carts->sortByDesc("price.clientDiscount")->values();

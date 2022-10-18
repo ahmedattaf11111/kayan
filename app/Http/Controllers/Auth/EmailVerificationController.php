@@ -17,11 +17,13 @@ class EmailVerificationController extends Controller
         $this->middleware("verified", ["only" => ["userVerified"]]);
         $this->emailVerificationService = $emailVerificationService;
     }
+
     //To verify the token in front end
     public function verifyToken()
     {
         return ["valid" => true];
     }
+
     public function verifyEmail(EmailVerificationRequest $request)
     {
         $authUserEmail = JWTAuth::parseToken()->getPayload()->get("email");
@@ -33,11 +35,13 @@ class EmailVerificationController extends Controller
             return response()->json(["errorMessage" => "Verification code is not valid"], 400);
         }
     }
+
     public function resendVerificationCode()
     {
         $authUserEmail = JWTAuth::parseToken()->getPayload()->get("email");
         $this->emailVerificationService->resendVerificationCode($authUserEmail);
     }
+
     //To check if user verified
     public function userVerified()
     {

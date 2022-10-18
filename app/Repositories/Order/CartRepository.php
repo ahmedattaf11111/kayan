@@ -40,12 +40,14 @@ class CartRepository
             $query->where("user_id", $userId)->where("order_status", OrderStatus::CART);
         })
             ->where("product_id", $cartQuantityInput["product_id"])
-            ->where("supplier_id", $cartQuantityInput["supplier_id"])
+            ->when(isset($cartQuantityInput["supplier_id"]), function ($query) use ($cartQuantityInput) {
+                $query->where("supplier_id", $cartQuantityInput["supplier_id"]);
+            })
             ->update(["quantity" => $cartQuantityInput["quantity"]]);
     }
 
     public function getCartItemsCount($userId)
     {
-        return Product::cartItems($userId)->count();
+        return Product::withWhereHascarts($userId)->count();
     }
 }

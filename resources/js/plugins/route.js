@@ -8,7 +8,7 @@ import Profile from '../components/auth/profile';
 import Home from '../components/home/home';
 import Cart from '../components/order/cart';
 import Order from '../components/order/order';
-import ProductDetails from '../components/product-details';
+import ProductDetails from '../components/product-details/product-details';
 import ViewAllProduct from '../components/view-all-products/view-all-products';
 import AuthenticatedGuard from "../shared/guards/authenticated-guard";
 import GuestGuard from "../shared/guards/guest-guard";

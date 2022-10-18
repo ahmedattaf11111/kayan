@@ -3,7 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Mail\ForgetPassword;
-use App\Models\PasswordReset;
+use App\Mail\TokenVerification;
 use App\Models\User;
 use App\Repositories\Auth\ForgetPasswordRepository;
 use Illuminate\Support\Facades\Mail;
@@ -27,6 +27,27 @@ class ForgetPasswordService
         }
         return $user;
     }
+
+    public function forgetPasswordOtp(string $email)
+    {
+        $user = User::where("email", $email)->first();
+        if ($user) {
+            $token = mb_substr(strval(random_int(100000, 999999)), 0, 4, 'UTF-8');
+            $this->forgetPasswordRepository->insertResetPassword($user->email, $token);
+            Mail::to($email)->send(new TokenVerification($token));
+        }
+        return $user;
+    }
+
+    public function verifyToken($token)
+    {
+        $passwordReset = $this->forgetPasswordRepository->getPasswordReset(
+            $token,
+            self::EXPIRATION_DURATION
+        );
+        return $passwordReset;
+    }
+
     public function resetPassword(array $resetPasswordInput)
     {
         $passwordReset = $this->forgetPasswordRepository->getPasswordReset(

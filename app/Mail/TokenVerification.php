@@ -7,18 +7,18 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Env;
 
-class EmailVerification extends Mailable
+class TokenVerification extends Mailable
 {
     use Queueable, SerializesModels;
-    private $verificationCode;
+    private $token;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($verificationCode)
+    public function __construct($token)
     {
-        $this->verificationCode = $verificationCode;
+        $this->token = $token;
     }
 
     /**
@@ -29,8 +29,7 @@ class EmailVerification extends Mailable
     public function build()
     {
         return $this->from(env("MAIL_FROM_ADDRESS"), env("APP_NAME"))
-            ->subject("Email Verification")
-            ->view('email-verification', ["verificationCode" => $this->verificationCode]);
-
+            ->subject("Token Verification")
+            ->view('token-verification', ["token" => $this->token]);
     }
 }

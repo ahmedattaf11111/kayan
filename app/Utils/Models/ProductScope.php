@@ -7,24 +7,10 @@ use App\Constants\OrderStatus;
 trait ProductScope
 {
 
-    public function scopeWithCartInfo($query, $userId)
-    {
-        $query->when($userId, function ($query) use ($userId) {
-            $query->with(["carts" => function ($query) use ($userId) {
-                $query->whereHas("order", function ($query) use ($userId) {
-                    $query->where("user_id", $userId)->where("order_status", OrderStatus::CART);
-                });
-            }]);
-        });
-    }
-
     public function scopeSearchByName($query, $name)
     {
         return $query->when($name, function ($query) use ($name) {
-            $query->whereHas("productName", function ($query) use ($name) {
-                $query->where("nameAr", "like", "%$name%")
-                    ->orWhere("nameEn", "like", "%$name%");
-            });
+            $query->where("nameAr", "like", "%$name%")->orWhere("nameEn", "like", "%$name%");
         });
     }
 
@@ -67,7 +53,29 @@ trait ProductScope
         });
     }
 
-    public function scopeCartItems($query, $userId)
+    public function scopeWithCartInfo($query, $userId)
+    {
+        $query->when($userId, function ($query) use ($userId) {
+            $query->with(["cart_info" => function ($query) use ($userId) {
+                $query->whereHas("order", function ($query) use ($userId) {
+                    $query->where("user_id", $userId)->where("order_status", OrderStatus::CART);
+                });
+            }]);
+        });
+    }
+
+    public function scopeWithCarts($query, $userId)
+    {
+        $query->when($userId, function ($query) use ($userId) {
+            $query->with(["carts" => function ($query) use ($userId) {
+                $query->whereHas("order", function ($query) use ($userId) {
+                    $query->where("user_id", $userId)->where("order_status", OrderStatus::CART);
+                });
+            }]);
+        });
+    }
+
+    public function scopewithWhereHasCarts($query, $userId)
     {
         return $query->whereHas("carts", function ($query) use ($userId) {
             $query->whereHas("order", function ($query) use ($userId) {

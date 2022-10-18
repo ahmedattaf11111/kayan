@@ -19,9 +19,9 @@
                       <img :src="getImagePath(product.image)" />
                       <div class="name">
                         <div>
-                          <b>{{ product.product_name.nameEn }}</b>
+                          <b>{{ product.nameEn }}</b>
                         </div>
-                        <div>{{ product.product_name.nameAr }}</div>
+                        <div>{{ product.nameAr }}</div>
                       </div>
                     </div>
                     <div class="second-side">

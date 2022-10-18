@@ -8,9 +8,9 @@
               <div class="product border">
                 <div class="name">
                   <div>
-                    <b>{{ product.product_name.nameAr }}</b>
+                    <b>{{ product.nameAr }}</b>
                   </div>
-                  <div>{{ product.product_name.nameEn }}</div>
+                  <div>{{ product.nameEn }}</div>
                 </div>
                 <div class="carts mt-5">
                   <div class="table-responsive">
@@ -98,6 +98,9 @@
             <img class="img-fluid" :src="getImagePath(product.image)" />
           </div>
         </div>
+        <div class="col-12">
+          <BroughtDetails />
+        </div>
       </div>
     </div>
   </div>
@@ -106,10 +109,14 @@
 <script>
 import { inject, onMounted, reactive, toRefs } from "vue-demi";
 import { useRoute, useRouter } from "vue-router";
-import productClient from "../shared/http-clients/product-client";
-import cartClient from "../shared/http-clients/cart-client";
-import global from "../shared/consts/global";
+import productClient from "../../shared/http-clients/product-client";
+import cartClient from "../../shared/http-clients/cart-client";
+import global from "../../shared/consts/global";
+import BroughtDetails from "./brought-products";
 export default {
+  components: {
+    BroughtDetails,
+  },
   setup() {
     const data = reactive({
       product: null,
@@ -240,6 +247,7 @@ export default {
     margin-bottom: 18px;
     border-radius: 5px;
     box-shadow: 0 0 8px #b6b6b633;
+    height: 300px;
   }
   .cart {
     color: #0e67d0 !important;

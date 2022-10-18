@@ -7,7 +7,6 @@ use App\Models\Category;
 use App\Models\Deal;
 use App\Models\Media;
 use App\Models\Price;
-use App\Models\ProductName;
 use App\Models\SubCategory;
 
 trait ProductRelation
@@ -15,11 +14,6 @@ trait ProductRelation
     public function biggestClientDiscountPrice()
     {
         return $this->hasOne(Price::class)->ofMany("clientDiscount", "max");
-    }
-
-    public function productName()
-    {
-        return $this->belongsTo(ProductName::class, "productName_id");
     }
 
     public function media()
@@ -55,5 +49,10 @@ trait ProductRelation
     public function carts()
     {
         return $this->hasMany(CartItem::class);
+    }
+
+    public function cart_info()
+    {
+        return $this->hasOne(CartItem::class);
     }
 }

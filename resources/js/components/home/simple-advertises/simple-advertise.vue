@@ -47,9 +47,7 @@ export default {
     });
     //Commons
     function getSimpleAdvertises() {
-      store.showLoader = true;
       homeClient.getSimpleAdvertises().then((response) => {
-        store.showLoader = false;
         data.simpleAdvertises = response.data;
       });
     }

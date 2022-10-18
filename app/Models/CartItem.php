@@ -27,6 +27,7 @@ class CartItem extends Model
 
     public function getPriceAttribute()
     {
-        return $this->supplier->prices()->where('product_id', $this->product_id)->first();
+        return $this->supplier ?
+            $this->supplier->prices()->where('product_id', $this->product_id)->first() : null;
     }
 }

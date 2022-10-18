@@ -19,6 +19,6 @@ trait OrderUtil
     }
     public function getCartItems($userId)
     {
-        return Product::cartItems($userId)->get();
+        return Product::withWhereHascarts($userId)->get();
     }
 }

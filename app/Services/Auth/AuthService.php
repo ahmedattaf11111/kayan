@@ -3,7 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Constants\PlatformType;
-use App\Mail\EmailVerification;
+use App\Mail\TokenVerification;
 use App\Repositories\Auth\AuthRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Mail;
@@ -27,7 +27,7 @@ class AuthService
             "email" => $registerInput["email"],
             "verification_code" => $verificationCode,
         ]);
-        Mail::to($registerInput["email"])->send(new EmailVerification($verificationCode));
+        Mail::to($registerInput["email"])->send(new TokenVerification($verificationCode));
     }
     public function getCitiesWithAreas(): Collection
     {

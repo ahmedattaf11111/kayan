@@ -103,6 +103,7 @@ export default {
         })
         .catch((error) => {
           this.$toast.error(this.$t("LOGIN_FAILED"));
+          this.store.showLoader=false;
         });
     },
     //Commons
