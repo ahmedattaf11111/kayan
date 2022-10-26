@@ -123,5 +123,7 @@
     "PAYMENT_SUCCESS": "لقد تم الدفع بنجاح",
     "FAILD": "فشل",
     "PAYMENT_FAILED": "حدث خطا اثناء الدفع",
-    "BEST_DEALS":"افضل العروض"
+    "BEST_DEALS":"افضل العروض",
+    "BEST_N_BEST_SELLERS": "اعلى {N} منتجات مبيعا",
+    "MOST_N_POPULAR": "اكثر {N} منتجات شيوعا"
 }

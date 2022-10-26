@@ -1,42 +1,15 @@
 <template>
   <div
-    v-if="deal.deal_settings && deal.products.length && endAtGreaterThanCurrentDate()"
-    class="deal-container container"
+    v-if="bestSeller.best_seller_settings && bestSeller.products.length"
+    class="best-seller-container container"
   >
     <section class="ps-section--deals">
       <div class="ps-section__header">
-        <h3 class="ps-section__title">{{ $t("BEST_DEALS") }}</h3>
-        <div class="ps-countdown">
-          <div class="ps-countdown__content">
-            <div class="ps-countdown__block ps-countdown__seconds">
-              <div class="ps-countdown__number">
-                <span class="last">0</span><span class="first">0</span>
-              </div>
-              <div class="ps-countdown__ref">Secs</div>
-            </div>
-            <div class="ps-countdown__block ps-countdown__minutes">
-              <div class="ps-countdown__number">
-                <span class="last">0</span><span class="first">0</span>
-              </div>
-              <div class="ps-countdown__ref">Mins</div>
-            </div>
-            <div class="ps-countdown__block ps-countdown__hours">
-              <div class="ps-countdown__number">
-                <span class="last">0</span><span class="first">0</span>
-              </div>
-              <div class="ps-countdown__ref">Hours</div>
-            </div>
-            <div class="ps-countdown__block ps-countdown___days">
-              <div class="ps-countdown__number">
-                <span class="first-1st">0</span><span class="last">0</span>
-                <span class="first">0</span>
-              </div>
-              <div class="ps-countdown__ref">Days</div>
-            </div>
-          </div>
-        </div>
+        <h3 class="ps-section__title">
+          {{ $t("BEST_N_BEST_SELLERS", { N: bestSeller.best_seller_settings.limit }) }}
+        </h3>
       </div>
-      <div class="ps-section__carousel">
+      <div class="ps-section__carousel border">
         <div
           class="owl-carousel"
           data-owl-auto="false"
@@ -55,20 +28,21 @@
           data-owl-mousedrag="on"
         >
           <div
-            v-for="product in deal.products"
+            v-for="product in bestSeller.products"
             :key="product.id"
             class="ps-product ps-product--standard border-right"
           >
             <div class="ps-product__thumbnail">
-              <a class="ps-product__image" href="product1.html">
+              <router-link
+                class="ps-product__image"
+                :to="`/product-details/${product.id}`"
+                >ٍ
                 <figure>
                   <img :src="getImagePath(product.image)" alt="alt" />
                 </figure>
-              </a>
+              </router-link>
               <div class="ps-product__badge"></div>
-              <div class="ps-product__percent">
-                %{{ product.deal_price.clientDiscount }}
-              </div>
+              <div class="ps-product__percent">%{{ product.price.clientDiscount }}</div>
             </div>
             <div class="ps-product__content">
               <h5 class="ps-product__title">
@@ -80,11 +54,11 @@
               </h5>
               <div class="ps-product__meta">
                 <span class="ps-product__price sale">
-                  {{ product.deal_price.pharmacyPrice }},
+                  {{ product.price.pharmacyPrice }},
                   {{ $t("POUND") }}
                 </span>
                 <span class="ps-product__del">
-                  {{ product.deal_price.publicPrice }}
+                  {{ product.price.publicPrice }}
                   {{ $t("POUND") }}
                 </span>
               </div>
@@ -126,8 +100,8 @@
 </template>
 
 <script>
-import { inject, onMounted, reactive, toRefs, watch } from "vue-demi";
-import { owlCarouselFunction, initializeClock } from "../../custom";
+import { inject, onMounted, reactive, toRefs } from "vue-demi";
+import { owlCarouselFunction } from "../../custom";
 import productClient from "../../shared/http-clients/product-client";
 import cartClient from "../../shared/http-clients/cart-client";
 import global from "../../shared/consts/global";
@@ -136,43 +110,29 @@ import homeStore from "./store";
 export default {
   setup(props, context) {
     let data = reactive({
-      deal: { deal_settings: null, products: [] },
+      bestSeller: { best_seller_settings: null, products: [] },
     });
     let store = inject("store");
     const router = useRouter();
     onMounted(() => {
-      getDeal();
+      getBestSellers();
     });
-    function calculatePharmacyPrice(publicPrice, dealDiscount) {
-      return publicPrice - (publicPrice * dealDiscount) / 100;
+    function calculatePharmacyPrice(publicPrice, bestSellerDiscount) {
+      return publicPrice - (publicPrice * bestSellerDiscount) / 100;
     }
-    watch(
-      () => {
-        homeStore.product;
-      },
-      (value) => {
-        let product = getProductByProductId(product.id);
-        getProductByProductAndSupplierId(product.id, product.price.id);
-      },
-      { deep: true }
-    );
     //Methods
     function getImagePath(image) {
       return `${global.DASHBOARD_DOMAIN}/upload/product/${image}`;
     }
 
-    function endAtGreaterThanCurrentDate() {
-      return getEndAt() > new Date();
-    }
-
     function removeCartItem(product) {
       store.showLoader = true;
-      cartClient.removeCartItem(product.id, product.deal_price.supplier_id).then(() => {
+      cartClient.removeCartItem(product.id, product.price.supplier_id).then(() => {
         store.showLoader = false;
         product.cart_info = null;
         product.cartClicked = false;
         if (product.carts_length == 1) store.cartItemsCount--;
-        product.carts_length--;
+        decrementProductCartsLength(product.id);
       });
     }
     function onIncrementClicked(product) {
@@ -192,18 +152,19 @@ export default {
         router.push("/login");
         return;
       }
+      homeStore.product = product;
       store.showLoader = true;
       cartClient
         .addToCart({
           product_id: product.id,
-          supplier_id: product.deal_price.supplier_id,
+          supplier_id: product.price.supplier_id,
         })
         .then(() => {
           store.showLoader = false;
           product.cartClicked = true;
           product.quantity = 1;
           if (product.carts_length == 0) store.cartItemsCount++;
-          product.carts_length++;
+          incrementProductCartsLength(product.id);
         });
     }
     function updateCartQuantity(product) {
@@ -218,55 +179,40 @@ export default {
         });
     }
     //Commons
-    function getDeal() {
+    function getBestSellers() {
       productClient
-        .getDeal()
+        .getBestSellers()
         .then((response) => {
-          data.deal = setCartsQuantitiesTodeal(response.data);
+          data.bestSeller = setCartsQuantitiesToBestSeller(response.data);
         })
         .finally(() => {
           owlCarouselFunction();
-          initializeClock(getEndAt());
         });
     }
-
-    function setCartsQuantitiesTodeal(deal) {
-      let products = deal.products.map((product) => {
+    function setCartsQuantitiesToBestSeller(bestSeller) {
+      let products = bestSeller.products.map((product) => {
         return {
           ...product,
           quantity: product.cart_info ? product.cart_info.quantity : 1,
         };
       });
-      deal.products = products;
-      return deal;
+      bestSeller.products = products;
+      return bestSeller;
     }
-
-    function getEndAt() {
-      return new Date(data.deal.deal_settings.end_at);
-    }
-    function getProductByProductAndSupplierId(productId, supplierId) {
-      let _product = null;
-      data.deal.products.forEach((product) => {
-        if (product.id == productId && product.price.supplier_id == supplierId) {
-          return (_product = product);
-        }
+    function incrementProductCartsLength(productId) {
+      data.bestSeller.products.forEach((product) => {
+        if (product.id == productId) product.carts_length++;
       });
-      return _product;
     }
-    function getProductByProductId(productId) {
-      let _product = null;
-      data.deal.products.forEach((product) => {
-        if (product.id == productId) {
-          return (_product = product);
-        }
+    function decrementProductCartsLength(productId) {
+      data.bestSeller.products.forEach((product) => {
+        if (product.id == productId) product.carts_length--;
       });
-      return _product;
     }
     return {
       ...toRefs(data),
       getImagePath,
       calculatePharmacyPrice,
-      endAtGreaterThanCurrentDate,
       addToCart,
       onIncrementClicked,
       onDecrementClicked,
@@ -321,6 +267,9 @@ export default {
     background: none;
     font-size: 22px;
     margin-right: 7px;
+  }
+  .ps-section__carousel {
+    border: none !important;
   }
 }
 </style>

@@ -50,21 +50,17 @@
                           <tr v-for="(cart, cartIndex) in product.carts" :key="cartIndex">
                             <td>{{ cart.supplier.name }}</td>
                             <td>
-                              <span
-                                :class="
-                                  cartIndex == 0
-                                    ? 'badge badge-success'
-                                    : 'badge badge-secondary'
-                                "
-                              >
-                                {{ cart.price.clientDiscount }}%
+                              <span class="badge border">
+                                {{ getPrice(cart).clientDiscount }}%
                               </span>
                             </td>
-                            <td>{{ `${cart.price.publicPrice} ${$t("POUND")}` }}</td>
-                            <td>{{ `${cart.price.pharmacyPrice} ${$t("POUND")}` }}</td>
+                            <td>{{ `${getPrice(cart).publicPrice} ${$t("POUND")}` }}</td>
+                            <td>
+                              {{ `${getPrice(cart).pharmacyPrice} ${$t("POUND")}` }}
+                            </td>
                             <td>
                               {{
-                                `${cart.price.pharmacyPrice * cart.quantity} ${$t(
+                                `${getPrice(cart).pharmacyPrice * cart.quantity} ${$t(
                                   "POUND"
                                 )}`
                               }}
@@ -255,8 +251,8 @@ export default {
       data.cartProducts.forEach((product) => {
         product.carts.forEach((cart) => {
           let quantity = Number.parseInt(cart.quantity);
-          totalBeforeDiscount += cart.price.publicPrice * quantity;
-          totalAfterDiscount += cart.price.pharmacyPrice * quantity;
+          totalBeforeDiscount += getPrice(cart).publicPrice * quantity;
+          totalAfterDiscount += getPrice(cart).pharmacyPrice * quantity;
           totalQuantity += quantity;
         });
       });
@@ -272,7 +268,11 @@ export default {
         (data.totalDiscount / data.totalBeforeDiscount) * 100
       );
     }
-
+    function getPrice(cart) {
+      //Priority for deal price in conflict case
+      if (cart.dealPrice) return cart.dealPrice;
+      else if (cart.price) return cart.price;
+    }
     return {
       ...toRefs(data),
       onIncrementClicked,
@@ -281,6 +281,7 @@ export default {
       removeCartItem,
       removeCartItems,
       getImagePath,
+      getPrice,
     };
   },
 };
@@ -292,9 +293,6 @@ export default {
     width: 50px;
     font-size: 14px !important;
     padding: 5px 0;
-    &.badge-success {
-      background-color: #00dd2f !important;
-    }
   }
   .cart-empty {
     margin: 100px 0;

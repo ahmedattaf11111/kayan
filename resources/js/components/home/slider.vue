@@ -66,9 +66,7 @@ export default {
       store.showLoader = true;
       homeClient.getSliders().then((response) => {
         data.sliders = response.data;
-        setTimeout(() => {
-          store.showLoader = false;
-        }, 1000);
+        store.showLoader = false;
       });
     });
     //Methods

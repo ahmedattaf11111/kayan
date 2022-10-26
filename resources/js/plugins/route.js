@@ -12,6 +12,7 @@ import ProductDetails from '../components/product-details/product-details';
 import ViewAllProduct from '../components/view-all-products/view-all-products';
 import AuthenticatedGuard from "../shared/guards/authenticated-guard";
 import GuestGuard from "../shared/guards/guest-guard";
+import EmailVerifiedGuard from "../shared/guards/email-verified-guard";
 import PageNotFound from "../shared/components/page-not-found";
 import SuccessCallback from "../components/order/success-callback";
 import ErrorCallback from "../components/order/error-callback";
@@ -20,9 +21,6 @@ const routes = [
     path: "",
     redirect: "/home"
   },
-  { path: "/home", component: Home },
-  { path: "/best-client-discount-products", component: ViewAllProduct },
-  { path: "/product-details/:id", component: ProductDetails },
   //Guest Routes
   {
     path: "",
@@ -34,23 +32,32 @@ const routes = [
       { path: "reset-password/:token", component: ResetPassword },
     ]
   },
-  //Authenticated Routes
   {
     path: "",
-    beforeEnter: [AuthenticatedGuard],
+    beforeEnter: [EmailVerifiedGuard],
     children: [
-      { path: "verify-email", component: EmailVerification },
-      { path: "profile", component: Profile },
-      { path: "cart", component: Cart },
-      { path: "order", component: Order },
-      { path: "/order-success", component: SuccessCallback },
-      { path: "/order-error", component: ErrorCallback },
+      { path: "/home", component: Home },
+      { path: "/best-client-discount-products", component: ViewAllProduct },
+      { path: "/product-details/:id", component: ProductDetails },
+      //Authenticated Routes
+      {
+        path: "",
+        beforeEnter: [AuthenticatedGuard],
+        children: [
+          { path: "profile", component: Profile },
+          { path: "cart", component: Cart },
+          { path: "order", component: Order },
+          { path: "/order-success", component: SuccessCallback },
+          { path: "/order-error", component: ErrorCallback },
+        ]
+      },
     ]
   },
+  { path: "/verify-email", component: EmailVerification, beforeEnter: [AuthenticatedGuard] },
   {
     path: '/:pathMatch(.*)*',
     component: PageNotFound
-  }
+  },
 ];
 const router = createRouter({
   history: createWebHistory(),

@@ -7,7 +7,7 @@ export default {
     updateCartQuantity(formValue) {
         return axios.put(`${CART_BASE_URL}`, formValue);
     },
-    removeCartItem(productId, supplierId = null) {
+    removeCartItem(productId, supplierId) {
         return axios.delete(`${CART_BASE_URL}?product_id=${productId}
         &supplier_id=${supplierId ? supplierId : ''}`);
     },
@@ -18,9 +18,9 @@ export default {
         return axios.get(`${CART_BASE_URL}/count`);
     },
     cachePayment(formValue) {
-        return axios.post(`${PAYMENT_BASE_URL}/cash`,formValue);
+        return axios.post(`${PAYMENT_BASE_URL}/cash`, formValue);
     },
     onlinePayment(formValue) {
-        return axios.post(`${PAYMENT_BASE_URL}/online`,formValue);
+        return axios.post(`${PAYMENT_BASE_URL}/online`, formValue);
     }
 }

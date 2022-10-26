@@ -3,6 +3,7 @@
 namespace App\Utils\Models;
 
 use App\Constants\OrderStatus;
+use App\Models\Order;
 
 trait ProductScope
 {
@@ -53,17 +54,6 @@ trait ProductScope
         });
     }
 
-    public function scopeWithCartInfo($query, $userId)
-    {
-        $query->when($userId, function ($query) use ($userId) {
-            $query->with(["cart_info" => function ($query) use ($userId) {
-                $query->whereHas("order", function ($query) use ($userId) {
-                    $query->where("user_id", $userId)->where("order_status", OrderStatus::CART);
-                });
-            }]);
-        });
-    }
-
     public function scopeWithCarts($query, $userId)
     {
         $query->when($userId, function ($query) use ($userId) {
@@ -75,7 +65,7 @@ trait ProductScope
         });
     }
 
-    public function scopewithWhereHasCarts($query, $userId)
+    public function scopeWithWhereHasCarts($query, $userId)
     {
         return $query->whereHas("carts", function ($query) use ($userId) {
             $query->whereHas("order", function ($query) use ($userId) {
@@ -88,5 +78,25 @@ trait ProductScope
                     ->where("order_status", OrderStatus::CART);
             });
         }]);
+    }
+
+    public function scopeBestSeller($query)
+    {
+        $orderIds = Order::where("order_status", OrderStatus::COMPLETED)->pluck("id");
+        return $query->join("cart_items", "products.id", "cart_items.product_id")
+            ->whereIn("cart_items.order_id", $orderIds)
+            ->selectRaw("products.*,supplier_id,sum(cart_items.quantity) as sum")
+            ->groupBy("cart_items.product_id", "cart_items.supplier_id")
+            ->orderByDesc("sum");
+    }
+
+    public function scopeMostPopular($query)
+    {
+        $orderIds = Order::where("order_status", OrderStatus::COMPLETED)->pluck("id");
+        return $query->join("cart_items", "products.id", "cart_items.product_id")
+            ->whereIn("cart_items.order_id", $orderIds)
+            ->selectRaw("products.*,supplier_id,count(*) as count")
+            ->groupBy("cart_items.product_id", "cart_items.supplier_id")
+            ->orderByDesc("count");
     }
 }

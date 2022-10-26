@@ -9,7 +9,6 @@ class ProductController extends Controller
 {
     //This controller responsible for products in the website
     private $productService;
-    const LIMIT = 15;
     function __construct(ProductService $productService)
     {
         $this->productService = $productService;
@@ -32,10 +31,22 @@ class ProductController extends Controller
             );
     }
 
-    public function getDealProducts()
+    public function getDeals()
     {
         $user = request()->user();
-        return $this->productService->getDealProducts($user ? $user->id : null, self::LIMIT);
+        return $this->productService->getDeals($user ? $user->id : null);
+    }
+
+    public function getBestSellers()
+    {
+        $user = request()->user();
+        return $this->productService->getBestSellers($user ? $user->id : null);
+    }
+
+    public function getMostPopulars()
+    {
+        $user = request()->user();
+        return $this->productService->getMostPopulars($user ? $user->id : null);
     }
 
     public function getProductDetails($productId)

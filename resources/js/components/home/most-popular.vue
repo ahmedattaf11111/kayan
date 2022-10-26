@@ -1,44 +1,30 @@
 <template>
-  <div v-if="products.length" class="deal-container container">
-    <section class="ps-section--deals">
-      <div class="ps-section__header">
-        <h5 class="ps-section__title">{{ $t("CUSTOMER_ALSO_BOUGHT") }}</h5>
-      </div>
-      <div class="ps-section__carousel">
+  <div
+    v-if="mostPopular.most_popular_settings && mostPopular.products.length"
+    class="container"
+  >
+    <section class="ps-section--featured">
+      <h3 class="ps-section__title">
+        {{ $t("MOST_N_POPULAR", { N: mostPopular.most_popular_settings.limit }) }}
+      </h3>
+      <div class="row m-0 border-left border-top">
         <div
-          class="owl-carousel"
-          data-owl-auto="false"
-          data-owl-loop="false"
-          data-owl-speed="15000"
-          data-owl-gap="0"
-          data-owl-nav="true"
-          data-owl-dots="true"
-          data-owl-item="3"
-          data-owl-item-xs="1"
-          data-owl-item-sm="2"
-          data-owl-item-md="2"
-          data-owl-item-lg="3"
-          data-owl-item-xl="3"
-          data-owl-duration="1000"
-          data-owl-mousedrag="on"
+          class="col-6 col-md-4 col-lg-2dot4 p-0 border-right border-bottom"
+          v-for="product in mostPopular.products"
+          :key="product.id"
         >
-          <div
-            v-for="product in products"
-            :key="product.id"
-            class="ps-product ps-product--standard border-right"
-          >
+          <div class="ps-product ps-product--standard">
             <div class="ps-product__thumbnail">
               <router-link
                 class="ps-product__image"
                 :to="`/product-details/${product.id}`"
-              >
+                >ٍ
                 <figure>
                   <img :src="getImagePath(product.image)" alt="alt" />
-              </figure>
+                </figure>
               </router-link>
-              <div class="ps-product__percent">
-                {{ product.biggest_client_discount_price.clientDiscount }}%
-              </div>
+              <div class="ps-product__badge"></div>
+              <div class="ps-product__percent">%{{ product.price.clientDiscount }}</div>
             </div>
             <div class="ps-product__content">
               <h5 class="ps-product__title">
@@ -50,11 +36,11 @@
               </h5>
               <div class="ps-product__meta">
                 <span class="ps-product__price sale">
-                  {{ product.biggest_client_discount_price.pharmacyPrice }}
+                  {{ product.price.pharmacyPrice }},
                   {{ $t("POUND") }}
                 </span>
                 <span class="ps-product__del">
-                  {{ product.biggest_client_discount_price.publicPrice }}
+                  {{ product.price.publicPrice }}
                   {{ $t("POUND") }}
                 </span>
               </div>
@@ -100,31 +86,34 @@ import { inject, onMounted, reactive, toRefs } from "vue-demi";
 import productClient from "../../shared/http-clients/product-client";
 import cartClient from "../../shared/http-clients/cart-client";
 import global from "../../shared/consts/global";
-import { useRoute, useRouter } from "vue-router";
-import { owlCarouselFunction } from "../../custom";
+import { useRouter } from "vue-router";
 export default {
-  setup() {
-    const store = inject("store");
-    const route = useRoute();
-    const router = useRouter();
+  setup(props, context) {
     let data = reactive({
-      products: [],
+      mostPopular: { most_popular_settings: null, products: [] },
     });
+    let store = inject("store");
+    const router = useRouter();
     onMounted(() => {
-      getBoughtProducts();
+      getMostPopulars();
     });
+    function calculatePharmacyPrice(publicPrice, mostPopularDiscount) {
+      return publicPrice - (publicPrice * mostPopularDiscount) / 100;
+    }
     //Methods
+    function getImagePath(image) {
+      return `${global.DASHBOARD_DOMAIN}/upload/product/${image}`;
+    }
+
     function removeCartItem(product) {
       store.showLoader = true;
-      cartClient
-        .removeCartItem(product.id, product.biggest_client_discount_price.supplier_id)
-        .then(() => {
-          store.showLoader = false;
-          product.cart_info = null;
-          product.cartClicked = false;
-          if (product.carts_length == 1) store.cartItemsCount--;
-          product.carts_length--;
-        });
+      cartClient.removeCartItem(product.id, product.price.supplier_id).then(() => {
+        store.showLoader = false;
+        product.cart_info = null;
+        product.cartClicked = false;
+        if (product.carts_length == 1) store.cartItemsCount--;
+        decrementProductCartsLength(product.id);
+      });
     }
     function onIncrementClicked(product) {
       product.quantity++;
@@ -147,29 +136,14 @@ export default {
       cartClient
         .addToCart({
           product_id: product.id,
-          supplier_id: product.biggest_client_discount_price.supplier_id,
+          supplier_id: product.price.supplier_id,
         })
         .then(() => {
           store.showLoader = false;
           product.cartClicked = true;
           product.quantity = 1;
           if (product.carts_length == 0) store.cartItemsCount++;
-          product.carts_length++;
-        });
-    }
-    function getImagePath(image) {
-      return `${global.DASHBOARD_DOMAIN}/upload/product/${image}`;
-    }
-    function getBoughtProducts() {
-      store.showLoader = true;
-      productClient
-        .getBoughtProducts()
-        .then((response) => {
-          data.products = setCartsQuantitiesToProducts(response.data);
-        })
-        .finally(() => {
-          store.showLoader = false;
-          owlCarouselFunction();
+          incrementProductCartsLength(product.id);
         });
     }
     function updateCartQuantity(product) {
@@ -177,7 +151,6 @@ export default {
       cartClient
         .updateCartQuantity({
           product_id: product.id,
-          supplier_id: product.biggest_client_discount_price.supplier_id,
           quantity: product.quantity,
         })
         .then(() => {
@@ -185,17 +158,35 @@ export default {
         });
     }
     //Commons
-    function setCartsQuantitiesToProducts(products) {
-      return products.map((product) => {
+    function getMostPopulars() {
+      productClient.getMostPopulars().then((response) => {
+        data.mostPopular = setCartsQuantitiesToMostPopular(response.data);
+      });
+    }
+    function setCartsQuantitiesToMostPopular(mostPopular) {
+      let products = mostPopular.products.map((product) => {
         return {
           ...product,
           quantity: product.cart_info ? product.cart_info.quantity : 1,
         };
       });
+      mostPopular.products = products;
+      return mostPopular;
+    }
+    function incrementProductCartsLength(productId) {
+      data.mostPopular.products.forEach((product) => {
+        if (product.id == productId) product.carts_length++;
+      });
+    }
+    function decrementProductCartsLength(productId) {
+      data.mostPopular.products.forEach((product) => {
+        if (product.id == productId) product.carts_length--;
+      });
     }
     return {
       ...toRefs(data),
       getImagePath,
+      calculatePharmacyPrice,
       addToCart,
       onIncrementClicked,
       onDecrementClicked,
@@ -205,7 +196,8 @@ export default {
   },
 };
 </script>
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
 .ps-product__percent {
   font-size: 14px;
 }

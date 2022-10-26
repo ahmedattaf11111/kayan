@@ -8,7 +8,7 @@ class CartItem extends Model
 {
     protected $guarded = [];
 
-    protected $appends = ['price'];
+    protected $appends = ["price", "dealPrice"];
 
     public function order()
     {
@@ -24,10 +24,13 @@ class CartItem extends Model
     {
         return $this->belongsTo(Supplier::class);
     }
-
+    //Prices
     public function getPriceAttribute()
     {
-        return $this->supplier ?
-            $this->supplier->prices()->where('product_id', $this->product_id)->first() : null;
+        return  $this->supplier->prices()->where('product_id', $this->product_id)->first();
+    }
+    public function getDealPriceAttribute()
+    {
+        return  $this->supplier->dealPrices()->where('product_id', $this->product_id)->first();
     }
 }

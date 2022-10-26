@@ -32,5 +32,8 @@ export default {
     },
     getCitiesWithAreas() {
         return axios.get(`${BASE_URL}/cities-with-areas`);
+    },
+    userVerified() {
+        return axios.get(`${BASE_URL}/user-verified`);
     }
 }

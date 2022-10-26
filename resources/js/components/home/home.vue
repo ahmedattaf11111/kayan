@@ -5,6 +5,8 @@
       <Slider />
       <div class="ps-home__content">
         <Deal />
+        <BestSeller />
+        <MostPopular />
         <SimpleAdvertises />
         <Newsletter />
       </div>
@@ -18,6 +20,8 @@ import productClient from "../../shared/http-clients/product-client";
 import { onMounted, reactive, toRefs } from "vue-demi";
 import Category from "./category";
 import SimpleAdvertises from "./simple-advertises/simple-advertise";
+import BestSeller from "./best-seller";
+import MostPopular from "./most-popular";
 import Deal from "./deal";
 export default {
   components: {
@@ -26,6 +30,8 @@ export default {
     Category,
     SimpleAdvertises,
     Deal,
+    BestSeller,
+    MostPopular,
   },
   setup() {
     let data = reactive({

@@ -3,7 +3,11 @@
 namespace App\Repositories;
 
 use App\Constants\OrderStatus;
+use App\Models\AlsoBought;
+use App\Models\BestSeller;
 use App\Models\Category;
+use App\Models\Deal;
+use App\Models\MostPopular;
 use App\Models\Product;
 
 class ProductRepository
@@ -40,9 +44,49 @@ class ProductRepository
 
     public function getDealProducts($userId, $limit)
     {
-        return Product::has("deal")->with("deal")->withCartInfo($userId)->take($limit)->get();
+        return Product::has("dealPrice")->with("dealPrice")->withCarts($userId)->take($limit)->get();
+    }
+    public function getDealSettings()
+    {
+        return Deal::first();
+    }
+    public function getManualBestSellerProducts($userId)
+    {
+        return Product::has("bestSellerProducts")->withCarts($userId)->get()->each->append("price");
+    }
+    public function getActualBestSellerProducts($userId)
+    {
+        return Product::bestSeller()->withCarts($userId)->get()->each->append("price");
+    }
+    public function getActualMostPopularProducts($userId)
+    {
+        return Product::mostPopular()->withCarts($userId)->get()->each->append("price");
+    }
+    public function getManualMostPopularProducts($userId)
+    {
+        return Product::has("mostPopularProducts")->withCarts($userId)->get()->each->append("price");
+    }
+    public function getBestSellerSettings()
+    {
+        return BestSeller::first();
+    }
+    public function getActualAlsoBoughtProducts($userId)
+    {
+        return Product::mostPopular()->withCarts($userId)->get()->each->append("price");
+    }
+    public function getManualAlsoBoughtProducts($userId)
+    {
+        return Product::has("alsoBougtProducts")->withCarts($userId)->get()->each->append("price");
+    }
+    public function getAlsoBoughtSettings()
+    {
+        return AlsoBought::first();
     }
 
+    public function getMostPopularSettings()
+    {
+        return MostPopular::first();
+    }
     public function getProductDetails($productId)
     {
         $user = request()->user();
@@ -51,15 +95,6 @@ class ProductRepository
                 $this->withCart($query, $user, $productId);
             }])->orderBy("clientDiscount", 'desc');
         }])->find($productId);
-    }
-
-    public function getBoughtProducts($userId)
-    {
-        return Product::with("biggestClientDiscountPrice")
-            ->has("biggestClientDiscountPrice")
-            ->withCarts($userId)
-            ->whereRelation("carts.order", "order_status", OrderStatus::COMPLETED)
-            ->get();
     }
 
     //Commons

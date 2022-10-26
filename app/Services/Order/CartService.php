@@ -42,14 +42,14 @@ class CartService
 
     public function getUserCart($userId)
     {
-        $cartItems = $this->cartRepository->getCartItems($userId);
-        return $this->sortCartsOfEachItemByDiscount($cartItems);
+        return $this->cartRepository->getCartItems($userId);
     }
 
     public function getCartItemsCount($userId)
     {
         return $this->cartRepository->getCartItemsCount($userId);
     }
+
     //Commons
     private function getOrderInput($userId)
     {
@@ -57,17 +57,6 @@ class CartService
             "user_id" => $userId,
             "order_status" => OrderStatus::CART,
         ];
-    }
-    private function sortCartsOfEachItemByDiscount($cartItems)
-    {
-        return $cartItems->map(function ($cartItem) {
-            $carts = $cartItem->carts->sortByDesc("price.clientDiscount")->values();
-            //Idont know why laravel force me to type those 2 ugly lines
-            unset($cartItem->carts);
-            $cartItem->carts = $carts;
-            //Idont know why laravel force me to type those 2 ugly lines
-            return $cartItem;
-        });
     }
     private function getCartInput($orderId, &$cartInput)
     {

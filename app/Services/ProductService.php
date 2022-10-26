@@ -35,39 +35,76 @@ class ProductService
                 $pageSize,
                 $userId
             );
-        return $this->mapProductsPage($productsPage);
+        return $this->mapProducts($productsPage, "biggestClientDiscountPrice");
     }
     public function getMainWithSubCategories()
     {
         return $this->productRepository->getMainWithSubCategories();
     }
-    public function getDealProducts($userId, $limit)
+    public function getDeals($userId)
     {
-        return $this->productRepository->getDealProducts($userId, $limit);
+        $deal = $this->productRepository->getDealSettings();
+        $dealProducts = $this->productRepository->getDealProducts($userId, $deal["limit"]);
+        return ["deal_settings" => $deal, "products" => $this->mapProducts($dealProducts, "dealPrice")];
+    }
+    public function getBestSellers($userId)
+    {
+        $bestSellerSettings = $this->productRepository->getBestSellerSettings();
+        $mergedProducts = [];
+        if ($bestSellerSettings) {
+            $manualBestSellerProducts = $this->productRepository->getManualBestSellerProducts($userId);
+            $actualBestSellerProducts = $this->productRepository->getActualBestSellerProducts($userId);
+            $mergedProducts = $actualBestSellerProducts->concat($manualBestSellerProducts)
+                ->take($bestSellerSettings->limit);
+            $mergedProducts = $this->mapProducts($mergedProducts, "price");
+        }
+        return ["best_seller_settings" => $bestSellerSettings, "products" => $mergedProducts];
+    }
+    public function getMostPopulars($userId)
+    {
+        $mostPopularSettings = $this->productRepository->getMostPopularSettings();
+        $mergedProducts = [];
+        if ($mostPopularSettings) {
+            $manualMostPopularProducts = $this->productRepository->getManualMostPopularProducts($userId);
+            $actualMostPopularProducts = $this->productRepository->getActualMostPopularProducts($userId);
+            $mergedProducts = $actualMostPopularProducts->concat($manualMostPopularProducts)
+                ->take($mostPopularSettings->limit);
+            $mergedProducts = $this->mapProducts($mergedProducts, "price");
+        }
+        return ["most_popular_settings" => $mostPopularSettings, "products" => $mergedProducts];
     }
     public function getProductDetails($productId)
     {
         return $this->productRepository->getProductDetails($productId);
     }
+
     public function getBoughtProducts($userId)
     {
-        $boughtProducts = $this->productRepository->getBoughtProducts($userId);
-        return $this->mapProductsPage($boughtProducts);
+        $alsoBoughtSettings = $this->productRepository->getAlsoBoughtSettings();
+        $mergedProducts = [];
+        if ($alsoBoughtSettings) {
+            $manualAlsoBoughtProducts = $this->productRepository->getManualAlsoBoughtProducts($userId);
+            $actualAlsoBoughtProducts = $this->productRepository->getActualAlsoBoughtProducts($userId);
+            $mergedProducts = $actualAlsoBoughtProducts->concat($manualAlsoBoughtProducts)
+                ->take($alsoBoughtSettings->limit);
+            $mergedProducts = $this->mapProducts($mergedProducts, "price");
+        }
+        return ["also_bought_settings" => $alsoBoughtSettings, "products" => $mergedProducts];
     }
 
     //Commons
-    private function mapProductsPage(&$productsPage)
+    private function mapProducts(&$products, $priceType)
     {
-        $productsPage->transform(function ($product) {
+        $products->transform(function ($product) use ($priceType) {
             if ($product->relationLoaded("carts")) {
-                $product->cart_info = $product->carts->filter(function ($cart_info) use ($product) {
-                    return $cart_info->supplier_id == $product->biggestClientDiscountPrice->supplier_id;
+                $product->cart_info = $product->carts->filter(function ($cart_info) use ($product, $priceType) {
+                    return $cart_info->supplier_id == $product[$priceType]->supplier_id;
                 })->first();
                 $product->carts_length = $product->carts->count();
                 unset($product->carts);
             }
             return $product;
         });
-        return $productsPage;
+        return $products;
     }
 }

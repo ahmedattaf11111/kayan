@@ -27,7 +27,8 @@ class CartRepository
             ->where("product_id", $productId)
             ->when($supplierId, function ($query) use ($supplierId) {
                 $query->where("supplier_id", $supplierId);
-            })->delete();
+            })
+            ->delete();
     }
 
     public function removeOrderIfNoItems($id)

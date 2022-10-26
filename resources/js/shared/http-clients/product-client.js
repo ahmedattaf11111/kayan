@@ -22,14 +22,18 @@ export default {
         &discount=${discount ? discount : ""}`
         );
     },
-    getDealProducts() {
-        return axios.get(`${BASE_URL}/deal`);
+    getDeal() {
+        return axios.get(`${BASE_URL}/deals`);
     },
-
+    getBestSellers(){
+        return axios.get(`${BASE_URL}/best-sellers`);
+    },
+    getMostPopulars(){
+        return axios.get(`${BASE_URL}/most-populars`);
+    },
     getMainWithSubCategories() {
         return axios.get(`${BASE_URL}/main-with-sub-categories`);
     },
-
     getProductDetails(productId) {
         return axios.get(`${BASE_URL}/${productId}`);
     },

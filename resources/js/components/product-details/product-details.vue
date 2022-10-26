@@ -2,15 +2,18 @@
   <div v-if="product" class="product-details-container">
     <div class="container">
       <div class="row">
-        <div class="col-lg-8 mb-5">
+        <div class="col-lg-12 mb-2">
           <div class="row">
             <div class="col-12">
               <div class="product border">
-                <div class="name">
-                  <div>
-                    <b>{{ product.nameAr }}</b>
+                <div class="first-side">
+                  <img :src="getImagePath(product.image)" />
+                  <div class="name">
+                    <div>
+                      <b>{{ product.nameEn }}</b>
+                    </div>
+                    <div>{{ product.nameAr }}</div>
                   </div>
-                  <div>{{ product.nameEn }}</div>
                 </div>
                 <div class="carts mt-5">
                   <div class="table-responsive">
@@ -93,13 +96,8 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-4">
-          <div class="image border">
-            <img class="img-fluid" :src="getImagePath(product.image)" />
-          </div>
-        </div>
-        <div class="col-12">
-          <BroughtDetails />
+        <div class="col-12 mt-5">
+          <AlsoBoughtProducts @productDetailsRouterClicked="getProductDetails" />
         </div>
       </div>
     </div>
@@ -112,10 +110,10 @@ import { useRoute, useRouter } from "vue-router";
 import productClient from "../../shared/http-clients/product-client";
 import cartClient from "../../shared/http-clients/cart-client";
 import global from "../../shared/consts/global";
-import BroughtDetails from "./brought-products";
+import AlsoBoughtProducts from "./also-bought-products";
 export default {
   components: {
-    BroughtDetails,
+    AlsoBoughtProducts,
   },
   setup() {
     const data = reactive({
@@ -216,6 +214,7 @@ export default {
       updateCartQuantity,
       removeCartItem,
       getImagePath,
+      getProductDetails,
     };
   },
 };
@@ -223,6 +222,17 @@ export default {
 
 <style lang="scss" scoped>
 .product-details-container {
+  .product {
+    .first-side {
+      display: flex;
+      align-items: center;
+      img {
+        margin-left: 25px;
+        width: 70px;
+        height: 70px;
+      }
+    }
+  }
   padding: 50px 0;
   .badge {
     width: 50px;
