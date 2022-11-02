@@ -31,6 +31,9 @@ Route::prefix("auth")->group(function () {
     Route::get('forget-password-otp', "ForgetPasswordController@forgetPasswordOtp");
     Route::get('verify-password-token', "ForgetPasswordController@verifyToken");
     Route::post('reset-password', "ForgetPasswordController@resetPassword");
-    Route::post('update-profile', "ForgetPasswordController@updateProfile");
+    Route::put('update-profile', "ProfileController@updateProfile");
+    Route::post('update-profile-image', "ProfileController@updateImage");
+    Route::delete('delete-profile-image', "ProfileController@deleteImage");
+    Route::get('profile-statistics', "ProfileController@getProfileStatistics");
+    Route::get('profile-orders', "ProfileController@getProfileOrders");
 });
-

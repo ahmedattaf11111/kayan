@@ -8,6 +8,7 @@ use App\Constants\PaymentStatus;
 use App\Models\Client;
 use App\Models\Order;
 use App\Utils\Repositories\OrderUtil;
+use Carbon\Carbon;
 
 class PaymentRepository
 {
@@ -42,6 +43,7 @@ class PaymentRepository
         $order->order_status = OrderStatus::PENDING;
         $order->payment_status = PaymentStatus::UNPAID;
         $order->payment_method = PaymentMethod::CASH;
+        $order->created_at = Carbon::now();
         $order->save();
     }
 }

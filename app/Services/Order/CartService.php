@@ -18,7 +18,11 @@ class CartService
     {
         $order = $this->cartRepository->getCartStatusOrder($userId, false);
         if (!$order) $order = $this->cartRepository->createOrder($this->getOrderInput($userId));
-        $this->cartRepository->createCart($this->getCartInput($order->id, $cartInput));
+        $addedToCart = $this->cartRepository->addedToCart($order->id, $cartInput);
+        if (!$addedToCart) {
+            $this->cartRepository->createCart($this->getCartInput($order->id, $cartInput));
+        }
+        return $addedToCart;
     }
 
     public function removeCartItems($userId, $productId, $supplierId)

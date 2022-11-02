@@ -154,8 +154,7 @@ export default {
           store.showLoader = false;
           product.cart_info = null;
           product.cartClicked = false;
-          if (product.carts_length == 1) store.cartItemsCount--;
-          product.carts_length--;
+          updateCartItemsCount();
         });
     }
     function onIncrementClicked(product) {
@@ -185,8 +184,7 @@ export default {
           store.showLoader = false;
           product.cartClicked = true;
           product.quantity = 1;
-          if (product.carts_length == 0) store.cartItemsCount++;
-          product.carts_length++;
+          updateCartItemsCount();
         });
     }
     function getImagePath(image) {
@@ -225,6 +223,11 @@ export default {
         });
     }
     //Commons
+    function updateCartItemsCount() {
+      cartClient.getCartItemsCount().then((response) => {
+        store.cartItemsCount = response.data;
+      });
+    }
     function setCartsQuantitiesToProducts(products) {
       return products.map((product) => {
         return {
@@ -255,10 +258,21 @@ export default {
   .ps-product__percent {
     font-size: 14px;
   }
+  .active {
+    .page-link {
+      background-color: #0e67d0 !important ;
+      color: #fff !important;
+    }
+  }
   .page-link {
     color: #0e67d0 !important;
-    padding: 5px 12px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border: none;
+    border-radius: 50%;
     &:hover {
       background: none;
     }
@@ -266,6 +280,7 @@ export default {
       box-shadow: none;
     }
   }
+
   .cart {
     margin-top: 18px;
     color: #0e67d0 !important;
@@ -280,13 +295,6 @@ export default {
     i {
       margin-bottom: 5px;
       font-size: 20px;
-    }
-  }
-  .active {
-    .page-link {
-      background-color: #0e67d0 !important ;
-      color: #fff !important;
-      border-radius: 50px;
     }
   }
   .cart {

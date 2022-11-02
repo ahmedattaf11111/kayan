@@ -36,6 +36,8 @@ export default {
   setup() {
     let data = reactive({
       categories: [],
+      bestSellerProducts: [],
+      mostPopularProducts: [],
     });
     onMounted(() => {
       getMainWithSubCategories();

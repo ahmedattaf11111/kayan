@@ -111,6 +111,7 @@ import productClient from "../../shared/http-clients/product-client";
 import cartClient from "../../shared/http-clients/cart-client";
 import global from "../../shared/consts/global";
 import AlsoBoughtProducts from "./also-bought-products";
+import { useI18n } from 'vue-i18n';
 export default {
   components: {
     AlsoBoughtProducts,
@@ -122,6 +123,8 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const store = inject("store");
+    const toast = inject("toast");
+    const { t, locale } = useI18n({});
     //Methods
     onMounted(() => {
       getProductDetails();
@@ -133,7 +136,7 @@ export default {
         price.supplier.cart_info = null;
         price.quantity = 0;
         price.cartClicked = false;
-        if (countSuppliersAddedToCart() == 0) store.cartItemsCount--;
+        updateCartItemsCount();
       });
     }
     function onIncrementClicked(price) {
@@ -164,7 +167,11 @@ export default {
           store.showLoader = false;
           price.cartClicked = true;
           price.quantity = 1;
-          if (countSuppliersAddedToCart() == 1) store.cartItemsCount++;
+          updateCartItemsCount();
+        })
+        .catch((error) => {
+          store.showLoader = false;
+          toast.error(t("ADDED_BEFORE_TO_CART"));
         });
     }
     function updateCartQuantity(price) {
@@ -183,6 +190,11 @@ export default {
       return `${global.DASHBOARD_DOMAIN}/upload/product/${image}`;
     }
     //Commons
+    function updateCartItemsCount() {
+      cartClient.getCartItemsCount().then((response) => {
+        store.cartItemsCount = response.data;
+      });
+    }
     function getProductDetails() {
       store.showLoader = true;
       productClient.getProductDetails(route.params.id).then((response) => {
@@ -198,13 +210,6 @@ export default {
         };
       });
       return product;
-    }
-    function countSuppliersAddedToCart() {
-      let counter = 0;
-      data.product.prices.forEach((price) => {
-        if (price.quantity) counter++;
-      });
-      return counter;
     }
     return {
       ...toRefs(data),
@@ -251,12 +256,10 @@ export default {
       text-align: center;
     }
   }
-  .product,
-  .image {
+  .product {
     padding: 20px 15px;
     margin-bottom: 18px;
     border-radius: 5px;
-    box-shadow: 0 0 8px #b6b6b633;
     height: 300px;
   }
   .cart {

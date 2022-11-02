@@ -4,7 +4,8 @@ import Login from '../components/auth/login';
 import ForgetPassword from '../components/auth/forget-password';
 import ResetPassword from '../components/auth/reset-password';
 import EmailVerification from '../components/auth/email-verification';
-import Profile from '../components/auth/profile';
+import ProfileBasic from '../components/profile/basic';
+import ProfileOrders from '../components/profile/orders';
 import Home from '../components/home/home';
 import Cart from '../components/order/cart';
 import Order from '../components/order/order';
@@ -44,7 +45,8 @@ const routes = [
         path: "",
         beforeEnter: [AuthenticatedGuard],
         children: [
-          { path: "profile", component: Profile },
+          { path: "profile-basic", component: ProfileBasic },
+          { path: "profile-orders", component: ProfileOrders },
           { path: "cart", component: Cart },
           { path: "order", component: Order },
           { path: "/order-success", component: SuccessCallback },

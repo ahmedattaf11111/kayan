@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProfileImageRequest;
 use App\Http\Requests\ProfileRequest;
-use App\Models\User;
 use App\Services\Auth\ProfileService;
-use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class AuthController extends Controller
+class ProfileController extends Controller
 {
     private $profileService;
 
@@ -18,13 +17,39 @@ class AuthController extends Controller
         $this->middleware("auth");
         $this->profileService = $profileService;
     }
-    public function updateProfile(ProfileRequest $request): User
+    public function updateProfile(ProfileRequest $request)
     {
         $authUserId = JWTAuth::parseToken()->getPayload()->get("id");
         return $this->profileService->updateProfile(
             $authUserId,
-            $request->file("image"),
             $request->validated()
+        );
+    }
+    public function updateImage(ProfileImageRequest $request)
+    {
+        $authUserId = JWTAuth::parseToken()->getPayload()->get("id");
+        return $this->profileService->updateImage($authUserId, $request->file("image"));
+    }
+    public function deleteImage()
+    {
+        $authUserId = JWTAuth::parseToken()->getPayload()->get("id");
+        $this->profileService->deleteImage($authUserId);
+    }
+
+    public function getProfileStatistics()
+    {
+        $authUserId = JWTAuth::parseToken()->getPayload()->get("id");
+        return $this->profileService->getProfileStatistics($authUserId);
+    }
+
+    public function getProfileOrders()
+    {
+        $authUserId = JWTAuth::parseToken()->getPayload()->get("id");
+        return $this->profileService->getProfileOrders(
+            $authUserId,
+            request()->page_size,
+            request()->from,
+            request()->to,
         );
     }
 }

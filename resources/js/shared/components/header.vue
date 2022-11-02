@@ -39,81 +39,28 @@
               ></a>
             </li>
             <li>
+              <router-link
+                v-if="currentUser"
+                class="ps-header__item"
+                to="/profile-basic"
+                id="cart-mini"
+              >
+                <i class="fa fa-user"></i>
+              </router-link>
+            </li>
+            <li>
               <router-link v-if="!currentUser" to="/login" class="ps-header__item">
                 <i class="icon-user"></i>
               </router-link>
               <a @click="logout" v-if="currentUser" class="ps-header__item" href="#">
                 <i class="fa fa-sign-out"></i>
               </a>
-              <div class="ps-login--modal">
-                <form method="get" action="http://nouthemes.net/html/mymedi/do_action">
-                  <div class="form-group">
-                    <label>Username or Email Address</label>
-                    <input class="form-control" type="text" />
-                  </div>
-                  <div class="form-group">
-                    <label>Password</label>
-                    <input class="form-control" type="password" />
-                  </div>
-                  <div class="form-group form-check">
-                    <input class="form-check-input" type="checkbox" />
-                    <label>Remember Me</label>
-                  </div>
-                  <button class="ps-btn ps-btn--warning" type="submit">Log In</button>
-                </form>
-              </div>
             </li>
             <li>
               <router-link class="ps-header__item" to="/cart" id="cart-mini">
                 <i class="icon-cart-empty"></i
                 ><span class="badge">{{ cartItemsCount }}</span>
               </router-link>
-              <div class="ps-cart--mini">
-                <ul class="ps-cart__items">
-                  <li class="ps-cart__item">
-                    <div class="ps-product--mini-cart">
-                      <a class="ps-product__thumbnail" href="product-default.html"
-                        ><img src="img/products/055.jpg" alt="alt"
-                      /></a>
-                      <div class="ps-product__content">
-                        <a class="ps-product__name" href="product-default.html"
-                          >Somersung Sonic X2500 Pro White</a
-                        >
-                        <p class="ps-product__meta">
-                          <span class="ps-product__price">$399.99</span>
-                        </p>
-                      </div>
-                      <a class="ps-product__remove" href="javascript: void(0)"
-                        ><i class="icon-cross"></i
-                      ></a>
-                    </div>
-                  </li>
-                  <li class="ps-cart__item">
-                    <div class="ps-product--mini-cart">
-                      <a class="ps-product__thumbnail" href="product-default.html"
-                        ><img src="img/products/001.jpg" alt="alt"
-                      /></a>
-                      <div class="ps-product__content">
-                        <a class="ps-product__name" href="product-default.html"
-                          >Digital Thermometer X30-Pro</a
-                        >
-                        <p class="ps-product__meta">
-                          <span class="ps-product__sale">$77.65</span
-                          ><span class="ps-product__is-price">$80.65</span>
-                        </p>
-                      </div>
-                      <a class="ps-product__remove" href="javascript: void(0)"
-                        ><i class="icon-cross"></i
-                      ></a>
-                    </div>
-                  </li>
-                </ul>
-                <div class="ps-cart__total"><span>Subtotal </span><span>$399</span></div>
-                <div class="ps-cart__footer">
-                  <a class="ps-btn ps-btn--outline" href="shopping-cart.html">View Cart</a
-                  ><a class="ps-btn ps-btn--warning" href="checkout.html">Checkout</a>
-                </div>
-              </div>
             </li>
           </ul>
           <div class="ps-header__search">
@@ -216,6 +163,11 @@
     </div>
     <div class="ps-nav__item">
       <router-link to="/home"><i class="icon-home2"></i></router-link>
+    </div>
+    <div class="ps-nav__item">
+      <router-link v-if="currentUser" class="ps-header__item" to="/profile-basic">
+        <i class="fa fa-user"></i>
+      </router-link>
     </div>
     <div class="ps-nav__item">
       <router-link

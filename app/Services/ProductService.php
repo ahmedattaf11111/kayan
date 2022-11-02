@@ -100,7 +100,6 @@ class ProductService
                 $product->cart_info = $product->carts->filter(function ($cart_info) use ($product, $priceType) {
                     return $cart_info->supplier_id == $product[$priceType]->supplier_id;
                 })->first();
-                $product->carts_length = $product->carts->count();
                 unset($product->carts);
             }
             return $product;

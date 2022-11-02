@@ -4,6 +4,7 @@ namespace App\Services\Order;
 
 use App\Repositories\Order\PaymentRepository;
 use App\Utils\Controllers\MyFatoorahUtil;
+use Carbon\Carbon;
 
 class PaymentService
 {
@@ -26,6 +27,7 @@ class PaymentService
     }
     public function onlinePayment($paymentInput)
     {
+        $paymentInput["created_at"] = Carbon::now();
         $this->paymentRepository->onlinePayment($paymentInput);
     }
 

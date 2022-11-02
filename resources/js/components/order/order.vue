@@ -18,7 +18,7 @@
                     {{ $t("SHIPPING_IN_SAME_ADDRESS") }}
                   </label>
                   <label class="form-check-label text-secondary" for="flexCheckChecked">
-                    {{`(${currentUser.client.address})`}}
+                    {{ `(${currentUser.client.address})` }}
                   </label>
                 </div>
                 <template v-if="!same_address_shipping">
@@ -202,6 +202,7 @@ export default {
           router.push("/home");
           toast.success(t("ORDER_REGISTERED"));
           store.cartItemsCount = 0;
+          saveCurrentUser();
         })
         .catch((error) => {
           store.showLoader = false;
@@ -220,6 +221,13 @@ export default {
         shipping_area_id: form.area_id,
         same_address_shipping: form.same_address_shipping,
       };
+    }
+    //Commons
+    function saveCurrentUser() {
+      store.currentUser.client.same_address_shipping = form.same_address_shipping;
+      store.currentUser.client.shipping_address = form.address;
+      store.currentUser.client.shipping_city_id = form.city_id;
+      store.currentUser.client.shipping_area_id = form.area_id;
     }
     return {
       ...toRefs(data),

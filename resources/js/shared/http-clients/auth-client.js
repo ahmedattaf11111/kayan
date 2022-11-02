@@ -25,7 +25,23 @@ export default {
         return axios.get(`${BASE_URL}/logout`);
     },
     updateProfile(formValue) {
-        return axios.post(`${BASE_URL}/update-profile`, formValue);
+        return axios.put(`${BASE_URL}/update-profile`, formValue);
+    },
+    updateProfileImage(formValue) {
+        return axios.post(`${BASE_URL}/update-profile-image`, formValue);
+    },
+    deleteProfileImage() {
+        return axios.delete(`${BASE_URL}/delete-profile-image`);
+    },
+    getProfileStatistics() {
+        return axios.get(`${BASE_URL}/profile-statistics`);
+    },
+    getProfileOrders(page, pageSize, from, to) {
+        return axios.get(`${BASE_URL}/profile-orders?
+        page=${page}
+        &page_size=${pageSize}
+        &from=${from ? from : ""}
+        &to=${to ? to : ""}`);
     },
     getCurrentUser() {
         return axios.get(`${BASE_URL}/current-user`);

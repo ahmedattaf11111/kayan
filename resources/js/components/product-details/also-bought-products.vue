@@ -103,12 +103,15 @@ import productClient from "../../shared/http-clients/product-client";
 import cartClient from "../../shared/http-clients/cart-client";
 import global from "../../shared/consts/global";
 import { useRoute, useRouter } from "vue-router";
+import { useI18n } from 'vue-i18n';
 export default {
   setup(props, context) {
     let data = reactive({
       alsoBought: { also_bought_settings: null, products: [] },
     });
     let store = inject("store");
+    let toast = inject("toast");
+    const { t, locale } = useI18n({});
     const route = useRoute();
     const router = useRouter();
     onMounted(() => {
@@ -124,8 +127,7 @@ export default {
         store.showLoader = false;
         product.cart_info = null;
         product.cartClicked = false;
-        if (product.carts_length == 1) store.cartItemsCount--;
-        product.carts_length--;
+        updateCartItemsCount();
       });
     }
     function onIncrementClicked(product) {
@@ -155,8 +157,11 @@ export default {
           store.showLoader = false;
           product.cartClicked = true;
           product.quantity = 1;
-          if (product.carts_length == 0) store.cartItemsCount++;
-          product.carts_length++;
+          updateCartItemsCount();
+        })
+        .catch((error) => {
+          store.showLoader = false;
+          toast.error(t("ADDED_BEFORE_TO_CART"));
         });
     }
     function updateCartQuantity(product) {
@@ -182,6 +187,11 @@ export default {
     );
 
     //Commons
+    function updateCartItemsCount() {
+      cartClient.getCartItemsCount().then((response) => {
+        store.cartItemsCount = response.data;
+      });
+    }
     function getBoughtProducts() {
       productClient
         .getBoughtProducts()
@@ -259,9 +269,6 @@ export default {
     background: none;
     font-size: 22px;
     margin-right: 7px;
-  }
-  .ps-section--deals .ps-section__carousel {
-    border: none !important;
   }
 }
 </style>

@@ -30,7 +30,12 @@ class CartRepository
             })
             ->delete();
     }
-
+    public function addedToCart($orderId, $cartInput)
+    {
+        return CartItem::where("order_id", $orderId)
+            ->where("supplier_id", $cartInput["supplier_id"])
+            ->where("product_id", $cartInput["product_id"])->count() > 0;
+    }
     public function removeOrderIfNoItems($id)
     {
         Order::doesntHave("products")->where("id", $id)->delete();

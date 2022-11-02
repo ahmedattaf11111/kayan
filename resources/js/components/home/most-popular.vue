@@ -87,19 +87,19 @@ import productClient from "../../shared/http-clients/product-client";
 import cartClient from "../../shared/http-clients/cart-client";
 import global from "../../shared/consts/global";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 export default {
   setup(props, context) {
     let data = reactive({
       mostPopular: { most_popular_settings: null, products: [] },
     });
     let store = inject("store");
+    let toast = inject("toast");
     const router = useRouter();
+    const { t, locale } = useI18n({});
     onMounted(() => {
       getMostPopulars();
     });
-    function calculatePharmacyPrice(publicPrice, mostPopularDiscount) {
-      return publicPrice - (publicPrice * mostPopularDiscount) / 100;
-    }
     //Methods
     function getImagePath(image) {
       return `${global.DASHBOARD_DOMAIN}/upload/product/${image}`;
@@ -111,8 +111,7 @@ export default {
         store.showLoader = false;
         product.cart_info = null;
         product.cartClicked = false;
-        if (product.carts_length == 1) store.cartItemsCount--;
-        decrementProductCartsLength(product.id);
+        updateCartItemsCount();
       });
     }
     function onIncrementClicked(product) {
@@ -142,8 +141,11 @@ export default {
           store.showLoader = false;
           product.cartClicked = true;
           product.quantity = 1;
-          if (product.carts_length == 0) store.cartItemsCount++;
-          incrementProductCartsLength(product.id);
+          updateCartItemsCount();
+        })
+        .catch((error) => {
+          store.showLoader = false;
+          toast.error(t("ADDED_BEFORE_TO_CART"));
         });
     }
     function updateCartQuantity(product) {
@@ -173,20 +175,15 @@ export default {
       mostPopular.products = products;
       return mostPopular;
     }
-    function incrementProductCartsLength(productId) {
-      data.mostPopular.products.forEach((product) => {
-        if (product.id == productId) product.carts_length++;
-      });
-    }
-    function decrementProductCartsLength(productId) {
-      data.mostPopular.products.forEach((product) => {
-        if (product.id == productId) product.carts_length--;
+
+    function updateCartItemsCount() {
+      cartClient.getCartItemsCount().then((response) => {
+        store.cartItemsCount = response.data;
       });
     }
     return {
       ...toRefs(data),
       getImagePath,
-      calculatePharmacyPrice,
       addToCart,
       onIncrementClicked,
       onDecrementClicked,

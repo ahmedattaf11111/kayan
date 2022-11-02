@@ -19,7 +19,9 @@ class CartController extends Controller
 
     public function addToCart(CartRequest $request)
     {
-        $this->cartService->addToCart($request->user()->id, $request->validated());
+        if ($this->cartService->addToCart($request->user()->id, $request->validated())) {
+            return response()->json(["error" => "Item added to cart before"], 400);
+        };
     }
 
     public function removeCartItems()

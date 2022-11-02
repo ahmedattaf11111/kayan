@@ -132,30 +132,19 @@ import productClient from "../../shared/http-clients/product-client";
 import cartClient from "../../shared/http-clients/cart-client";
 import global from "../../shared/consts/global";
 import { useRouter } from "vue-router";
-import homeStore from "./store";
+import { useI18n } from "vue-i18n";
 export default {
   setup(props, context) {
     let data = reactive({
       deal: { deal_settings: null, products: [] },
     });
+    const { t, locale } = useI18n({});
+    let toast = inject("toast");
     let store = inject("store");
     const router = useRouter();
     onMounted(() => {
       getDeal();
     });
-    function calculatePharmacyPrice(publicPrice, dealDiscount) {
-      return publicPrice - (publicPrice * dealDiscount) / 100;
-    }
-    watch(
-      () => {
-        homeStore.product;
-      },
-      (value) => {
-        let product = getProductByProductId(product.id);
-        getProductByProductAndSupplierId(product.id, product.price.id);
-      },
-      { deep: true }
-    );
     //Methods
     function getImagePath(image) {
       return `${global.DASHBOARD_DOMAIN}/upload/product/${image}`;
@@ -171,10 +160,10 @@ export default {
         store.showLoader = false;
         product.cart_info = null;
         product.cartClicked = false;
-        if (product.carts_length == 1) store.cartItemsCount--;
-        product.carts_length--;
+        updateCartItemsCount();
       });
     }
+
     function onIncrementClicked(product) {
       product.quantity++;
       updateCartQuantity(product);
@@ -187,6 +176,7 @@ export default {
       }
       updateCartQuantity(product);
     }
+
     function addToCart(product) {
       if (!store.currentUser) {
         router.push("/login");
@@ -202,10 +192,14 @@ export default {
           store.showLoader = false;
           product.cartClicked = true;
           product.quantity = 1;
-          if (product.carts_length == 0) store.cartItemsCount++;
-          product.carts_length++;
+          updateCartItemsCount();
+        })
+        .catch((error) => {
+          store.showLoader = false;
+          toast.error(t("ADDED_BEFORE_TO_CART"));
         });
     }
+
     function updateCartQuantity(product) {
       store.showLoader = true;
       cartClient
@@ -218,6 +212,11 @@ export default {
         });
     }
     //Commons
+    function updateCartItemsCount() {
+      cartClient.getCartItemsCount().then((response) => {
+        store.cartItemsCount = response.data;
+      });
+    }
     function getDeal() {
       productClient
         .getDeal()
@@ -244,28 +243,9 @@ export default {
     function getEndAt() {
       return new Date(data.deal.deal_settings.end_at);
     }
-    function getProductByProductAndSupplierId(productId, supplierId) {
-      let _product = null;
-      data.deal.products.forEach((product) => {
-        if (product.id == productId && product.price.supplier_id == supplierId) {
-          return (_product = product);
-        }
-      });
-      return _product;
-    }
-    function getProductByProductId(productId) {
-      let _product = null;
-      data.deal.products.forEach((product) => {
-        if (product.id == productId) {
-          return (_product = product);
-        }
-      });
-      return _product;
-    }
     return {
       ...toRefs(data),
       getImagePath,
-      calculatePharmacyPrice,
       endAtGreaterThanCurrentDate,
       addToCart,
       onIncrementClicked,

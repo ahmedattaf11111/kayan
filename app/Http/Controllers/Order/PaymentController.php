@@ -22,7 +22,7 @@ class PaymentController extends Controller
     }
     public function cashPayment(OrderFormRequest $request)
     {
-        $this->paymentService->cashPayment(request()->user()->id, $request->validated());
+        $this->paymentService->cashPayment($request->user()->id, $request->validated());
     }
     public function onlinePayment(OrderFormRequest $request)
     {

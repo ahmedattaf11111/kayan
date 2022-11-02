@@ -155,6 +155,7 @@
           <router-link to="/home">{{ $t("REQUEST_NEW_ORDER") }}</router-link>
         </div>
       </template>
+
     </div>
   </div>
 </template>
@@ -361,7 +362,6 @@ export default {
     padding: 20px 15px;
     margin-bottom: 18px;
     border-radius: 5px;
-    box-shadow: 0 0 8px #b6b6b633;
   }
   .meta-info {
     .total-discount {
