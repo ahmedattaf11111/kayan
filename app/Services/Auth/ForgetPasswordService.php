@@ -17,7 +17,7 @@ class ForgetPasswordService
     {
         $this->forgetPasswordRepository = $forgetPasswordRepository;
     }
-    public function forgetPassword(string $email)
+    public function forgetPassword($email)
     {
         $user = User::where("email", $email)->first();
         if ($user) {
@@ -28,7 +28,7 @@ class ForgetPasswordService
         return $user;
     }
 
-    public function forgetPasswordOtp(string $email)
+    public function forgetPasswordOtp($email)
     {
         $user = User::where("email", $email)->first();
         if ($user) {
@@ -48,7 +48,7 @@ class ForgetPasswordService
         return $passwordReset;
     }
 
-    public function resetPassword(array $resetPasswordInput)
+    public function resetPassword($resetPasswordInput)
     {
         $passwordReset = $this->forgetPasswordRepository->getPasswordReset(
             $resetPasswordInput["token"],

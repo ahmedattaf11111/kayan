@@ -155,7 +155,6 @@
           <router-link to="/home">{{ $t("REQUEST_NEW_ORDER") }}</router-link>
         </div>
       </template>
-
     </div>
   </div>
 </template>

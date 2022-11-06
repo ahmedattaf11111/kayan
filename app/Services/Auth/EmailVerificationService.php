@@ -15,12 +15,12 @@ class EmailVerificationService
     {
         $this->emailVerificationRepository = $emailVerificationRepository;
     }
-    public function verifyEmail(string $email, string $verificationCode): string
+    public function verifyEmail($email,  $verificationCode)
     {
         return $this->emailVerificationRepository
             ->verifyUser($email, $verificationCode, self::EXPIRATION_DURATION);
     }
-    public function resendVerificationCode(string $email)
+    public function resendVerificationCode($email)
     {
         $verificationCode = Str::random(5);
         $this->emailVerificationRepository->updateEmailVerification($email, $verificationCode);

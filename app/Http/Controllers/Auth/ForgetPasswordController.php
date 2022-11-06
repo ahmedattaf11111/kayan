@@ -16,7 +16,7 @@ class ForgetPasswordController extends Controller
     {
         $this->forgetPasswordService = $forgetPasswordService;
     }
-    public function forgetPassword(string $email)
+    public function forgetPassword($email)
     {
         $user = $this->forgetPasswordService->forgetPassword($email);
         if (!$user) {

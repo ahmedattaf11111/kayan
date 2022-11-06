@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 class AuthRepository
 {
     use EmailVerificationUtil;
-    public function createClient(array $userInput, array $clientInput): void
+    public function createClient($userInput,  $clientInput)
     {
         $user = User::create($userInput);
         $clientInput["user_id"] = $user->id;

@@ -5,7 +5,6 @@ namespace App\Services\Auth;
 use App\Constants\PlatformType;
 use App\Mail\TokenVerification;
 use App\Repositories\Auth\AuthRepository;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -16,7 +15,7 @@ class AuthService
     {
         $this->authRepository = $authRepository;
     }
-    public function register(array $registerInput): void
+    public function register($registerInput)
     {
         $this->authRepository->createClient(
             $this->getUserInput($registerInput),
@@ -29,7 +28,7 @@ class AuthService
         ]);
         Mail::to($registerInput["email"])->send(new TokenVerification($verificationCode));
     }
-    public function getCitiesWithAreas(): Collection
+    public function getCitiesWithAreas()
     {
         return $this->authRepository->getCitiesWithAreas();
     }
@@ -38,7 +37,7 @@ class AuthService
         return $this->authRepository->getUser($userId);
     }
     //Commons
-    private function getUserInput(array $registerInput): array
+    private function getUserInput($registerInput)
     {
         return [
             "name" => $registerInput["name"],
@@ -47,7 +46,7 @@ class AuthService
             "phone" => $registerInput["phone"]
         ];
     }
-    private function getClientInput(array $registerInput): array
+    private function getClientInput($registerInput)
     {
         return [
             "store_name" => $registerInput["store_name"],

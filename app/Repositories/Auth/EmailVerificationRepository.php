@@ -10,7 +10,7 @@ use App\Utils\Repositories\EmailVerificationUtil;
 class EmailVerificationRepository
 {
     use EmailVerificationUtil;
-    public function updateEmailVerification(string $email, string $verificationCode)
+    public function updateEmailVerification($email,  $verificationCode)
     {
         EmailVerification::where("email", $email)->update([
             "verification_code" => $verificationCode,

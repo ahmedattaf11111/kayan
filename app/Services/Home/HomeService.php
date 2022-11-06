@@ -12,7 +12,7 @@ class HomeService
         $this->homeRepository = $homeRepository;
     }
 
-    public function storeNewsletter(array $newsLetterInput)
+    public function storeNewsletter($newsLetterInput)
     {
         $this->homeRepository->storeNewsletter($newsLetterInput);
     }

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\TermAndCondition;
-use App\Models\User;
 use App\Services\Auth\AuthService;
 use App\Utils\Controllers\AuthUtil;
 
@@ -42,7 +41,7 @@ class AuthController extends Controller
         auth()->logout();
     }
 
-    public function getCurrentUser(): User
+    public function getCurrentUser()
     {
         return $this->authService->getUser(request()->user()->id);
     }
