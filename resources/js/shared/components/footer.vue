@@ -20,8 +20,8 @@
           <div class="col-12 col-sm-4 p-0">
             <p class="text-center">
               <a class="ps-footer__link" href="#"
-                >Free delivery for order over $200 <i class="icon-truck"></i></a
-              >
+                >Free delivery for order over $200 <i class="icon-truck"></i
+              ></a>
             </p>
           </div>
         </div>

@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\SubCategory;
 use App\Repositories\ProductRepository;
 
 class ProductService
@@ -76,6 +79,11 @@ class ProductService
     public function getProductDetails($productId)
     {
         return $this->productRepository->getProductDetails($productId);
+    }
+
+    public function getSubCategories()
+    {
+        return $this->productRepository->getSubCategories();
     }
 
     public function getBoughtProducts($userId)

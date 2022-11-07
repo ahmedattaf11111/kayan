@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Deal;
 use App\Models\MostPopular;
 use App\Models\Product;
+use App\Models\SubCategory;
 
 class ProductRepository
 {
@@ -112,5 +113,10 @@ class ProductRepository
         $query->whereHas("order", function ($query) use ($userId) {
             $query->where("user_id", $userId)->where("order_status", OrderStatus::CART);
         })->where("product_id", $productId);
+    }
+
+    public function getSubCategories()
+    {
+        return SubCategory::with("products")->get();
     }
 }

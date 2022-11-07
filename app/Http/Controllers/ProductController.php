@@ -64,5 +64,9 @@ class ProductController extends Controller
     {
         return $this->productService->getMainWithSubCategories();
     }
-    
+    //For mobile applications
+    public function getSubCategories()
+    {
+        return $this->productService->getSubCategories();
+    }
 }

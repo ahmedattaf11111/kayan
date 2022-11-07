@@ -26,6 +26,9 @@ Route::prefix("products")->group(function () {
     Route::get("best-sellers", "ProductController@getBestSellers");
     Route::get("most-populars", "ProductController@getMostPopulars");
     Route::get("bought", "ProductController@getBoughtProducts");
+    //For Mobile
+    Route::get("sub-categories", "ProductController@getSubCategories");
+    //For Mobile
     Route::get("{productId}", "ProductController@getProductDetails");
 });
 Route::get("test", function () {

@@ -82,7 +82,6 @@ class PaymentController extends Controller
             'KeyType' => 'PaymentId',
         ];
     }
-    //Commons
     private function getSuccessPaymentInfo($data)
     {
         return [
