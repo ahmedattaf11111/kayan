@@ -2,9 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\SubCategory;
 use App\Repositories\ProductRepository;
 
 class ProductService

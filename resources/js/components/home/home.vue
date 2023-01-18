@@ -4,10 +4,10 @@
       <Category :categories="categories" />
       <Slider />
       <div class="ps-home__content">
+        <SimpleAdvertises />
         <Deal />
         <BestSeller />
         <MostPopular />
-        <SimpleAdvertises />
         <Newsletter />
       </div>
     </div>
@@ -54,4 +54,8 @@ export default {
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+.ps-home {
+  border-top: none !important;
+}
+</style>

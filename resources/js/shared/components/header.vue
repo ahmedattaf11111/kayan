@@ -4,24 +4,8 @@
     <div class="ps-menu__content">
       <Filter />
     </div>
-    <div class="ps-menu__footer">
-      <div class="ps-menu__item">
-        <div class="ps-menu__contact">
-          Need help? <strong>0020 500 - MYMEDI - 000</strong>
-        </div>
-      </div>
-    </div>
   </div>
   <header class="ps-header ps-header--3 ps-header--4">
-    <div class="ps-noti">
-      <div class="container">
-        <p class="m-0">
-          Due to the <strong>COVID 19 </strong>epidemic, orders may be processed with a
-          slight delay
-        </p>
-      </div>
-      <a class="ps-noti__close"><i class="icon-cross"></i></a>
-    </div>
     <div class="ps-header__middle">
       <div class="container">
         <div class="ps-logo">
@@ -122,9 +106,8 @@
         <div class="ps-header__right">
           <ul class="ps-header__icons">
             <li>
-              <a class="ps-header__item" href="#"
-                ><i class="icon-cart-empty"></i><span class="badge">2</span></a
-              >
+              <router-link class="ps-header__item" to="/cart"
+                ><i class="icon-cart-empty"></i><span class="badge">2</span></router-link>
             </li>
           </ul>
         </div>
@@ -240,7 +223,10 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.ps-header {
+  border-bottom: 2px solid #d9dee8;
+}
 .scroll-top {
   z-index: 9997 !important;
 }

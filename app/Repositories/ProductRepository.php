@@ -73,7 +73,7 @@ class ProductRepository
     }
     public function getActualAlsoBoughtProducts($userId)
     {
-        return Product::mostPopular()->withCarts($userId)->get()->each->append("price");
+        return $this->getActualMostPopularProducts($userId);
     }
     public function getManualAlsoBoughtProducts($userId)
     {

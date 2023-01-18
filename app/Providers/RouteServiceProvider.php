@@ -33,6 +33,7 @@ class RouteServiceProvider extends ServiceProvider
         "home" => self::DEF_NAMESPACE,
         "product" => self::DEF_NAMESPACE,
         "filter" => self::DEF_NAMESPACE,
+        "footer" => self::DEF_NAMESPACE,
         "order" => self::DEF_NAMESPACE . "\\Order",
     ];
     /**

@@ -15,7 +15,7 @@ class Product extends Model
     public function getPriceAttribute()
     {
         //Supplier id come from join operations of products only
-        return $this->supplier_id ? $this->price()->where("supplier_id", $this->supplier_id)->first()
+        return $this->supplier_id ? $this->prices()->where("supplier_id", $this->supplier_id)->first()
             : $this->prices()->whereRelation("supplier", "is_our_supplier", 1)->first();
     }
 }

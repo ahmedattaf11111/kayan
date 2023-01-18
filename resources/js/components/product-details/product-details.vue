@@ -111,7 +111,7 @@ import productClient from "../../shared/http-clients/product-client";
 import cartClient from "../../shared/http-clients/cart-client";
 import global from "../../shared/consts/global";
 import AlsoBoughtProducts from "./also-bought-products";
-import { useI18n } from 'vue-i18n';
+import { useI18n } from "vue-i18n";
 export default {
   components: {
     AlsoBoughtProducts,
@@ -145,10 +145,6 @@ export default {
     }
     function onDecrementClicked(price) {
       price.quantity--;
-      if (price.quantity == 0) {
-        removeCartItem(price);
-        return;
-      }
       updateCartQuantity(price);
     }
 
@@ -175,6 +171,10 @@ export default {
         });
     }
     function updateCartQuantity(price) {
+      if (!price.quantity || price.quantity == 0) {
+        removeCartItem(price);
+        return;
+      }
       store.showLoader = true;
       cartClient
         .updateCartQuantity({

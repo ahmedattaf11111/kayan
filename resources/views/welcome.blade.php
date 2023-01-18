@@ -29,14 +29,15 @@
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" type="text/css" href="https://www.fontstatic.com/f=hanimation" />
     <style>
-        *,
+        *:not(.fa,i),
         h1,
         h2,
         h3,
         h4,
         h5,
-        h6 {
-            font-family: 'hanimation';
+        h6
+         {
+            font-family: 'hanimation' !important;
         }
 
         /* width */

@@ -1,27 +1,36 @@
 <template>
-  <footer class="ps-footer ps-footer--2 ps-footer--4">
+  <footer v-if="topFooterSections||needHelp||ourStore" class="ps-footer ps-footer--2 ps-footer--4">
     <div class="ps-footer--top">
       <div class="container">
         <div class="row m-0">
           <div class="col-12 col-sm-4 p-0">
-            <p class="text-center">
-              <a class="ps-footer__link" href="#"
-                >Money back 100% <i class="icon-wallet"></i
-              ></a>
+            <p
+              v-if="topFooterSections && topFooterSections.first_section"
+              class="text-center"
+            >
+              <a class="ps-footer__link" @click.prevent="" href="">
+                <i class="icon-wallet"></i> {{ topFooterSections.first_section }}
+              </a>
             </p>
           </div>
           <div class="col-12 col-sm-4 p-0">
-            <p class="text-center">
-              <a class="ps-footer__link" href="#"
-                >Non-contact shipping <i class="icon-bag2"></i
-              ></a>
+            <p
+              v-if="topFooterSections && topFooterSections.second_section"
+              class="text-center"
+            >
+              <a class="ps-footer__link" @click.prevent="" href="">
+                <i class="icon-wallet"></i> {{ topFooterSections.second_section }}
+              </a>
             </p>
           </div>
           <div class="col-12 col-sm-4 p-0">
-            <p class="text-center">
-              <a class="ps-footer__link" href="#"
-                >Free delivery for order over $200 <i class="icon-truck"></i
-              ></a>
+            <p
+              v-if="topFooterSections && topFooterSections.third_section"
+              class="text-center"
+            >
+              <a class="ps-footer__link" @click.prevent="" href="">
+                <i class="icon-wallet"></i> {{ topFooterSections.third_section }}
+              </a>
             </p>
           </div>
         </div>
@@ -32,39 +41,49 @@
         <div class="row m-0">
           <div class="col-12 col-md-6 p-0">
             <div class="row m-0">
-              <div class="col-6 col-md-4 p-0">
+              <div class="col-6 p-0">
                 <div class="ps-footer--block">
-                  <h5 class="ps-block__title">Information</h5>
+                  <h5 class="ps-block__title">{{ $t("AUTHENTICATION") }}</h5>
                   <ul class="ps-block__list">
-                    <li><a href="about-us.html">About us</a></li>
-                    <li><a href="#">Delivery information</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Sales</a></li>
-                    <li><a href="#">Terms &amp; Conditions</a></li>
+                    <li>
+                      <router-link to="/home">{{ $t("HOME") }}</router-link>
+                    </li>
+                    <li>
+                      <router-link to="/login">{{ $t("LOGIN") }}</router-link>
+                    </li>
+                    <li>
+                      <router-link to="/register">{{ $t("REGISTER") }}</router-link>
+                    </li>
+                    <li>
+                      <router-link to="/forget-password">{{
+                        $t("RESET_PASSWORD")
+                      }}</router-link>
+                    </li>
                   </ul>
                 </div>
               </div>
-              <div class="col-6 col-md-4 p-0">
+              <div class="col-6 p-0">
                 <div class="ps-footer--block">
-                  <h5 class="ps-block__title">Account</h5>
+                  <h5 class="ps-block__title">{{ $t("ACCOUNT_INFORMATION") }}</h5>
                   <ul class="ps-block__list">
-                    <li><a href="#">My account</a></li>
-                    <li><a href="#">My orders</a></li>
-                    <li><a href="#">Returns</a></li>
-                    <li><a href="#">Shipping</a></li>
-                    <li><a href="wishlist.html">Wishlist</a></li>
-                  </ul>
-                </div>
-              </div>
-              <div class="col-6 col-md-4 p-0">
-                <div class="ps-footer--block">
-                  <h5 class="ps-block__title">Store</h5>
-                  <ul class="ps-block__list">
-                    <li><a href="#">Affiliate</a></li>
-                    <li><a href="#">Bestsellers</a></li>
-                    <li><a href="#">Discount</a></li>
-                    <li><a href="#">Latest products</a></li>
-                    <li><a href="#">Sale</a></li>
+                    <li>
+                      <router-link to="/best-client-discount-products">{{
+                        $t("BEST_CLIENT_DISCOUNT_PRODUCTS")
+                      }}</router-link>
+                    </li>
+                    <li>
+                      <router-link to="/profile-basic">{{
+                        $t("PROFILE_SETTINGS")
+                      }}</router-link>
+                    </li>
+                    <li>
+                      <router-link to="/profile-orders">{{
+                        $t("ORDERS")
+                      }}</router-link>
+                    </li>
+                    <li>
+                      <router-link to="/cart">{{ $t("CART") }}</router-link>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -72,32 +91,31 @@
           </div>
           <div class="col-12 col-md-6 p-0">
             <div class="row">
-              <div class="col-12 col-md-7">
+              <div v-if="needHelp" class="col-12 col-md-7">
                 <div class="ps-footer--contact">
-                  <h5 class="ps-footer__title">Need help</h5>
+                  <h5 class="ps-footer__title">{{ $t("NEED_HELP") }}</h5>
                   <div class="ps-footer__fax">
-                    <i class="icon-telephone"></i>0020 500 – MYMEDI – 000
+                    <i class="icon-telephone"></i> {{ needHelp.header }}
                   </div>
                   <p class="ps-footer__work">
-                    Monday – Friday: 9:00-20:00<br />Saturday: 11:00 – 15:00
+                    {{ needHelp.start_work_deadline }}<br />{{
+                      needHelp.end_work_deadline
+                    }}
                   </p>
                   <hr />
                   <p>
-                    <a
-                      class="ps-footer__email"
-                      href="http://nouthemes.net/cdn-cgi/l/email-protection#52313d3c2633312612372a333f223e377c313d3f"
-                    >
+                    <a class="ps-footer__email" @click.prevent="" href="">
                       <i class="icon-envelope"></i
                       ><span
                         class="__cf_email__"
                         data-cfemail="6e0d01001a0f0d1a2e0b160f031e020b400d0103"
-                        >[email&#160;protected]</span
+                        >[{{ needHelp.email }}]</span
                       >
                     </a>
                   </p>
                 </div>
               </div>
-              <div class="col-12 col-md-5">
+              <div v-if="ourStore" class="col-12 col-md-5">
                 <div class="ps-footer--address">
                   <div class="ps-logo">
                     <a href="index.html">
@@ -116,44 +134,59 @@
                         alt
                     /></a>
                   </div>
-                  <div class="ps-footer__title">Our store</div>
-                  <p>1487 Rocky Horse Carrefour<br />Arlington, TX 16819</p>
+                  <div class="ps-footer__title">{{ $t("OUR_STORE") }}</div>
+                  <p>{{ ourStore.first_line }}<br />{{ ourStore.second_line }}</p>
                   <p>
                     <a
                       target="_blank"
                       href="https://www.google.com/maps/place/Arlington,+TX,+USA/@32.701968,-97.2054529,12z/data=!3m1!4b1!4m8!1m2!2m1!1s1487+Rocky+Horse+Carrefour+Arlington,+TX+16819!3m4!1s0x864e62d2e40898d3:0xb5ef6ac1fa05351!8m2!3d32.735687!4d-97.1080656"
-                      >Show on map</a
+                      >{{ $t("SHOW_MAP") }}</a
                     >
                   </p>
                   <ul class="ps-social">
-                    <li>
-                      <a class="ps-social__link facebook" href="#"
+                    <li v-if="ourStore.facebook">
+                      <a
+                        target="_blank"
+                        class="ps-social__link facebook"
+                        :href="ourStore.facebook"
                         ><i class="fa fa-facebook"> </i
-                        ><span class="ps-tooltip">Facebook</span></a
+                        ><span class="ps-tooltip">{{ $t("FACEBOOK") }}</span></a
                       >
                     </li>
-                    <li>
-                      <a class="ps-social__link instagram" href="#"
+                    <li v-if="ourStore.instgram">
+                      <a
+                        target="_blank"
+                        class="ps-social__link instagram"
+                        :href="ourStore.instgram"
                         ><i class="fa fa-instagram"></i
-                        ><span class="ps-tooltip">Instagram</span></a
+                        ><span class="ps-tooltip">{{ $t("INSTGRAM") }}</span></a
                       >
                     </li>
-                    <li>
-                      <a class="ps-social__link youtube" href="#"
+                    <li v-if="ourStore.youtube">
+                      <a
+                        target="_blank"
+                        class="ps-social__link youtube"
+                        :href="ourStore.youtube"
                         ><i class="fa fa-youtube-play"></i
-                        ><span class="ps-tooltip">Youtube</span></a
+                        ><span class="ps-tooltip">{{ $t("YOUTUBE") }}</span></a
                       >
                     </li>
-                    <li>
-                      <a class="ps-social__link pinterest" href="#"
-                        ><i class="fa fa-pinterest-p"></i
-                        ><span class="ps-tooltip">Pinterest</span></a
+                    <li v-if="ourStore.twitter">
+                      <a
+                        target="_blank"
+                        class="ps-social__link linkedin"
+                        :href="ourStore.twitter"
+                        ><i class="fa fa-twitter"></i
+                        ><span class="ps-tooltip">{{ $t("TWITTER") }}</span></a
                       >
                     </li>
-                    <li>
-                      <a class="ps-social__link linkedin" href="#"
+                    <li v-if="ourStore.linked_in">
+                      <a
+                        target="_blank"
+                        class="ps-social__link linkedin"
+                        :href="ourStore.linked_in"
                         ><i class="fa fa-linkedin"></i
-                        ><span class="ps-tooltip">Linkedin</span></a
+                        ><span class="ps-tooltip">{{ $t("LINKED_IN") }}</span></a
                       >
                     </li>
                   </ul>
@@ -166,7 +199,14 @@
       <div class="ps-footer--bottom">
         <div class="row">
           <div class="col-12 col-md-6">
-            <p>Copyright © 2021 Mymedi. All Rights Reserved</p>
+            <p>{{ $t("ALL_RIGHTS_RESERVED") }}</p>
+          </div>
+          <div class="col-12 col-md-6 text-right">
+            <img src="/assets/img/payment.png" alt /><img
+              class="payment-light"
+              src="/assets/img/payment-light.png"
+              alt
+            />
           </div>
         </div>
       </div>
@@ -175,7 +215,34 @@
 </template>
 
 <script>
-export default {};
+import { onMounted, reactive, toRefs } from "vue-demi";
+import footerClient from "../../shared/http-clients/footer-client";
+export default {
+  setup() {
+    const data = reactive({
+      topFooterSections: null,
+      needHelp: null,
+      ourStore: null,
+    });
+    onMounted(() => {
+      footerClient.getTopFooterSections().then((response) => {
+        data.topFooterSections = response.data;
+      });
+      footerClient.getNeedHelp().then((response) => {
+        data.needHelp = response.data;
+      });
+      footerClient.getOurStore().then((response) => {
+        data.ourStore = response.data;
+      });
+    });
+    return { ...toRefs(data) };
+  },
+};
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+.ps-footer__link:hover,
+.ps-footer__email:hover {
+  cursor: text;
+}
+</style>

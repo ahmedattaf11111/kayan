@@ -74,7 +74,14 @@
                                   <span>+</span>
                                 </button>
                                 <input
-                                  @blur="updateCartQuantity(product, cart)"
+                                  @blur="
+                                    updateCartQuantity(
+                                      product,
+                                      productIndex,
+                                      cart,
+                                      cartIndex
+                                    )
+                                  "
                                   v-model="cart.quantity"
                                   class="form-control text-center"
                                 />
@@ -214,13 +221,13 @@ export default {
     }
     function onDecrementClicked(product, productIndex, cart, cartIndex) {
       cart.quantity--;
-      if (cart.quantity == 0) {
+      updateCartQuantity(product, productIndex, cart, cartIndex);
+    }
+    function updateCartQuantity(product, productIndex, cart, cartIndex) {
+      if (!cart.quantity || cart.quantity == 0) {
         removeCartItem(product, productIndex, cart, cartIndex);
         return;
       }
-      updateCartQuantity(product, cart);
-    }
-    function updateCartQuantity(product, cart) {
       store.showLoader = true;
       cartClient
         .updateCartQuantity({

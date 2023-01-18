@@ -120,10 +120,6 @@ export default {
     }
     function onDecrementClicked(product) {
       product.quantity--;
-      if (product.quantity == 0) {
-        removeCartItem(product);
-        return;
-      }
       updateCartQuantity(product);
     }
     function addToCart(product) {
@@ -149,6 +145,10 @@ export default {
         });
     }
     function updateCartQuantity(product) {
+      if (!product.quantity || product.quantity == 0) {
+        removeCartItem(product);
+        return;
+      }
       store.showLoader = true;
       cartClient
         .updateCartQuantity({

@@ -4,7 +4,7 @@
       <div class="ps-promo">
         <div class="row">
           <div
-            v-for="advertise in simpleAdvertises"
+            v-for="(advertise,index) in simpleAdvertises"
             :key="advertise.id"
             class="col-12 col-md-4"
           >
@@ -15,7 +15,7 @@
                 alt="alt"
               />
               <div class="ps-promo__content">
-                <h4 class="text-white ps-promo__name">
+                <h4 class="text-white ps-promo__name" :style="index!=1?'color:#103178 !important':''">
                   {{ advertise.title }}
                 </h4>
                 <a

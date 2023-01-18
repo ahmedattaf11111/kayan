@@ -82,7 +82,7 @@ trait ProductScope
 
     public function scopeBestSeller($query)
     {
-        $orderIds = Order::where("order_status", OrderStatus::COMPLETED)->pluck("id");
+        $orderIds = Order::where("order_status", "<>", OrderStatus::CART)->pluck("id");
         return $query->join("cart_items", "products.id", "cart_items.product_id")
             ->whereIn("cart_items.order_id", $orderIds)
             ->selectRaw("products.*,supplier_id,sum(cart_items.quantity) as sum")
@@ -92,7 +92,7 @@ trait ProductScope
 
     public function scopeMostPopular($query)
     {
-        $orderIds = Order::where("order_status", OrderStatus::COMPLETED)->pluck("id");
+        $orderIds = Order::where("order_status","<>", OrderStatus::CART)->pluck("id");
         return $query->join("cart_items", "products.id", "cart_items.product_id")
             ->whereIn("cart_items.order_id", $orderIds)
             ->selectRaw("products.*,supplier_id,count(*) as count")

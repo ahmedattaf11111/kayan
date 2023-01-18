@@ -103,7 +103,7 @@ import productClient from "../../shared/http-clients/product-client";
 import cartClient from "../../shared/http-clients/cart-client";
 import global from "../../shared/consts/global";
 import { useRoute, useRouter } from "vue-router";
-import { useI18n } from 'vue-i18n';
+import { useI18n } from "vue-i18n";
 export default {
   setup(props, context) {
     let data = reactive({
@@ -165,6 +165,10 @@ export default {
         });
     }
     function updateCartQuantity(product) {
+      if (!product.quantity || product.quantity == 0) {
+        removeCartItem(product);
+        return;
+      }
       store.showLoader = true;
       cartClient
         .updateCartQuantity({
