@@ -6,4 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class PharmacistForm extends Model
 {
+    protected $guarded=[];
 }

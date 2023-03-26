@@ -54,7 +54,6 @@ class AuthService
             "area_id" => $registerInput["area_id"],
             "address" => $registerInput["address"],
             "type" => $registerInput["type"],
-            "platform_type" => PlatformType::WEB
         ];
     }
 }

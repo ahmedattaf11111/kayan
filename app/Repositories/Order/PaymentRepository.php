@@ -32,12 +32,17 @@ class PaymentRepository
         $cartProducts = $this->getCartItems($userId);
         foreach ($cartProducts as $product) {
             foreach ($product->carts as $cart) {
-                $totalPrice += $cart->price->pharmacyPrice * $cart->quantity;
+                $totalPrice += $this->getClientPrice($product->public_price, $this->getPrice($cart)->client_discount)
+                    * $cart->quantity;
             }
         }
         return $totalPrice;
     }
     //Commons
+    private function getPrice($cart)
+    {
+        return $cart->dealPrice ?  $cart->dealPrice : $cart->price;
+    }
     public function makeOrdercashedPayment(&$order)
     {
         $order->order_status = OrderStatus::PENDING;
@@ -45,5 +50,11 @@ class PaymentRepository
         $order->payment_method = PaymentMethod::CASH;
         $order->created_at = Carbon::now();
         $order->save();
+    }
+    public function getClientPrice($publicPrice, $clientDiscount)
+    {
+        $discountVal = $publicPrice *
+            ($clientDiscount / 100);
+        return $publicPrice - $discountVal;
     }
 }

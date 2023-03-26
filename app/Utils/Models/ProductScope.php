@@ -11,46 +11,35 @@ trait ProductScope
     public function scopeSearchByName($query, $name)
     {
         return $query->when($name, function ($query) use ($name) {
-            $query->where("nameAr", "like", "%$name%")->orWhere("nameEn", "like", "%$name%");
+            $query->where("name", "like", "%$name%")->orWhere("name_e", "like", "%$name%");
         });
     }
 
     public function scopeSearchByEffectiveMaterial($query, $effectiveMaterial)
     {
         return $query->when($effectiveMaterial, function ($query) use ($effectiveMaterial) {
-            $query->where("effectiveMaterial", $effectiveMaterial);
+            $query->where("effective_material", $effectiveMaterial);
         });
     }
 
     public function scopeSearchByPharmacistFormId($query, $pharmacologicalFormId)
     {
         return $query->when($pharmacologicalFormId, function ($query) use ($pharmacologicalFormId) {
-            $query->where("pharmacistForm_id", $pharmacologicalFormId);
+            $query->whereIn("pharmacist_form_id", $pharmacologicalFormId);
         });
     }
 
-    public function scopeSearchBySupplierId($query, $supplierId)
+    public function scopeSearchByCompanyId($query, $companyId)
     {
-        return $query->when($supplierId, function ($query) use ($supplierId) {
-            $query->whereRelation("prices", "supplier_id", $supplierId);
+        return $query->when($companyId, function ($query) use ($companyId) {
+            $query->whereIn("company_id", $companyId);
         });
     }
 
-    public function scopeSearchByDiscount($query, $discount)
+    public function scopeSearchByCategory($query, $categoryId)
     {
-        return $query->when($discount, function ($query) use ($discount) {
-            $query->whereRelation("prices", "clientDiscount", $discount);
-        });
-    }
-
-    public function scopeSearchByCategory($query, $categoryId, $categoryLevel)
-    {
-        return $query->when($categoryId, function ($query) use ($categoryId, $categoryLevel) {
-            $query->when($categoryLevel == 1, function ($query) use ($categoryId) {
-                $query->whereRelation("category", "id", $categoryId);
-            })->when($categoryLevel == 2, function ($query) use ($categoryId) {
-                $query->whereRelation("sub_category", "id", $categoryId);
-            });
+        return $query->when($categoryId, function ($query) use ($categoryId) {
+            $query->whereIn("category_id", $categoryId);
         });
     }
 
@@ -92,7 +81,7 @@ trait ProductScope
 
     public function scopeMostPopular($query)
     {
-        $orderIds = Order::where("order_status","<>", OrderStatus::CART)->pluck("id");
+        $orderIds = Order::where("order_status", "<>", OrderStatus::CART)->pluck("id");
         return $query->join("cart_items", "products.id", "cart_items.product_id")
             ->whereIn("cart_items.order_id", $orderIds)
             ->selectRaw("products.*,supplier_id,count(*) as count")

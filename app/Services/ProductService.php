@@ -13,33 +13,29 @@ class ProductService
     }
 
     public function getBiggestClientDiscountProducts(
-        $categoryId,
-        $categoryLevel,
+        $categoryIds,
         $name,
         $effectiveMaterial,
-        $pharmacologicalFormId,
-        $supplierId,
-        $discount,
+        $pharmacologicalFormIds,
+        $companyIds,
         $pageSize,
         $userId
     ) {
         $productsPage = $this->productRepository
             ->getBiggestClientDiscountProducts(
-                $categoryId,
-                $categoryLevel,
+                $categoryIds,
                 $name,
                 $effectiveMaterial,
-                $pharmacologicalFormId,
-                $supplierId,
-                $discount,
+                $pharmacologicalFormIds,
+                $companyIds,
                 $pageSize,
                 $userId
             );
         return $this->mapProducts($productsPage, "biggestClientDiscountPrice");
     }
-    public function getMainWithSubCategories()
+    public function getCategories()
     {
-        return $this->productRepository->getMainWithSubCategories();
+        return $this->productRepository->getCategories();
     }
     public function getDeals($userId)
     {
@@ -49,54 +45,13 @@ class ProductService
     }
     public function getBestSellers($userId)
     {
-        $bestSellerSettings = $this->productRepository->getBestSellerSettings();
-        $mergedProducts = [];
-        if ($bestSellerSettings) {
-            $manualBestSellerProducts = $this->productRepository->getManualBestSellerProducts($userId);
-            $actualBestSellerProducts = $this->productRepository->getActualBestSellerProducts($userId);
-            $mergedProducts = $actualBestSellerProducts->concat($manualBestSellerProducts)
-                ->take($bestSellerSettings->limit);
-            $mergedProducts = $this->mapProducts($mergedProducts, "price");
-        }
-        return ["best_seller_settings" => $bestSellerSettings, "products" => $mergedProducts];
-    }
-    public function getMostPopulars($userId)
-    {
-        $mostPopularSettings = $this->productRepository->getMostPopularSettings();
-        $mergedProducts = [];
-        if ($mostPopularSettings) {
-            $manualMostPopularProducts = $this->productRepository->getManualMostPopularProducts($userId);
-            $actualMostPopularProducts = $this->productRepository->getActualMostPopularProducts($userId);
-            $mergedProducts = $actualMostPopularProducts->concat($manualMostPopularProducts)
-                ->take($mostPopularSettings->limit);
-            $mergedProducts = $this->mapProducts($mergedProducts, "price");
-        }
-        return ["most_popular_settings" => $mostPopularSettings, "products" => $mergedProducts];
+        $bestSellerProducts = $this->productRepository->getBestSellerProducts($userId,10);
+        return $this->mapProducts($bestSellerProducts, "price");
     }
     public function getProductDetails($productId)
     {
         return $this->productRepository->getProductDetails($productId);
     }
-
-    public function getSubCategories()
-    {
-        return $this->productRepository->getSubCategories();
-    }
-
-    public function getBoughtProducts($userId)
-    {
-        $alsoBoughtSettings = $this->productRepository->getAlsoBoughtSettings();
-        $mergedProducts = [];
-        if ($alsoBoughtSettings) {
-            $manualAlsoBoughtProducts = $this->productRepository->getManualAlsoBoughtProducts($userId);
-            $actualAlsoBoughtProducts = $this->productRepository->getActualAlsoBoughtProducts($userId);
-            $mergedProducts = $actualAlsoBoughtProducts->concat($manualAlsoBoughtProducts)
-                ->take($alsoBoughtSettings->limit);
-            $mergedProducts = $this->mapProducts($mergedProducts, "price");
-        }
-        return ["also_bought_settings" => $alsoBoughtSettings, "products" => $mergedProducts];
-    }
-
     //Commons
     private function mapProducts(&$products, $priceType)
     {

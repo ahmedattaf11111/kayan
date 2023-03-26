@@ -165,6 +165,7 @@
       </div>
     </div>
   </div>
+  <Footer />
 </template>
 
 <script>
@@ -175,9 +176,11 @@ import useVuelidate from "@vuelidate/core";
 import authClient from "../../shared/http-clients/auth-client";
 import Sidebar from "./sidebar";
 import { useI18n } from "vue-i18n";
+import Footer from "../../shared/components/footer.vue";
 export default {
   components: {
     Sidebar,
+    Footer
   },
   setup() {
     const store = inject("store");

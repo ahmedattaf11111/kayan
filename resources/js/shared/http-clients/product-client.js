@@ -3,36 +3,35 @@ const BASE_URL = `products`;
 export default {
     getBiggestClientDiscountProducts(
         categoryId,
-        categoryLevel,
         name,
         effectiveMaterial,
         pharmacologicalFormId,
-        supplierId,
-        discount,
+        companyId,
         page,
         pageSize
     ) {
         return axios.get(`${BASE_URL}/biggest-client-discount?page=${page}&page_size=${pageSize}
-        &category_id=${categoryId ? categoryId : ""}
-        &category_level=${categoryLevel ? categoryLevel : ""}
         &name=${name ? name : ""}
-        &effective_material=${effectiveMaterial ? effectiveMaterial : ""}
-        &pharmacological_form_id=${pharmacologicalFormId ? pharmacologicalFormId : ""}
-        &supplier_id=${supplierId ? supplierId : ""}
-        &discount=${discount ? discount : ""}`
-        );
+        &effective_material=${effectiveMaterial ? effectiveMaterial : ""}`
+            , {
+                params: {
+                    category_ids: categoryId,
+                    company_ids: companyId,
+                    pharmacological_form_ids:pharmacologicalFormId
+                }
+            });
     },
     getDeal() {
         return axios.get(`${BASE_URL}/deals`);
     },
-    getBestSellers(){
+    getBestSellers() {
         return axios.get(`${BASE_URL}/best-sellers`);
     },
-    getMostPopulars(){
+    getMostPopulars() {
         return axios.get(`${BASE_URL}/most-populars`);
     },
-    getMainWithSubCategories() {
-        return axios.get(`${BASE_URL}/main-with-sub-categories`);
+    getCategories() {
+        return axios.get(`${BASE_URL}/categories`);
     },
     getProductDetails(productId) {
         return axios.get(`${BASE_URL}/${productId}`);

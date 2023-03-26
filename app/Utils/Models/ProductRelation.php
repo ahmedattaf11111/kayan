@@ -16,7 +16,7 @@ trait ProductRelation
 {
     public function biggestClientDiscountPrice()
     {
-        return $this->hasOne(Price::class)->ofMany("clientDiscount", "max");
+        return $this->hasOne(Price::class)->ofMany("client_discount", "max");
     }
 
     public function media()

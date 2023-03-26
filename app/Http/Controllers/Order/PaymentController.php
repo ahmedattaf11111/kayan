@@ -35,8 +35,8 @@ class PaymentController extends Controller
             $user,
             $order->id,
             "+2",
-            env("SUCCESS_CALLBACK_URL"),
-            env("ERROR_CALLBACK_URL")
+            env('SUCCESS_CALLBACK_URL'),
+            env('ERROR_CALLBACK_URL'),
         );
         if (
             $order

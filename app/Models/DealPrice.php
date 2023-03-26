@@ -7,5 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class DealPrice extends Model
 {
-   
+    protected $guarded = [];
+    
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
+    }
 }

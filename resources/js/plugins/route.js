@@ -17,6 +17,19 @@ import EmailVerifiedGuard from "../shared/guards/email-verified-guard";
 import PageNotFound from "../shared/components/page-not-found";
 import SuccessCallback from "../components/order/success-callback";
 import ErrorCallback from "../components/order/error-callback";
+import WebLayout from "../layouts/web-layout.vue";
+import DashboardLayout from "../layouts/dashboard-layout.vue";
+import CategoryTable from "../components/dashboard/category/category-table.vue";
+import CompanyTable from "../components/dashboard/company/company-table.vue";
+import PharmacistFormTable from "../components/dashboard/pharmacist-form/pharmacist-form-table.vue";
+import ProductTable from "../components/dashboard/product/product-table.vue";
+import SupplierTable from "../components/dashboard/supplier/supplier-table.vue";
+import PriceTable from "../components/dashboard/price/price-table.vue";
+import DealForm from "../components/dashboard/deal/deal-form.vue";
+import SliderTable from "../components/dashboard/slider/slider-table.vue";
+import AdminLogin from "../components/dashboard/login.vue";
+import AdminGuestGuard from "../shared/guards/guest-admin-guard";
+import AuthenticatedAdminGuard from "../shared/guards/authenticated-admin-guard";
 const routes = [
   {
     path: "",
@@ -26,6 +39,7 @@ const routes = [
   {
     path: "",
     beforeEnter: [GuestGuard],
+    component: WebLayout,
     children: [
       { path: "register", component: Register },
       { path: "login", component: Login },
@@ -36,6 +50,7 @@ const routes = [
   {
     path: "",
     beforeEnter: [EmailVerifiedGuard],
+    component: WebLayout,
     children: [
       { path: "/home", component: Home },
       { path: "/best-client-discount-products", component: ViewAllProduct },
@@ -55,7 +70,33 @@ const routes = [
       },
     ]
   },
-  { path: "/verify-email", component: EmailVerification, beforeEnter: [AuthenticatedGuard] },
+  {
+    path: "/verify-email", beforeEnter: [AuthenticatedGuard]
+    , component: WebLayout, children: [{ path: "", component: EmailVerification }]
+  },
+  //Admin
+  {
+    path: "/admin",
+    beforeEnter:[AuthenticatedAdminGuard],
+    component: DashboardLayout,
+    children: [
+      { path: "categories", component: CategoryTable },
+      { path: "companies", component: CompanyTable },
+      { path: "pharmacist-from", component: PharmacistFormTable },
+      { path: "products", component: ProductTable },
+      { path: "suppliers", component: SupplierTable },
+      { path: "prices", component: PriceTable },
+      { path: "deal", component: DealForm },
+      { path: "sliders", component: SliderTable },
+    ]
+  },
+  {
+    path: "/admin",
+    beforeEnter:[AdminGuestGuard],
+    children: [
+      { path: "login", component: AdminLogin },
+    ]
+  },
   {
     path: '/:pathMatch(.*)*',
     component: PageNotFound

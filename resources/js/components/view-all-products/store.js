@@ -3,11 +3,13 @@ import { reactive } from "vue";
 export default reactive({
     from: "",
     categoryId: null,
-    categoryLevel: null,
+    categoriesIds: [],
+    companiesIds: [],
+    pharmacologicalFormIds: null,
     name: null,
     effectiveMaterial: null,
+    effectiveMaterialText: "",
     pharmacologicalFormId: null,
-    supplierId: null,
-    discount: null,
+    companyId: null,
     pageSize: null
 })

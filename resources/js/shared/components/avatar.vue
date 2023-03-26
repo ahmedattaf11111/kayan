@@ -1,45 +1,40 @@
 <template>
   <div class="user">
     <a href="" class="menu-toggler border" @click.prevent="toggleMenu" type="button">
-      <img v-if="currentUser && currentUser.image" :src="currentUser.image" />
-      <img v-else src="../../../../public/assets/images/empty-image.png" />
+      <!-- <img v-if="currentUser && currentUser.image" :src="currentUser.image" /> -->
+      <img src="/images/empty-image.png" />
     </a>
     <div v-if="showMenu" class="menu text-center pt-3 border shadow">
-      <img
+      <!-- <img
         v-if="currentUser && currentUser.image"
         class="border"
         :src="currentUser.image"
-      />
-      <img class="border" v-else src="../../../../public/assets/images/empty-image.png" />
-      <div>
-        <router-link to="/profile">
-          <i class="fa fa-edit text-secondary"></i>
-        </router-link>
-      </div>
+      /> -->
+      <img class="border" src="/images/empty-image.png" />
       <div class="header">
-        <div class="mt-1">
+        <!-- <div class="mt-1">
           {{ currentUser ? currentUser.first_name + " " + currentUser.last_name : "" }}
-        </div>
-        <div class="email mb-1">
+        </div> -->
+        <!-- <div class="email mb-1">
           {{ currentUser ? currentUser.email : "" }}
-        </div>
+        </div> -->
       </div>
       <hr class="hr" />
       <div class="footer">
-        <router-link
+        <!-- <router-link
           class="text-secondary"
           to="/verify-email"
           v-if="currentUser && !currentUser.email_verified_at"
         >
           {{ $t("VERIFY_EMAIL") }}
-        </router-link>
+        </router-link> -->
         <a class="text-secondary" href="" @click.prevent="logout">{{ $t("LOGOUT") }}</a>
       </div>
     </div>
   </div>
 </template>
 <script>
-import authClient from "../../shared/http-clients/auth-client";
+import authClient from "../http-clients/admin/admin-auth-client";
 import global from "../../shared/consts/global";
 import TokenUtil from "../../shared/utils/token-util";
 import { inject, toRefs, ref } from "vue-demi";
@@ -62,7 +57,7 @@ export default {
         .logout()
         .then((response) => {
           TokenUtil.remove();
-          this.$router.push(global.GUEST_REDIRECT);
+          this.$router.push(global.ADMIN_GUEST_REDIRECT);
           this.currentUser = null;
         })
         .catch((error) => {});

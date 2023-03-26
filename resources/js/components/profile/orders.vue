@@ -64,12 +64,12 @@
               >
                 <div class="header">
                   <div class="first-side">
-                    <img :src="getImagePath(product.image)" />
+                    <img :src="product.image" />
                     <div class="name">
                       <div>
-                        <b>{{ product.nameEn }}</b>
+                        <b>{{ product.name_e }}</b>
                       </div>
-                      <div>{{ product.nameAr }}</div>
+                      <div>{{ product.name }}</div>
                     </div>
                   </div>
                 </div>
@@ -94,16 +94,16 @@
                           <td>{{ cart.supplier.name }}</td>
                           <td>
                             <span class="badge border">
-                              {{ getPrice(cart).clientDiscount }}%
+                              {{ getPrice(cart).client_discount }}%
                             </span>
                           </td>
-                          <td>{{ `${getPrice(cart).publicPrice} ${$t("POUND")}` }}</td>
+                          <td>{{ `${product.public_price} ${$t("POUND")}` }}</td>
                           <td>
-                            {{ `${getPrice(cart).pharmacyPrice} ${$t("POUND")}` }}
+                            {{ `${getClientPrice(product.public_price,getPrice(cart).client_discount)} ${$t("POUND")}` }}
                           </td>
                           <td>
                             {{
-                              `${getPrice(cart).pharmacyPrice * cart.quantity} ${$t(
+                              `${getClientPrice(product.public_price,getPrice(cart).client_discount) * cart.quantity} ${$t(
                                 "POUND"
                               )}`
                             }}
@@ -163,6 +163,12 @@ export default {
       getProfileOrders();
     });
     //Methods
+    function getClientPrice(publicPrice, clientDiscount) {
+      let discountVal = publicPrice *
+        (clientDiscount / 100);
+      return publicPrice - discountVal;
+    }
+
     function deleteSearch() {
       data.from = null;
       data.to = null;
@@ -191,6 +197,7 @@ export default {
     }
     return {
       ...toRefs(data),
+      getClientPrice,
       getProfileOrders,
       getImagePath,
       getPrice,

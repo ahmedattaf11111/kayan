@@ -8,8 +8,7 @@ class CartItem extends Model
 {
     protected $guarded = [];
 
-    protected $appends = ["price", "dealPrice"];
-
+    protected $appends = ["price","dealPrice"];
     public function order()
     {
         return $this->belongsTo(Order::class);

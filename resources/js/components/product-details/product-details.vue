@@ -7,12 +7,12 @@
             <div class="col-12">
               <div class="product border">
                 <div class="first-side">
-                  <img :src="getImagePath(product.image)" />
+                  <img :src="product.image" />
                   <div class="name">
                     <div>
-                      <b>{{ product.nameEn }}</b>
+                      <b>{{ product.name }}</b>
                     </div>
-                    <div>{{ product.nameAr }}</div>
+                    <div>{{ product.name_e }}</div>
                   </div>
                 </div>
                 <div class="carts mt-5">
@@ -38,12 +38,12 @@
                                   : 'badge badge-secondary'
                               "
                             >
-                              {{ price.clientDiscount }}%
+                              {{ price.client_discount }}%
                             </span>
                           </td>
-                          <td>{{ `${price.publicPrice} ${$t("POUND")} ` }}</td>
+                          <td>{{ `${product.public_price} ${$t("POUND")} ` }}</td>
                           <td class="">
-                            {{ `${price.pharmacyPrice} ${$t("POUND")} ` }}
+                            {{ `${getClientPrice(product.public_price,price.client_discount)} ${$t("POUND")} ` }}
                           </td>
                           <td>
                             <div class="cart">
@@ -96,9 +96,6 @@
             </div>
           </div>
         </div>
-        <div class="col-12 mt-5">
-          <AlsoBoughtProducts @productDetailsRouterClicked="getProductDetails" />
-        </div>
       </div>
     </div>
   </div>
@@ -110,11 +107,9 @@ import { useRoute, useRouter } from "vue-router";
 import productClient from "../../shared/http-clients/product-client";
 import cartClient from "../../shared/http-clients/cart-client";
 import global from "../../shared/consts/global";
-import AlsoBoughtProducts from "./also-bought-products";
 import { useI18n } from "vue-i18n";
 export default {
   components: {
-    AlsoBoughtProducts,
   },
   setup() {
     const data = reactive({
@@ -129,6 +124,12 @@ export default {
     onMounted(() => {
       getProductDetails();
     });
+  
+    function getClientPrice(publicPrice, clientDiscount) {
+      let discountVal = publicPrice *
+        (clientDiscount / 100);
+      return publicPrice - discountVal;
+    }
     function removeCartItem(price) {
       store.showLoader = true;
       cartClient.removeCartItem(route.params.id, price.supplier_id).then(() => {
@@ -213,6 +214,7 @@ export default {
     }
     return {
       ...toRefs(data),
+      getClientPrice,
       addToCart,
       onIncrementClicked,
       onDecrementClicked,
@@ -260,7 +262,8 @@ export default {
     padding: 20px 15px;
     margin-bottom: 18px;
     border-radius: 5px;
-    height: 300px;
+    height: 400px;
+    overflow: auto;
   }
   .cart {
     color: #0e67d0 !important;

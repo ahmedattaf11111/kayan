@@ -3,25 +3,23 @@
     <div class="row">
       <div class="col-md-6">
         <div class="form-group">
-          <label for="exampleFormControlSelect1">{{ $t("EFFECTIVE_MATERIAL") }}</label>
-          <input
-            v-model="effectiveMaterial"
-            type="text"
-            class="form-control"
-            aria-describedby="emailHelp"
-          />
+          <label for="exampleFormControlSelect1">{{ $t("COMPANY") }}</label>
+          <div class="select-wrapper">
+            <select v-model="companyId" class="form-control">
+              <option v-for="company in companys" :key="company.id" :value="company.id">
+                {{ company.name }}
+              </option>
+            </select>
+          </div>
         </div>
       </div>
       <div class="col-md-6">
         <div class="form-group">
-          <label for="exampleFormControlSelect1">{{ $t("PHARMACOLOGICAL_FORM") }}</label>
+          <label for="exampleFormControlSelect1">{{ $t("PHARMACIST_FORMS") }}</label>
           <div class="select-wrapper">
             <select v-model="pharmacologicalFormId" class="form-control">
-              <option
-                :value="pharmacologicalForm.id"
-                v-for="pharmacologicalForm in pharmacologicalForms"
-                :key="pharmacologicalForm.id"
-              >
+              <option :value="pharmacologicalForm.id" v-for="pharmacologicalForm in pharmacologicalForms"
+                :key="pharmacologicalForm.id">
                 {{ pharmacologicalForm.name }}
               </option>
             </select>
@@ -30,15 +28,11 @@
       </div>
       <div class="col-md-6">
         <div class="form-group">
-          <label for="exampleFormControlSelect1">{{ $t("SUPPLIER") }}</label>
+          <label for="exampleFormControlSelect1">{{ $t("CATEGORY") }}</label>
           <div class="select-wrapper">
-            <select v-model="supplierId" class="form-control">
-              <option
-                v-for="supplier in suppliers"
-                :key="supplier.id"
-                :value="supplier.id"
-              >
-                {{ supplier.name }}
+            <select v-model="categoryId" class="form-control">
+              <option :value="category.id" v-for="category in categories" :key="category.id">
+                {{ category.name }}
               </option>
             </select>
           </div>
@@ -46,23 +40,13 @@
       </div>
       <div class="col-md-6">
         <div class="form-group">
-          <label for="exampleFormControlSelect1">{{ $t("DISCOUNT") }}</label>
-          <div class="select-wrapper">
-            <select v-model="discount" class="form-control">
-              <option :value="item" v-for="item in 100" :key="item">
-                {{ `${item}%` }}
-              </option>
-            </select>
-          </div>
+          <label for="exampleFormControlSelect1">{{ $t("EFFECTIVE_MATERIAL") }}</label>
+          <input v-model="effectiveMaterial" type="text" class="form-control" aria-describedby="emailHelp" />
         </div>
       </div>
       <div class="col-12">
-        <router-link
-          :to="{ path: '/best-client-discount-products', force: true }"
-          @click="onSearchClicked"
-          class="btn"
-          >{{ $t("SEARCH") }}</router-link
-        >
+        <router-link :to="{ path: '/best-client-discount-products', force: true }"  class="btn">{{
+          $t("SEARCH") }}</router-link>
         <button @click="reset" class="btn">{{ $t("DELETE") }}</button>
       </div>
     </div>
@@ -77,32 +61,30 @@ import From from "../../shared/consts/from";
 export default {
   setup() {
     const data = reactive({
-      suppliers: [],
-      companies: [],
+      companys: [],
       pharmacologicalForms: [],
+      categories: [],
     });
     const store = inject("store");
     onMounted(() => {
-      getSuppliers();
+      getCompanies();
       getPharmacologicalForms();
+      getCategories();
     });
     //Methods
-    function onSearchClicked() {
-      productStore.from = From.SEARCH;
-    }
     function reset() {
       productStore.name = null;
       productStore.effectiveMaterial = null;
       productStore.pharmacologicalFormId = null;
-      productStore.supplierId = null;
-      productStore.discount = null;
+      productStore.companyId = null;
+      productStore.categoryId = null;
     }
     //Commons
-    function getSuppliers() {
+    function getCompanies() {
       store.showLoader = true;
-      filterClient.getSuppliers().then((response) => {
+      filterClient.getCompanies().then((response) => {
         store.showLoader = false;
-        data.suppliers = response.data;
+        data.companys = response.data;
       });
     }
     function getPharmacologicalForms() {
@@ -112,7 +94,14 @@ export default {
         data.pharmacologicalForms = response.data;
       });
     }
-    return { ...toRefs(data), ...toRefs(productStore), onSearchClicked, reset };
+    function getCategories() {
+      store.showLoader = true;
+      filterClient.getCategories().then((response) => {
+        store.showLoader = false;
+        data.categories = response.data;
+      });
+    }
+    return { ...toRefs(data), ...toRefs(productStore), reset };
   },
 };
 </script>
@@ -122,6 +111,7 @@ select {
   -webkit-appearance: none;
   appearance: none;
 }
+
 .select-wrapper {
   position: relative;
 }
@@ -133,6 +123,7 @@ select {
   left: 18px;
   position: absolute;
 }
+
 button,
 a {
   padding: 8px 16px;

@@ -1,8 +1,5 @@
 <?php
 
-use App\Constants\OrderStatus;
-use App\Models\Order;
-use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,15 +18,8 @@ Route::prefix("products")->group(function () {
         "biggest-client-discount",
         "ProductController@getBiggestClientDiscountProducts"
     );
-    Route::get("main-with-sub-categories", "ProductController@getMainWithSubCategories");
+    Route::get("categories", "ProductController@getCategories");
     Route::get("deals", "ProductController@getDeals");
     Route::get("best-sellers", "ProductController@getBestSellers");
-    Route::get("most-populars", "ProductController@getMostPopulars");
-    Route::get("bought", "ProductController@getBoughtProducts");
-    //For Mobile
-    Route::get("sub-categories", "ProductController@getSubCategories");
-    //For Mobile
     Route::get("{productId}", "ProductController@getProductDetails");
-});
-Route::get("test", function () {
 });

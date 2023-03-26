@@ -2,11 +2,13 @@
 
 namespace App\Utils\Controllers;
 
+use Illuminate\Support\Facades\Auth;
+
 trait AuthUtil
 {
-    protected function attempt(array $loginInput)
+    protected function attempt(array $loginInput, $guard = "api")
     {
-        if (!$token = auth()->attempt($loginInput)) {
+        if (!$token = Auth::guard($guard)->attempt($loginInput)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         return $this->respondWithToken($token);

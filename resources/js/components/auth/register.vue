@@ -79,7 +79,7 @@
                   <div class="text-danger">
                     <div v-for="error in v$.password.$errors" :key="error">
                       {{ $t("PASSWORD") + " " + $t(error.$validator) }}
-                    </div>
+                    </div>  
                   </div>
                 </div>
                 <div class="ps-form__group">

@@ -8,7 +8,7 @@
               class="ps-category__link"
               @click="onSelectCategory(category.id)"
               :to="'/best-client-discount-products'"
-              ><img :src="getImagePath(category.media.file_name)" alt />
+              ><img :src="category.image" alt />
             </router-link>
             <h5 class="ps-category__name">
               <router-link
@@ -51,9 +51,7 @@ export default {
     });
     //Methods
     function onSelectCategory(categoryId) {
-      productStore.from = From.CATEGORY;
       productStore.categoryId = categoryId;
-      productStore.categoryLevel = 1;
     }
     function getImagePath(image) {
       return `${global.DASHBOARD_DOMAIN}/upload/category/${image}`;
@@ -77,6 +75,12 @@ export default {
     a {
       color: #103178 !important;
     }
+  }
+  img{
+    border: 1px solid rgb(14, 103, 208);
+    max-width: 63px !important;
+    margin: auto;
+    border-radius: 50%;
   }
 }
 </style>

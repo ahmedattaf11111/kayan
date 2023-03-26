@@ -19,10 +19,6 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail, CanRe
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    protected $attributes = [
-        "status" => 1
-    ];
-    
     public function client()
     {
         return $this->hasOne(Client::class);

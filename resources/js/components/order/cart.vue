@@ -9,26 +9,19 @@
           <div class="col-lg-8 mb-5">
             <div class="row">
               <div class="products-section col-12">
-                <div
-                  v-for="(product, productIndex) in cartProducts"
-                  :key="product.id"
-                  class="product border"
-                >
+                <div v-for="(product, productIndex) in cartProducts" :key="product.id" class="product border">
                   <div class="header">
                     <div class="first-side">
-                      <img :src="getImagePath(product.image)" />
+                      <img :src="product.image" />
                       <div class="name">
                         <div>
-                          <b>{{ product.nameEn }}</b>
+                          <b>{{ product.name }}</b>
                         </div>
-                        <div>{{ product.nameAr }}</div>
+                        <div>{{ product.name_e }}</div>
                       </div>
                     </div>
                     <div class="second-side">
-                      <button
-                        @click="removeCartItems(product, productIndex)"
-                        class="text-secondary"
-                      >
+                      <button @click="removeCartItems(product, productIndex)" class="text-secondary">
                         <i class="fa fa-trash"></i>
                       </button>
                     </div>
@@ -51,59 +44,47 @@
                             <td>{{ cart.supplier.name }}</td>
                             <td>
                               <span class="badge border">
-                                {{ getPrice(cart).clientDiscount }}%
+                                {{ getPrice(cart).client_discount }}%
                               </span>
                             </td>
-                            <td>{{ `${getPrice(cart).publicPrice} ${$t("POUND")}` }}</td>
+                            <td>{{ `${product.public_price} ${$t("POUND")}` }}</td>
                             <td>
-                              {{ `${getPrice(cart).pharmacyPrice} ${$t("POUND")}` }}
+                              {{ `${getClientPrice(product.public_price, getPrice(cart).client_discount)} ${$t("POUND")}`
+                              }}
                             </td>
                             <td>
                               {{
-                                `${getPrice(cart).pharmacyPrice * cart.quantity} ${$t(
-                                  "POUND"
-                                )}`
+                                `${getClientPrice(product.public_price, getPrice(cart).client_discount) * cart.quantity}
+                                                            ${$t(
+                                  "POUND")}`
                               }}
                             </td>
                             <td>
                               <div class="cart">
-                                <button
-                                  @click="onIncrementClicked(product, cart)"
-                                  class="increment mr-2"
-                                >
+                                <button @click="onIncrementClicked(product, cart)" class="increment mr-2">
                                   <span>+</span>
                                 </button>
-                                <input
-                                  @blur="
-                                    updateCartQuantity(
-                                      product,
-                                      productIndex,
-                                      cart,
-                                      cartIndex
-                                    )
-                                  "
-                                  v-model="cart.quantity"
-                                  class="form-control text-center"
-                                />
-                                <button
-                                  @click="
-                                    onDecrementClicked(
-                                      product,
-                                      productIndex,
-                                      cart,
-                                      cartIndex
-                                    )
-                                  "
-                                  class="decrement ml-2"
-                                >
+                                <input @blur="
+                                  updateCartQuantity(
+                                    product,
+                                    productIndex,
+                                    cart,
+                                    cartIndex
+                                  )
+                                " v-model="cart.quantity" class="form-control text-center" />
+                                <button @click="
+                                  onDecrementClicked(
+                                    product,
+                                    productIndex,
+                                    cart,
+                                    cartIndex
+                                  )
+                                " class="decrement ml-2">
                                   <span>-</span>
                                 </button>
-                                <button
-                                  @click="
-                                    removeCartItem(product, productIndex, cart, cartIndex)
-                                  "
-                                  class="mr-2 delete"
-                                >
+                                <button @click="
+                                  removeCartItem(product, productIndex, cart, cartIndex)
+                                " class="mr-2 delete">
                                   <i class="fa fa-trash"></i>
                                 </button>
                               </div>
@@ -128,9 +109,7 @@
                   <span>{{ `${totalBeforeDiscount} ${$t("POUND")}` }}</span>
                 </div>
                 <div class="info total-discount border-bottom">
-                  <span
-                    ><b>{{ $t("TOTAL_DISCOUNT_VALUE") }}</b></span
-                  >
+                  <span><b>{{ $t("TOTAL_DISCOUNT_VALUE") }}</b></span>
                   <span>
                     <b>{{
                       `(${totalDiscountPercentage}%) ${totalDiscount} ${$t("POUND")}`
@@ -185,6 +164,12 @@ export default {
       getUserCart();
     });
     //Methods
+
+    function getClientPrice(publicPrice, clientDiscount) {
+      let discountVal = publicPrice *
+        (clientDiscount / 100);
+      return publicPrice - discountVal;
+    }
     function getImagePath(image) {
       return `${global.DASHBOARD_DOMAIN}/upload/product/${image}`;
     }
@@ -258,8 +243,8 @@ export default {
       data.cartProducts.forEach((product) => {
         product.carts.forEach((cart) => {
           let quantity = Number.parseInt(cart.quantity);
-          totalBeforeDiscount += getPrice(cart).publicPrice * quantity;
-          totalAfterDiscount += getPrice(cart).pharmacyPrice * quantity;
+          totalBeforeDiscount += product.public_price * quantity;
+          totalAfterDiscount += getClientPrice(product.public_price, getPrice(cart).client_discount) * quantity;
           totalQuantity += quantity;
         });
       });
@@ -282,6 +267,7 @@ export default {
     }
     return {
       ...toRefs(data),
+      getClientPrice,
       onIncrementClicked,
       onDecrementClicked,
       updateCartQuantity,
@@ -301,14 +287,17 @@ export default {
     font-size: 14px !important;
     padding: 5px 0;
   }
+
   .cart-empty {
     margin: 100px 0;
     display: flex;
     align-items: center;
     flex-direction: column;
+
     i {
       font-size: 60px;
     }
+
     a {
       text-align: center;
       border-radius: 5px;
@@ -319,41 +308,51 @@ export default {
       padding: 15px;
       border: none;
     }
+
     i,
     h4 {
       color: #d9d9d9 !important;
     }
   }
+
   padding: 50px 0;
+
   .cart-header {
     color: #0e67d0;
   }
+
   .products-section {
     max-height: 400px;
     overflow: auto;
   }
+
   table {
     thead {
       background-color: #f5f8fa;
     }
+
     th,
     td {
       text-align: center;
     }
   }
+
   .product {
     .header {
       display: flex;
       justify-content: space-between;
+
       .first-side {
         display: flex;
         align-items: center;
+
         img {
           margin-left: 25px;
           width: 40px;
           height: 40px;
         }
       }
+
       .second-side {
         button {
           font-size: 17px;
@@ -363,16 +362,19 @@ export default {
       }
     }
   }
+
   .product,
   .meta-info {
     padding: 20px 15px;
     margin-bottom: 18px;
     border-radius: 5px;
   }
+
   .meta-info {
     .total-discount {
       font-size: 13px;
     }
+
     .info {
       display: flex;
       justify-content: space-between;
@@ -380,10 +382,12 @@ export default {
       margin-bottom: 10px;
     }
   }
+
   .order-submit {
     display: flex;
     justify-content: center;
     padding: 0 15px;
+
     a {
       border-radius: 5px;
       width: 100%;
@@ -393,16 +397,19 @@ export default {
       padding: 10px;
     }
   }
+
   .cart {
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 18px;
+
     .form-control {
       border-radius: 5px;
       width: 90px;
       height: 30px;
     }
+
     .decrement,
     .increment {
       height: 25px;
@@ -413,18 +420,21 @@ export default {
       border-radius: 50%;
       font-size: 18px;
     }
+
     .decrement {
       span {
         position: relative;
         bottom: 6px;
       }
     }
+
     .increment {
       span {
         position: relative;
         bottom: 4px;
       }
     }
+
     .delete {
       background: none;
       border: none;

@@ -4,34 +4,32 @@
       <Category :categories="categories" />
       <Slider />
       <div class="ps-home__content">
-        <SimpleAdvertises />
         <Deal />
+        <BestOffers />
         <BestSeller />
-        <MostPopular />
-        <Newsletter />
       </div>
     </div>
+    <Footer />
+
   </div>
 </template>
 <script>
-import Newsletter from "./newsletter";
 import Slider from "./slider";
+import Footer from "../../shared/components/footer.vue";
 import productClient from "../../shared/http-clients/product-client";
 import { onMounted, reactive, toRefs } from "vue-demi";
 import Category from "./category";
-import SimpleAdvertises from "./simple-advertises/simple-advertise";
 import BestSeller from "./best-seller";
-import MostPopular from "./most-popular";
+import BestOffers from "./best-offers";
 import Deal from "./deal";
 export default {
   components: {
     Slider,
-    Newsletter,
     Category,
-    SimpleAdvertises,
     Deal,
     BestSeller,
-    MostPopular,
+    BestOffers,
+    Footer
   },
   setup() {
     let data = reactive({
@@ -40,11 +38,11 @@ export default {
       mostPopularProducts: [],
     });
     onMounted(() => {
-      getMainWithSubCategories();
+      getCategories();
     });
 
-    function getMainWithSubCategories() {
-      productClient.getMainWithSubCategories().then((response) => {
+    function getCategories() {
+      productClient.getCategories().then((response) => {
         data.categories = response.data;
       });
     }

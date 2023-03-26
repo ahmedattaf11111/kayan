@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix("filter")->group(function () {
-    Route::get("suppliers", "FilterController@getSuppliers");
+    Route::get("companies", "FilterController@getCompanies");
+    Route::get("categories", "FilterController@getCategories");
     Route::get("pharmacological-forms", "FilterController@getPharmacologicalForms");
 });

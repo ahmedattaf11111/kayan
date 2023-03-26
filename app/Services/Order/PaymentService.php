@@ -40,4 +40,5 @@ class PaymentService
     {
         return $this->paymentRepository->getTotalPrice($userId);
     }
+  
 }

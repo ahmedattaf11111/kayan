@@ -19,13 +19,11 @@ class ProductController extends Controller
         $user = request()->user();
         return $this->productService
             ->getBiggestClientDiscountProducts(
-                request()->category_id,
-                request()->category_level,
+                request()->category_ids,
                 request()->name,
                 request()->effective_material,
-                request()->pharmacological_form_id,
-                request()->supplier_id,
-                request()->discount,
+                request()->pharmacological_form_ids,
+                request()->company_ids,
                 request()->page_size,
                 $user ? $user->id : null
             );
@@ -43,30 +41,14 @@ class ProductController extends Controller
         return $this->productService->getBestSellers($user ? $user->id : null);
     }
 
-    public function getMostPopulars()
-    {
-        $user = request()->user();
-        return $this->productService->getMostPopulars($user ? $user->id : null);
-    }
 
     public function getProductDetails($productId)
     {
         return $this->productService->getProductDetails($productId);
     }
 
-    public function getBoughtProducts()
+    public function getCategories()
     {
-        $user = request()->user();
-        return $this->productService->getBoughtProducts($user ? $user->id : null);
-    }
-
-    public function getMainWithSubCategories()
-    {
-        return $this->productService->getMainWithSubCategories();
-    }
-    //For mobile applications
-    public function getSubCategories()
-    {
-        return $this->productService->getSubCategories();
+        return $this->productService->getCategories();
     }
 }

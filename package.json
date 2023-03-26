@@ -33,6 +33,7 @@
         "vue-sidebar-menu": "^5.2.4",
         "vue3-carousel": "^0.1.46",
         "vue3-loading-overlay": "0.0.0",
-        "vuejs-paginate-next": "^1.0.2"
+        "vuejs-paginate-next": "^1.0.2",
+        "jquery": "^3.6.3"
     }
 }

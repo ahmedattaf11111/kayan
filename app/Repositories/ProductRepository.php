@@ -3,90 +3,48 @@
 namespace App\Repositories;
 
 use App\Constants\OrderStatus;
-use App\Models\AlsoBought;
-use App\Models\BestSeller;
 use App\Models\Category;
 use App\Models\Deal;
-use App\Models\MostPopular;
 use App\Models\Product;
-use App\Models\SubCategory;
 
 class ProductRepository
 {
     public function getBiggestClientDiscountProducts(
-        $categoryId,
-        $categoryLevel,
+        $categoryIds,
         $name,
         $effectiveMaterial,
-        $pharmacologicalFormId,
-        $supplierId,
-        $discount,
+        $pharmacologicalFormIds,
+        $companyIds,
         $pageSize,
         $userId
     ) {
-        return Product::with("biggestClientDiscountPrice")
+        return Product::with("biggestClientDiscountPrice.supplier")
             ->has("biggestClientDiscountPrice")
             ->withCarts($userId)
             ->searchByName($name)
             ->searchByEffectiveMaterial($effectiveMaterial)
-            ->searchByPharmacistFormId($pharmacologicalFormId)
-            ->searchBySupplierId($supplierId)
-            ->searchByDiscount($discount)
-            ->searchByCategory($categoryId, $categoryLevel)
+            ->searchByPharmacistFormId($pharmacologicalFormIds)
+            ->searchByCompanyId($companyIds)
+            ->searchByCategory($categoryIds)
             ->paginate($pageSize);
     }
 
-    public function getMainWithSubCategories()
+    public function getCategories()
     {
-        return Category::with(["subCategories" => function ($query) {
-            $query->where("status", 1);
-        }, "media"])->where("status", 1)->get();
+        return Category::get();
     }
 
     public function getDealProducts($userId, $limit)
     {
-        return Product::has("dealPrice")->with("dealPrice")->withCarts($userId)->take($limit)->get();
+        return Product::has("dealPrice")->with("dealPrice.supplier")->withCarts($userId)->take($limit)->get();
     }
     public function getDealSettings()
     {
         return Deal::first();
     }
-    public function getManualBestSellerProducts($userId)
+    public function getBestSellerProducts($userId,$limit)
     {
-        return Product::has("bestSellerProducts")->withCarts($userId)->get()->each->append("price");
-    }
-    public function getActualBestSellerProducts($userId)
-    {
-        return Product::bestSeller()->withCarts($userId)->get()->each->append("price");
-    }
-    public function getActualMostPopularProducts($userId)
-    {
-        return Product::mostPopular()->withCarts($userId)->get()->each->append("price");
-    }
-    public function getManualMostPopularProducts($userId)
-    {
-        return Product::has("mostPopularProducts")->withCarts($userId)->get()->each->append("price");
-    }
-    public function getBestSellerSettings()
-    {
-        return BestSeller::first();
-    }
-    public function getActualAlsoBoughtProducts($userId)
-    {
-        return $this->getActualMostPopularProducts($userId);
-    }
-    public function getManualAlsoBoughtProducts($userId)
-    {
-        return Product::has("alsoBougtProducts")->withCarts($userId)->get()->each->append("price");
-    }
-    public function getAlsoBoughtSettings()
-    {
-        return AlsoBought::first();
-    }
-
-    public function getMostPopularSettings()
-    {
-        return MostPopular::first();
+        return Product::bestSeller()->withCarts($userId)->take($limit)->get()->each->append("price");
     }
     public function getProductDetails($productId)
     {
@@ -94,7 +52,7 @@ class ProductRepository
         return Product::with(["prices" => function ($query) use ($user, $productId) {
             $query->with(["supplier" => function ($query) use ($user, $productId) {
                 $this->withCart($query, $user, $productId);
-            }])->orderBy("clientDiscount", 'desc');
+            }])->orderBy("client_discount", 'desc');
         }])->find($productId);
     }
 
@@ -113,10 +71,5 @@ class ProductRepository
         $query->whereHas("order", function ($query) use ($userId) {
             $query->where("user_id", $userId)->where("order_status", OrderStatus::CART);
         })->where("product_id", $productId);
-    }
-
-    public function getSubCategories()
-    {
-        return SubCategory::with("products")->get();
     }
 }

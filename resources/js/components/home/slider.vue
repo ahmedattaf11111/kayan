@@ -4,7 +4,7 @@
       <div class="ps-section__overlay">
         <div class="ps-section__loading"></div>
       </div>
-      <carousel dir="rtl" :items-to-show="1">
+      <carousel dir="rtl" :autoplay="3000" :wrapAround="true" :items-to-show="1">
         <slide v-for="slider in sliders" :key="slider.id">
           <div class="ps-banner" :style="`background-color:${slider.color}`">
             <div class="container container-initial">
@@ -29,7 +29,7 @@
                 <div class="ps-banner__thumnail">
                   <img
                     class="ps-banner__image"
-                    :src="getImagePath(slider.image)"
+                    :src="slider.image"
                     alt="alt"
                   />
                 </div>
@@ -70,11 +70,8 @@ export default {
       });
     });
     //Methods
-    function getImagePath(image) {
-      return `${global.DASHBOARD_DOMAIN}/upload/${image}`;
-    }
     //Commons
-    return { ...toRefs(data), getImagePath };
+    return { ...toRefs(data) };
   },
 };
 </script>

@@ -1,64 +1,49 @@
 <template>
-  <div
-    v-if="bestSeller.best_seller_settings && bestSeller.products.length"
-    class="best-seller-container container"
-  >
+  <div v-if="products.length" class="best-seller-container container">
     <section class="ps-section--deals">
       <div class="ps-section__header">
-        <h3 class="ps-section__title">
-          {{ $t("BEST_N_BEST_SELLERS", { N: bestSeller.best_seller_settings.limit }) }}
-        </h3>
+        <h5 class="ps-section__title">
+          {{ $t("BEST_N_BEST_SELLERS", { N: products.length }) }}
+        </h5>
       </div>
       <div class="ps-section__carousel border">
-        <div
-          class="owl-carousel"
-          data-owl-auto="false"
-          data-owl-loop="false"
-          data-owl-speed="13000"
-          data-owl-gap="0"
-          data-owl-nav="true"
-          data-owl-dots="true"
-          data-owl-item="5"
-          data-owl-item-xs="2"
-          data-owl-item-sm="2"
-          data-owl-item-md="3"
-          data-owl-item-lg="5"
-          data-owl-item-xl="5"
-          data-owl-duration="1000"
-          data-owl-mousedrag="on"
-        >
-          <div
-            v-for="product in bestSeller.products"
-            :key="product.id"
-            class="ps-product ps-product--standard border-right"
-          >
+        <div class="owl-carousel" data-owl-auto="false" data-owl-loop="false" data-owl-speed="13000" data-owl-gap="0"
+          data-owl-nav="true" data-owl-dots="true" data-owl-item="5" data-owl-item-xs="2" data-owl-item-sm="2"
+          data-owl-item-md="3" data-owl-item-lg="5" data-owl-item-xl="5" data-owl-duration="1000" data-owl-mousedrag="on">
+          <div v-for="product in products" :key="product.id" class="ps-product ps-product--standard border-right">
             <div class="ps-product__thumbnail">
-              <router-link
-                class="ps-product__image"
-                :to="`/product-details/${product.id}`"
-                >ٍ
+              <router-link class="ps-product__image" :to="`/product-details/${product.id}`">ٍ
                 <figure>
-                  <img :src="getImagePath(product.image)" alt="alt" />
+                  <img :src="product.image" alt="alt" />
                 </figure>
               </router-link>
               <div class="ps-product__badge"></div>
-              <div class="ps-product__percent">%{{ product.price.clientDiscount }}</div>
+              <div class="ps-product__percent">
+                {{ product.price.client_discount }}%
+                <br />
+                {{ $t("DISCOUNT") }}
+              </div>
             </div>
+            <hr />
             <div class="ps-product__content">
               <h5 class="ps-product__title">
                 <router-link :to="`/product-details/${product.id}`">
-                  <span>{{ product.nameAr }}</span>
+                  <span>{{ product.name }}</span>
                   <br />
-                  <span>{{ product.nameEn }}</span>
+                  <!-- <span>{{ product.name_e }}</span> -->
                 </router-link>
+                <p style="font-size: 13px;">
+                  <i class="fa fa-eyedropper" style="margin-left:5px" aria-hidden="true"></i>
+                  {{ product.price.supplier.name }}
+                </p>
               </h5>
               <div class="ps-product__meta">
                 <span class="ps-product__price sale">
-                  {{ product.price.pharmacyPrice }},
+                  {{ getClientPrice(product.public_price, product.price.client_discount) }},
                   {{ $t("POUND") }}
                 </span>
                 <span class="ps-product__del">
-                  {{ product.price.publicPrice }}
+                  {{ product.public_price }}
                   {{ $t("POUND") }}
                 </span>
               </div>
@@ -67,11 +52,8 @@
                   <button @click="onIncrementClicked(product)" class="increment mr-2">
                     <span>+</span>
                   </button>
-                  <input
-                    @blur="updateCartQuantity(product)"
-                    v-model="product.quantity"
-                    class="form-control text-center"
-                  />
+                  <input @blur="updateCartQuantity(product)" v-model="product.quantity"
+                    class="form-control text-center" />
                   <button @click="onDecrementClicked(product)" class="decrement ml-2">
                     <span>-</span>
                   </button>
@@ -79,17 +61,9 @@
                     <i class="fa fa-trash"></i>
                   </button>
                 </template>
-                <div
-                  v-else
-                  class="ps-product__item cart"
-                  data-toggle="tooltip"
-                  data-placement="left"
-                  :title="$t('ADD_TO_CART')"
-                >
-                  <a @click.prevent="addToCart(product)" href="#">
-                    <i class="fa fa-shopping-basket"></i>
-                  </a>
-                </div>
+                <button v-else class="btn btn-cart" @click.prevent="addToCart(product)">
+                  <i class="fa fa-cart-plus" style="margin-left:5px" aria-hidden="true"></i> {{ $t('ADD_TO_CART') }}
+                </button>
               </div>
             </div>
           </div>
@@ -110,7 +84,7 @@ import { useI18n } from "vue-i18n";
 export default {
   setup(props, context) {
     let data = reactive({
-      bestSeller: { best_seller_settings: null, products: [] },
+      products: []
     });
     let store = inject("store");
     let toast = inject("toast");
@@ -120,6 +94,11 @@ export default {
       getBestSellers();
     });
     //Methods
+    function getClientPrice(publicPrice, clientDiscount) {
+      let discountVal = publicPrice *
+        (clientDiscount / 100);
+      return publicPrice - discountVal;
+    }
     function getImagePath(image) {
       return `${global.DASHBOARD_DOMAIN}/upload/product/${image}`;
     }
@@ -189,25 +168,25 @@ export default {
       productClient
         .getBestSellers()
         .then((response) => {
-          data.bestSeller = setCartsQuantitiesToBestSeller(response.data);
+          data.products = setCartsQuantitiesToBestSeller(response.data);
         })
         .finally(() => {
           owlCarouselFunction();
         });
     }
-    function setCartsQuantitiesToBestSeller(bestSeller) {
-      let products = bestSeller.products.map((product) => {
+    function setCartsQuantitiesToBestSeller(products) {
+      return products.map((product) => {
         return {
           ...product,
           quantity: product.cart_info ? product.cart_info.quantity : 1,
         };
       });
-      bestSeller.products = products;
-      return bestSeller;
+
     }
 
     return {
       ...toRefs(data),
+      getClientPrice,
       getImagePath,
       addToCart,
       onIncrementClicked,
@@ -223,47 +202,93 @@ export default {
 .ps-product__percent {
   font-size: 14px;
 }
+
+.ps-section__header {
+  justify-content: flex-start !important;
+}
+
+.btn-cart {
+  font-size: 16px;
+  border-radius: 28px;
+  padding: 6px;
+  background-color: #0e67d0;
+  border-color: none;
+  width: 200px;
+  color: #fff;
+}
+
+.ps-product__del {
+  position: relative;
+  font-size: 14px;
+  top: 6px;
+}
+
+.ps-product__meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+
+.ps-product__percent {
+  right: unset;
+  background-color: #3c6;
+  position: absolute;
+  top: 0;
+  left: 6px;
+  z-index: 10;
+  border-radius: 0px 0px 10px 10px;
+  width: 70px;
+  height: 44px;
+  font-size: 14px;
+}
+
 .cart {
   margin-top: 5px;
   color: #0e67d0 !important;
   display: flex;
   align-items: center;
   font-size: 18px;
+
   .form-control {
     border-radius: 5px;
     width: 90px;
     height: 30px;
   }
+
   .decrement,
   .increment {
-    height: 25px;
-    width: 25px;
+    height: 26px;
     border: none;
     background-color: #0e67d0 !important;
     color: #fff !important;
-    border-radius: 50%;
-    font-size: 18px;
+    border-radius: 4px;
+    font-size: 20px;
+    padding: 0 10px;
   }
+
   .decrement {
     span {
       position: relative;
       bottom: 6px;
     }
   }
+
   .increment {
     span {
       position: relative;
       bottom: 4px;
     }
   }
+
   .delete {
     background: none;
     border: none;
     color: #0e67d0;
     background: none;
-    font-size: 22px;
+    font-size: 26px;
     margin-right: 7px;
   }
+
   .ps-section__carousel {
     border: none !important;
   }
