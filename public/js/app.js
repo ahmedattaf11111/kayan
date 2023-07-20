@@ -31066,7 +31066,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      color: "#2caae2",
+      color: "#0e67d0",
       width: 80,
       height: 80,
       canCancel: true,
