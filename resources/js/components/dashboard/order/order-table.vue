@@ -1,18 +1,47 @@
 <template>
-  <div class="p-3 product-container">
-    <DeleteConfirmation
-      @confirm="deleteProduct"
-      @closed="selectedProduct = null"
-    />
-    <ProductForm
-      @created="onCreated"
-      @updated="onUpdated"
-      :selectedProduct="selectedProduct"
-    />
-   
+  <div class="p-3 order-container">
+    <!-- <DeleteConfirmation @confirm="deleteCompany" @closed="selectedCompany = null" /> -->
+    <!-- <CompanyForm @created="onCreated" @updated="onUpdated" :selectedCompany="selectedCompany" /> -->
+
     <div class="px-4">
       <div class="table-container">
-        <div class="table-responsive">
+        <div class="table-responsive container">
+          <div class="filter row mb-4">
+            <div class="col-lg-3">
+              <select
+                @change="onSelectChange"
+                v-model="order_status"
+                class="form-control"
+              >
+                <option :value="''">{{ $t("ORDER_STATUS") }}</option>
+                <option value="Pending">{{ $t("Pending") }}</option>
+                <option value="Faild">{{ $t("Faild") }}</option>
+                <option value="Completed">{{ $t("Completed") }}</option>
+              </select>
+            </div>
+            <div class="col-lg-3">
+              <select
+                @change="onSelectChange"
+                v-model="payment_status"
+                class="form-control"
+              >
+                <option :value="''">{{ $t("PAYMENT_STATUS") }}</option>
+                <option value="Paid">{{ $t("Paid") }}</option>
+                <option value="Unpaid">{{ $t("Unpaid") }}</option>
+              </select>
+            </div>
+            <div class="col-lg-3">
+              <select
+                @change="onSelectChange"
+                v-model="payment_method"
+                class="form-control"
+              >
+                <option :value="''">{{ $t("PAYMENT_METHOD") }}</option>
+                <option value="online">{{ $t("Online") }}</option>
+                <option value="cash">{{ $t("Cash") }}</option>
+              </select>
+            </div>
+          </div>
           <div class="controls">
             <div class="search">
               <input
@@ -24,14 +53,14 @@
               <i class="fa fa-search"></i>
             </div>
             <div class="actions my-2">
-              <button
-                @click="onAddClicked()"
-                data-toggle="modal"
-                data-target="#productFormModal"
-                class="border text-secondary"
-              >
-                <i class="fa fa-plus" aria-hidden="true"></i>
-              </button>
+              <!-- <button
+                  @click="onAddClicked()"
+                  data-toggle="modal"
+                  data-target="#companyFormModal"
+                  class="border text-secondary"
+                >
+                  <i class="fa fa-plus" aria-hidden="true"></i>
+                </button> -->
               <button @click="downloadExcelFile" class="border text-secondary">
                 <i class="fa fa-download" aria-hidden="true"></i>
               </button>
@@ -43,44 +72,33 @@
           <table id="printMe" class="table">
             <thead>
               <tr>
-                <th scope="col">{{ $t("IMAGE") }}</th>
-                <th scope="col">{{ $t("NAME") }}</th>
-                <th scope="col">{{ $t("CATEGORY") }}</th>
-                <th scope="col">{{ $t("PHARMACIST_FORMS") }}</th>
-                <th scope="col">{{ $t("COMPANY") }}</th>
-                <th scope="col">{{ $t("effective_material") }}</th>
-                <th scope="col">{{ $t("public_price") }}</th>
+                <th scope="col">{{ $t("INVOICE_NUMBER") }}</th>
+                <th scope="col">{{ $t("USER") }}</th>
+                <th scope="col">{{ $t("TRANSACTION_NUMBER") }}</th>
+                <th scope="col">{{ $t("ORDER_STATUS") }}</th>
+                <th scope="col">{{ $t("PAYMENT_STATUS") }}</th>
+                <th scope="col">{{ $t("PAYMENT_METHOD") }}</th>
                 <th class="actions-header" scope="col">{{ $t("ACTIONS") }}</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(product, index) in products" :key="product.id">
-                <td class="img"><img :src="product.image" /></td>
-                <td>{{ product.name }}</td>
-                <td>{{ product.category.name }}</td>
-                <td>{{ product.company.name }}</td>
-                <td>{{ product.pharmacist_form.name }}</td>
-                <td>{{ product.effective_material }}</td>
-                <td>{{ product.public_price }}</td>
-                <td class="actions-cell">
-                  <div class="actions">
-                    <button
-                      @click="onEditClicked(product, index)"
-                      data-toggle="modal"
-                      data-target="#productFormModal"
-                      class="border text-secondary"
-                    >
-                      <i class="fa fa-edit" aria-hidden="true"></i>
-                    </button>
-                    <button
-                      @click="onDeleteClicked(product, index)"
-                      data-toggle="modal"
-                      data-target="#deleteConfirmationModal"
-                      class="border text-secondary"
-                    >
-                      <i class="fa fa-trash" aria-hidden="true"></i>
-                    </button>
-                  </div>
+              <tr v-for="order in orders" :key="order.id">
+                <td>{{ order.invoice_id }}</td>
+                <td>{{ order.user.name }}</td>
+                <td>{{ order.transaction_id }}</td>
+                <td>{{ $t(order.order_status) }}</td>
+                <td>{{ $t(order.payment_status) }}</td>
+                <td>{{ $t(order.payment_method) }}</td>
+                <td>
+                  <button
+                    :disabled="order.order_status != 'Pending'"
+                    @click="markStatusAsCompleted(order)"
+                    data-toggle="modal"
+                    data-target="#deleteConfirmationModal"
+                    class="mb-2 text-secondary border"
+                  >
+                  {{$t("COMPLETE_ORDER")}}
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -90,7 +108,7 @@
           <paginate
             v-model="page"
             :pageCount="pageCounts"
-            :clickHandler="getProducts"
+            :clickHandler="getOrders"
             :prevText="`<i class='fa fa-arrow-right'></i>`"
             :nextText="`<i class='fa fa-arrow-left'></i>`"
           >
@@ -101,72 +119,90 @@
   </div>
 </template>
 <script>
-import productClient from "../../../shared/http-clients/admin/product-client";
+import orderClient from "../../../shared/http-clients/admin/order-client";
 import Paginate from "vuejs-paginate-next";
 import exportFromJSON from "export-from-json";
 import DeleteConfirmation from "../../../shared/components/delete-confirmation.vue";
-import ProductForm from "./product-form.vue";
-import productStore from "./product-store";
+// import CompanyForm from "./company-form.vue";
+import companyStore from "./company-store";
 import { inject, provide, reactive, ref, toRefs, watch } from "vue-demi";
 import { useI18n } from "vue-i18n";
 export default {
   components: {
     Paginate,
-    DeleteConfirmation,
-    ProductForm,
+    // DeleteConfirmation,
+    // CompanyForm,
   },
   setup() {
     const data = reactive({
       pageSize: 6,
       page: 1,
-      products: [],
+      orders: [],
       text: "",
+      payment_status: "",
+      payment_method: "",
+      order_status: "",
       pageCounts: 0,
       timeout: null,
-      selectedProduct: null,
-      selectedProductIndex: 0,
+      selectedCompany: null,
+      selectedCompanyIndex: 0,
     });
     const toast = inject("toast");
     const { t, locale } = useI18n({ useScope: "global" });
-    provide("product_store", productStore);
+    provide("company_store", companyStore);
     created();
     //Methods
+    function onSelectChange() {
+      data.page = 1;
+      getOrders();
+    }
+    function markStatusAsCompleted(order) {
+      orderClient.markStatusAsCompleted(order.id).then((res) => {
+        toast.success(t("UPDATED_SUCCESSFULLY"));
+      });
+      getOrders();
+    }
     function onAddClicked() {
-      data.selectedProduct = null;
+      data.selectedCompany = null;
       //Make little delay to ensure that watcher that found in category form component
-      // catch selectedProduct input prop
+      // catch selectedCompany input prop
       setTimeout(() => {
-        productStore.onFormShow = !productStore.onFormShow;
+        companyStore.onFormShow = !companyStore.onFormShow;
       }, 1);
     }
     function onEditClicked(category, index) {
-      data.selectedProduct = category;
-      data.selectedProductIndex = index;
-      //Make little delay to ensure that watcher catch selectedProduct input prop
+      data.selectedCompany = category;
+      data.selectedCompanyIndex = index;
+      //Make little delay to ensure that watcher catch selectedCompany input prop
       //in category form component
       setTimeout(() => {
-        productStore.onFormShow = !productStore.onFormShow;
+        companyStore.onFormShow = !companyStore.onFormShow;
       }, 1);
     }
-    function onDeleteClicked(category, index) {
-      data.selectedProduct = category;
-      data.selectedProductIndex = index;
+    function onDeleteClicked(company, index) {
+      data.selectedCompany = company;
+      data.selectedCompanyIndex = index;
     }
-    function getProducts() {
-      productClient
-        .getProducts(data.page, data.pageSize, data.text)
+    function getOrders() {
+      orderClient
+        .getOrders(
+          data.page,
+          data.pageSize,
+          data.order_status,
+          data.payment_status,
+          data.payment_method,
+          data.text
+        )
         .then((response) => {
-          data.products = response.data.data;
+          data.orders = response.data.data;
           data.pageCounts = Math.ceil(response.data.total / data.pageSize);
         })
-        .catch((error) => {
-          console.log(error.response);
-        });
+        .catch((error) => {});
     }
     function downloadExcelFile() {
-      productClient.getAllProducts().then((res) => {
+      orderClient.getAllOrders().then((res) => {
         let data = res.data;
-        const fileName = "products";
+        const fileName = "orders";
         const exportType = exportFromJSON.types.csv;
         if (data) exportFromJSON({ data, fileName, exportType });
       });
@@ -176,22 +212,22 @@ export default {
     }
     function onCreated(event) {
       data.page = 1;
-      getProducts();
+      getOrders();
     }
     function onUpdated(event) {
-      data.selectedProduct = null;
-      getProducts();
+      data.selectedCompany = null;
+      getOrders();
     }
-    function deleteProduct() {
-      productClient
-        .delete(data.selectedProduct.id)
+    function deleteCompany() {
+      orderClient
+        .delete(data.selectedCompany.id)
         .then((response) => {
           toast.success(t("DELETED_SUCCESSFULLY"));
-          if (data.page > 1 && data.products.length == 1) {
+          if (data.page > 1 && data.orders.length == 1) {
             data.page--;
           }
-          getProducts();
-          data.selectedProduct = null;
+          getOrders();
+          data.selectedCompany = null;
         })
         .catch((error) => {});
     }
@@ -200,7 +236,7 @@ export default {
       // clear timeout variable
       clearTimeout(data.timeout);
       data.timeout = setTimeout(() => {
-        getProducts();
+        getOrders();
       }, 500);
     }
     watch(
@@ -214,18 +250,20 @@ export default {
     );
     //Commons
     function created() {
-      getProducts();
+      getOrders();
     }
     return {
+      onSelectChange,
+      markStatusAsCompleted,
       ...toRefs(data),
       onAddClicked,
       onEditClicked,
       onDeleteClicked,
-      getProducts,
+      getOrders,
       downloadExcelFile,
       onCreated,
       onUpdated,
-      deleteProduct,
+      deleteCompany,
       search,
       print,
     };
@@ -252,19 +290,22 @@ export default {
     left: 0;
   }
 }
-.product-container {
+.order-container {
   td,
   th {
     white-space: nowrap;
   }
+  .actions-cell {
+    padding: 5px 0 !important;
+  }
   td {
     &:not(.actions-cell, .img) {
       position: relative;
-      top: 6px;
+      top: 3px;
     }
     &.actions-cell {
       position: relative;
-      top: 8px;
+      top: 0px;
     }
     height: 30px;
     vertical-align: center;

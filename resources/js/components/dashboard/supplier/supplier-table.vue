@@ -2,17 +2,7 @@
   <div class="p-3 supplier-container">
     <DeleteConfirmation @confirm="deleteSupplier" @closed="selectedSupplier = null" />
     <SupplierForm @created="onCreated" @updated="onUpdated" :selectedSupplier="selectedSupplier" />
-    <div class="header">
-      <h2 class="welcome">
-        <b>{{ $t("SUPPLIERS") }}</b
-        >, {{ $t("WELCOME_HERE") }}
-      </h2>
-      <div class="title">
-        <router-link to="/admin-panel-settings">{{ $t("HOME") }}</router-link>
-        /
-        <span>{{ $t("HELLO") }}</span>
-      </div>
-    </div>
+
     <div class="px-4">
       <div class="table-container">
           <div class="table-responsive">
@@ -90,8 +80,9 @@
             v-model="page"
             :pageCount="pageCounts"
             :clickHandler="getSuppliers"
-            :prevText="$t('PREV')"
-            :nextText="$t('NEXT')"
+            :prevText="`<i class='fa fa-arrow-right'></i>`"
+            :nextText="`<i class='fa fa-arrow-left'></i>`"
+
           >
           </paginate>
         </div>
@@ -229,7 +220,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style  lang="scss">
 @media print {
   body * {
     visibility: hidden;
@@ -249,12 +240,35 @@ export default {
   }
 }
 .supplier-container {
+  td,th{
+    white-space: nowrap;
+  }
+  .actions-cell {
+    padding: 5px 0 !important;
+  }
   td {
+    &:not(.actions-cell, .img) {
+      position: relative;
+      top: 3px;
+    }
+    
+    &.actions-cell {
+      position: relative;
+      top: 0px;
+    }
+    height: 30px;
+    vertical-align: center;
+    button {
+      margin: 0 2px !important;
+    }
+    font-size: 14px !important;
+    padding: 0 !important;
     img {
-      width: 70px;
-      height: 70px;
+      width: 35px;
+      height: 35px;
       border-radius: 3px;
       padding: 5px;
+      margin: 5px;
       box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
         rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     }
@@ -285,7 +299,7 @@ export default {
   }
   .table-container {
     background: #ffffff;
-    box-shadow: 0 5px 20px rgb(0 0 0 / 10%);
+    box-shadow: none !important;
     padding: 30px;
     .controls {
       display: flex;
@@ -327,8 +341,15 @@ export default {
         cursor: text;
       }
       button {
-        width: 34px;
-        height: 34px;
+        padding: 13px;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        i {
+          font-size: 12px !important;
+        }
+        width: 20px;
+        height: 20px;
         background: none;
         margin: 3px 5px;
         border-radius: 5px;
@@ -344,13 +365,23 @@ export default {
         border-color: #dbdbdb !important;
       }
     }
+    .page-item:first,
+    .page-item:last-child {
+      display: none !important;
+    }
     .page-link {
-      padding: 3px 18px !important;
+      padding: 0 !important;
+      height: 32px;
+      width: 32px;
+      justify-content: center;
+      align-items: center;
+      display: flex;
+      padding: 0 !important;
     }
     table {
       td,
       th {
-        width: 16.66666666666667%;
+        width: 25%;
       }
     }
   }

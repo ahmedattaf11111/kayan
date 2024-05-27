@@ -1,89 +1,89 @@
 <template>
   <div class="p-3 pharmacist-form-container">
-    <DeleteConfirmation @confirm="deletePharmacist" @closed="selectedPharmacist = null" />
-    <PharmacistFormForm @created="onCreated" @updated="onUpdated" :selectedPharmacist="selectedPharmacist" />
-    <div class="header">
-      <h2 class="welcome">
-        <b>{{ $t("PHARMACIST_FORMS") }}</b
-        >, {{ $t("WELCOME_HERE") }}
-      </h2>
-      <div class="title">
-        <router-link to="/admin-panel-settings">{{ $t("HOME") }}</router-link>
-        /
-        <span>{{ $t("HELLO") }}</span>
-      </div>
-    </div>
+    <DeleteConfirmation
+      @confirm="deletePharmacist"
+      @closed="selectedPharmacist = null"
+    />
+    <PharmacistFormForm
+      @created="onCreated"
+      @updated="onUpdated"
+      :selectedPharmacist="selectedPharmacist"
+    />
+    
     <div class="px-4">
       <div class="table-container">
-          <div class="table-responsive">
-            <div class="controls">
-              <div class="search">
-                <input
-                  v-model="text"
-                  type="text"
-                  :placeholder="$t('SEARCH')"
-                  ref="search"
-                />
-                <i class="fa fa-search"></i>
-              </div>
-              <div class="actions my-2">
-                <button
-                  @click="onAddClicked()"
-                  data-toggle="modal"
-                  data-target="#pharmacistFormFormModal"
-                  class="border text-secondary"
-                >
-                  <i class="fa fa-plus" aria-hidden="true"></i>
-                </button>
-                <button @click="downloadExcelFile" class="border text-secondary">
-                  <i class="fa fa-download" aria-hidden="true"></i>
-                </button>
-                <button @click="print" class="border text-secondary">
-                  <i class="fa fa-print" aria-hidden="true"></i>
-                </button>
-              </div>
+        <div class="table-responsive">
+          <div class="controls">
+            <div class="search">
+              <input
+                v-model="text"
+                type="text"
+                :placeholder="$t('SEARCH')"
+                ref="search"
+              />
+              <i class="fa fa-search"></i>
             </div>
-            <table id="printMe" class="table">
-              <thead>
-                <tr>
-                  <th scope="col">{{ $t("NAME") }}</th>
-                  <th class="actions-header" scope="col">{{ $t("ACTIONS") }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(pharmacistForm, index) in pharmacistForms" :key="pharmacistForm.id">
-                  <td>{{ pharmacistForm.name }}</td>
-                  <td class="actions-cell">
-                    <div class="actions">
-                      <button
-                        @click="onEditClicked(pharmacistForm, index)"
-                        data-toggle="modal"
-                        data-target="#pharmacistFormFormModal"
-                        class="border text-secondary"
-                      >
-                        <i class="fa fa-edit" aria-hidden="true"></i>
-                      </button>
-                      <button
-                        @click="onDeleteClicked(pharmacistForm, index)"
-                        data-toggle="modal"
-                        data-target="#deleteConfirmationModal"
-                        class="border text-secondary"
-                      >
-                        <i class="fa fa-trash" aria-hidden="true"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="actions my-2">
+              <button
+                @click="onAddClicked()"
+                data-toggle="modal"
+                data-target="#pharmacistFormFormModal"
+                class="border text-secondary"
+              >
+                <i class="fa fa-plus" aria-hidden="true"></i>
+              </button>
+              <button @click="downloadExcelFile" class="border text-secondary">
+                <i class="fa fa-download" aria-hidden="true"></i>
+              </button>
+              <button @click="print" class="border text-secondary">
+                <i class="fa fa-print" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
+          <table id="printMe" class="table">
+            <thead>
+              <tr>
+                <th scope="col">{{ $t("NAME") }}</th>
+                <th class="actions-header" scope="col">{{ $t("ACTIONS") }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="(pharmacistForm, index) in pharmacistForms"
+                :key="pharmacistForm.id"
+              >
+                <td>{{ pharmacistForm.name }}</td>
+                <td class="actions-cell">
+                  <div class="actions">
+                    <button
+                      @click="onEditClicked(pharmacistForm, index)"
+                      data-toggle="modal"
+                      data-target="#pharmacistFormFormModal"
+                      class="border text-secondary"
+                    >
+                      <i class="fa fa-edit" aria-hidden="true"></i>
+                    </button>
+                    <button
+                      @click="onDeleteClicked(pharmacistForm, index)"
+                      data-toggle="modal"
+                      data-target="#deleteConfirmationModal"
+                      class="border text-secondary"
+                    >
+                      <i class="fa fa-trash" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <div class="mt-1">
           <paginate
             v-model="page"
             :pageCount="pageCounts"
             :clickHandler="getPharmacistForms"
-            :prevText="$t('PREV')"
-            :nextText="$t('NEXT')"
+            :prevText="`<i class='fa fa-arrow-right'></i>`"
+            :nextText="`<i class='fa fa-arrow-left'></i>`"
           >
           </paginate>
         </div>
@@ -174,16 +174,16 @@ export default {
       getPharmacistForms();
     }
     function deletePharmacist() {
-        pharmacistFormClient
+      pharmacistFormClient
         .delete(data.selectedPharmacist.id)
         .then((response) => {
           toast.success(t("DELETED_SUCCESSFULLY"));
-          if (data.page > 1 && data.pharmacistForms.length==1) {
+          if (data.page > 1 && data.pharmacistForms.length == 1) {
             data.page--;
           }
           getPharmacistForms();
           data.selectedPharmacist = null;
-        })  
+        })
         .catch((error) => {});
     }
     function search() {
@@ -223,8 +223,7 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
+<style  lang="scss">
 @media print {
   body * {
     visibility: hidden;
@@ -244,12 +243,32 @@ export default {
   }
 }
 .pharmacist-form-container {
+  .actions-cell {
+    padding: 5px 0 !important;
+  }
   td {
+    &:not(.actions-cell, .img) {
+      position: relative;
+      top: 3px;
+    }
+
+    &.actions-cell {
+      position: relative;
+      top: 0px;
+    }
+    height: 30px;
+    vertical-align: center;
+    button {
+      margin: 0 2px !important;
+    }
+    font-size: 14px !important;
+    padding: 0 !important;
     img {
-      width: 70px;
-      height: 70px;
+      width: 35px;
+      height: 35px;
       border-radius: 3px;
       padding: 5px;
+      margin: 5px;
       box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
         rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     }
@@ -280,7 +299,7 @@ export default {
   }
   .table-container {
     background: #ffffff;
-    box-shadow: 0 5px 20px rgb(0 0 0 / 10%);
+    box-shadow: none !important;
     padding: 30px;
     .controls {
       display: flex;
@@ -322,8 +341,15 @@ export default {
         cursor: text;
       }
       button {
-        width: 34px;
-        height: 34px;
+        padding: 13px;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        i {
+          font-size: 12px !important;
+        }
+        width: 20px;
+        height: 20px;
         background: none;
         margin: 3px 5px;
         border-radius: 5px;
@@ -339,8 +365,18 @@ export default {
         border-color: #dbdbdb !important;
       }
     }
+    .page-item:first,
+    .page-item:last-child {
+      display: none !important;
+    }
     .page-link {
-      padding: 3px 18px !important;
+      padding: 0 !important;
+      height: 32px;
+      width: 32px;
+      justify-content: center;
+      align-items: center;
+      display: flex;
+      padding: 0 !important;
     }
     table {
       td,

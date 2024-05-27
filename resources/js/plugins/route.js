@@ -27,6 +27,7 @@ import SupplierTable from "../components/dashboard/supplier/supplier-table.vue";
 import PriceTable from "../components/dashboard/price/price-table.vue";
 import DealForm from "../components/dashboard/deal/deal-form.vue";
 import SliderTable from "../components/dashboard/slider/slider-table.vue";
+import OrderTable from "../components/dashboard/order/order-table.vue";
 import AdminLogin from "../components/dashboard/login.vue";
 import AdminGuestGuard from "../shared/guards/guest-admin-guard";
 import AuthenticatedAdminGuard from "../shared/guards/authenticated-admin-guard";
@@ -88,6 +89,7 @@ const routes = [
       { path: "prices", component: PriceTable },
       { path: "deal", component: DealForm },
       { path: "sliders", component: SliderTable },
+      { path: "orders", component: OrderTable },
     ]
   },
   {

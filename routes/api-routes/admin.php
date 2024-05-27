@@ -86,3 +86,8 @@ Route::prefix("admin-auth")->group(function () {
     Route::get("logout", "AuthController@logout");
 });
 
+
+Route::prefix("admin-orders")->group(function () {
+    Route::get("", "OrderController@index");
+    Route::get("mark-status-as-completed/{id}", "OrderController@markStatusAsCompleted");
+});

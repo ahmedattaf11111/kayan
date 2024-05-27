@@ -1,28 +1,35 @@
 <template>
   <div class="p-3 slider-container">
-    <DeleteConfirmation @confirm="deleteSlider" @closed="selectedSlider = null" />
-    <SliderForm @created="onCreated" @updated="onUpdated" :selectedSlider="selectedSlider" />
-    <div class="header">
-      <h2 class="welcome">
-        <b>{{ $t("SLIDER") }}</b>, {{ $t("WELCOME_HERE") }}
-      </h2>
-      <div class="title">
-        <router-link to="/admin-panel-settings">{{ $t("HOME") }}</router-link>
-        /
-        <span>{{ $t("HELLO") }}</span>
-      </div>
-    </div>
+    <DeleteConfirmation
+      @confirm="deleteSlider"
+      @closed="selectedSlider = null"
+    />
+    <SliderForm
+      @created="onCreated"
+      @updated="onUpdated"
+      :selectedSlider="selectedSlider"
+    />
+
     <div class="px-4">
       <div class="table-container">
         <div class="table-responsive">
           <div class="controls">
             <div class="search">
-              <input v-model="text" type="text" :placeholder="$t('SEARCH')" ref="search" />
+              <input
+                v-model="text"
+                type="text"
+                :placeholder="$t('SEARCH')"
+                ref="search"
+              />
               <i class="fa fa-search"></i>
             </div>
             <div class="actions my-2">
-              <button @click="onAddClicked()" data-toggle="modal" data-target="#sliderFormModal"
-                class="border text-secondary">
+              <button
+                @click="onAddClicked()"
+                data-toggle="modal"
+                data-target="#sliderFormModal"
+                class="border text-secondary"
+              >
                 <i class="fa fa-plus" aria-hidden="true"></i>
               </button>
               <button @click="downloadExcelFile" class="border text-secondary">
@@ -45,7 +52,7 @@
             </thead>
             <tbody>
               <tr v-for="(slider, index) in sliders" :key="slider.id">
-                <td><img :src="slider.image" /></td>
+                <td class="img"><img :src="slider.image" /></td>
                 <td>{{ slider.title }}</td>
                 <td>{{ slider.external ? $t("YES") : $t("NO") }}</td>
                 <td>
@@ -55,12 +62,20 @@
                 </td>
                 <td class="actions-cell">
                   <div class="actions">
-                    <button @click="onEditClicked(slider, index)" data-toggle="modal" data-target="#sliderFormModal"
-                      class="border text-secondary">
+                    <button
+                      @click="onEditClicked(slider, index)"
+                      data-toggle="modal"
+                      data-target="#sliderFormModal"
+                      class="border text-secondary"
+                    >
                       <i class="fa fa-edit" aria-hidden="true"></i>
                     </button>
-                    <button @click="onDeleteClicked(slider, index)" data-toggle="modal"
-                      data-target="#deleteConfirmationModal" class="border text-secondary">
+                    <button
+                      @click="onDeleteClicked(slider, index)"
+                      data-toggle="modal"
+                      data-target="#deleteConfirmationModal"
+                      class="border text-secondary"
+                    >
                       <i class="fa fa-trash" aria-hidden="true"></i>
                     </button>
                   </div>
@@ -70,8 +85,13 @@
           </table>
         </div>
         <div class="mt-1">
-          <paginate v-model="page" :pageCount="pageCounts" :clickHandler="getSliders" :prevText="$t('PREV')"
-            :nextText="$t('NEXT')">
+          <paginate
+            v-model="page"
+            :pageCount="pageCounts"
+            :clickHandler="getSliders"
+            :prevText="`<i class='fa fa-arrow-right'></i>`"
+            :nextText="`<i class='fa fa-arrow-left'></i>`"
+          >
           </paginate>
         </div>
       </div>
@@ -168,7 +188,7 @@ export default {
           getSliders();
           data.selectedSlider = null;
         })
-        .catch((error) => { });
+        .catch((error) => {});
     }
     function search() {
       data.page = 1;
@@ -208,84 +228,86 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style  lang="scss">
 @media print {
   body * {
     visibility: hidden;
   }
-
   #printMe,
   #printMe * {
     visibility: visible;
   }
-
   .actions-header,
   .actions-cell {
     display: none !important;
   }
-
   #printMe {
     position: absolute;
     top: 0;
     left: 0;
   }
 }
-
 .slider-container {
   td {
+    &:not(.actions-cell, .img) {
+      position: relative;
+      top: 6px;
+    }
+    &.actions-cell {
+      position: relative;
+      top: 8px;
+    }
+    height: 30px;
+    vertical-align: center;
+    button {
+      margin: 0 2px !important;
+    }
+    font-size: 14px !important;
+    padding: 0 !important;
     img {
-      width: 70px;
-      height: 70px;
+      width: 35px;
+      height: 35px;
       border-radius: 3px;
       padding: 5px;
+      margin: 5px;
       box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
         rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     }
   }
-
   .header {
     * {
       font-size: 17px !important;
     }
-
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     padding: 30px;
-
     .welcome {
       padding-top: 9px;
     }
-
     .title {
       * {
         color: #6c757d !important;
       }
-
       a {
         text-decoration: none;
         color: #868e96 !important;
-
         &:hover {
           color: #6c757d !important;
         }
       }
     }
   }
-
   .table-container {
     background: #ffffff;
-    box-shadow: 0 5px 20px rgb(0 0 0 / 10%);
+    box-shadow: none !important;
     padding: 30px;
-
     .controls {
       display: flex;
       justify-content: space-between;
-
       @media (max-width: 500px) {
         flex-direction: column;
       }
-
       body[dir="ltr"] & {
         .search {
           i {
@@ -293,7 +315,6 @@ export default {
           }
         }
       }
-
       body[dir="rtl"] & {
         .search {
           i {
@@ -301,16 +322,13 @@ export default {
           }
         }
       }
-
       .search {
         margin-bottom: 10px;
-
         i {
           position: relative;
           top: 1px;
           color: #888888;
         }
-
         input {
           padding: 4px 15px;
           border: 1px solid #dee2e6 !important;
@@ -318,27 +336,29 @@ export default {
         }
       }
     }
-
     .actions {
       display: flex;
-
       a:hover {
         cursor: text;
       }
-
       button {
-        width: 34px;
-        height: 34px;
+        padding: 13px;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        i {
+          font-size: 12px !important;
+        }
+        width: 20px;
+        height: 20px;
         background: none;
         margin: 3px 5px;
         border-radius: 5px;
       }
     }
-
     a:hover {
       cursor: pointer;
     }
-
     .active {
       a {
         color: #fff !important;
@@ -346,16 +366,23 @@ export default {
         border-color: #dbdbdb !important;
       }
     }
-
-    .page-link {
-      padding: 3px 18px !important;
+    .page-item:first,
+    .page-item:last-child {
+      display: none !important;
     }
-
+    .page-link {
+      padding: 0 !important;
+      height: 32px;
+      width: 32px;
+      justify-content: center;
+      align-items: center;
+      display: flex;
+      padding: 0 !important;
+    }
     table {
-
       td,
       th {
-        width: 11.11111111111111%;
+        width: 25%;
       }
     }
   }

@@ -1,27 +1,20 @@
 <template>
   <div class="deal-form">
-    <div class="header">
-      <h2 class="welcome">
-        <b>{{ $t("DEAL") }}</b>, {{ $t("WELCOME_HERE") }}
-      </h2>
-      <div class="title">
-        <router-link to="/admin-panel-settings">{{ $t("HOME") }}</router-link>
-        /
-        <span>{{ $t("HELLO") }}</span>
-      </div>
-    </div>
-    <div class="px-4">
+    <div class="px-4 mt-4">
       <div class="table-container">
         <form @submit.prevent="saveDeal" enctype="multipart/form-data">
           <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-3">
               <div class="form-group">
-                <label for="exampleInputEmail1">{{
-                  $t("END_AT")
-                }}</label>
-                <input type="datetime-local" class="form-control" v-model="v$.end_at.$model" :class="{
-                  'is-invalid': v$.end_at.$error,
-                }" />
+                <label for="exampleInputEmail1">{{ $t("END_AT") }}</label>
+                <input
+                  type="datetime-local"
+                  class="form-control"
+                  v-model="v$.end_at.$model"
+                  :class="{
+                    'is-invalid': v$.end_at.$error,
+                  }"
+                />
                 <div class="invalid-feedback">
                   <div v-for="error in v$.end_at.$errors" :key="error">
                     {{ $t("END_AT") + " " + $t(error.$validator) }}
@@ -33,87 +26,120 @@
             <!--list-->
             <div class="list" v-for="(deal, index) in list" :key="index">
               <div class="hello row">
-                <div class="col-lg-12 d-flex justify-content-end">
-                  <button @click="removeDeal(index)" class="increments border" type="button">
-                    -
-                  </button>
-                </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                   <div class="form-group">
                     <label for="inputState">{{ $t("SUPPLIER") }}</label>
-                    <select @change="deal.supplier_id_dirty=true" :class="{
-                      'is-invalid':
-                        deal.supplier_id_dirty &&
-                        v$.list.$each.$response.$errors[index]
-                          .supplier_id.length,
-                    }" v-model="deal.supplier_id" class="form-control">
-                      <option v-for="supplier in suppliers" :value="supplier.id">{{ supplier.name }}</option>
+                    <select
+                      @change="deal.supplier_id_dirty = true"
+                      :class="{
+                        'is-invalid':
+                          deal.supplier_id_dirty &&
+                          v$.list.$each.$response.$errors[index].supplier_id
+                            .length,
+                      }"
+                      v-model="deal.supplier_id"
+                      class="form-control"
+                    >
+                      <option
+                        v-for="supplier in suppliers"
+                        :value="supplier.id"
+                      >
+                        {{ supplier.name }}
+                      </option>
                     </select>
                     <div class="invalid-feedback">
-                      <div v-for="error in v$.list.$each.$response.$errors[
-                        index
-                      ].supplier_id" :key="error">
-                        {{
-                          $t("SUPPLIER") + " " + $t(error.$validator)
-                        }}
+                      <div
+                        v-for="error in v$.list.$each.$response.$errors[index]
+                          .supplier_id"
+                        :key="error"
+                      >
+                        {{ $t("SUPPLIER") + " " + $t(error.$validator) }}
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                   <div class="form-group">
                     <label for="inputState">{{ $t("PRODUCT") }}</label>
-                    <select @change="deal.product_id_dirty=true" :class="{
-                      'is-invalid':
-                        deal.product_id_dirty &&
-                        v$.list.$each.$response.$errors[index]
-                          .product_id.length,
-                    }" v-model="deal.product_id" class="form-control">
-                      <option v-for="product in products" :value="product.id">{{ product.name }}</option>
+                    <select
+                      @change="deal.product_id_dirty = true"
+                      :class="{
+                        'is-invalid':
+                          deal.product_id_dirty &&
+                          v$.list.$each.$response.$errors[index].product_id
+                            .length,
+                      }"
+                      v-model="deal.product_id"
+                      class="form-control"
+                    >
+                      <option v-for="product in products" :value="product.id">
+                        {{ product.name }}
+                      </option>
                     </select>
                     <div class="invalid-feedback">
-                      <div v-for="error in v$.list.$each.$response.$errors[
-                        index
-                      ].product_id" :key="error">
+                      <div
+                        v-for="error in v$.list.$each.$response.$errors[index]
+                          .product_id"
+                        :key="error"
+                      >
+                        {{ $t("PRODUCT") + " " + $t(error.$validator) }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label>{{ $t("client_discount") }}</label>
+                    <input
+                      @input="deal.client_discount_dirty = true"
+                      type="number"
+                      class="form-control"
+                      v-model="deal.client_discount"
+                      :class="{
+                        'is-invalid':
+                          deal.client_discount_dirty &&
+                          v$.list.$each.$response.$errors[index].client_discount
+                            .length,
+                      }"
+                    />
+                    <div class="invalid-feedback">
+                      <div
+                        v-for="error in v$.list.$each.$response.$errors[index]
+                          .client_discount"
+                        :key="error"
+                      >
                         {{
-                          $t("PRODUCT") + " " + $t(error.$validator)
+                          $t("client_discount") +
+                          " " +
+                          $t(error.$validator, { value: 0, maxValue: 100 })
                         }}
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label>{{ $t("client_discount") }}</label>
-                    <input @input="deal.client_discount_dirty = true" type="number" class="form-control"
-                      v-model="deal.client_discount" :class="{
-                        'is-invalid':
-                          deal.client_discount_dirty &&
-                          v$.list.$each.$response.$errors[index]
-                            .client_discount.length,
-                      }" />
-                    <div class="invalid-feedback">
-                      <div v-for="error in v$.list.$each.$response.$errors[
-                        index
-                      ].client_discount" :key="error">
-                        {{ $t("client_discount") + " " + $t(error.$validator, { value: 0, maxValue: 100 }) }}
-                      </div>
-                    </div>
-                  </div>
+                <div class="col-md-3">
+                  <button
+                    v-if="index != 0"
+                    @click="removeDeal(index)"
+                    class="increments"
+                    type="button"
+                  >
+                    <i class="fa fa-trash text-danger"></i>
+                  </button>
+                  <button
+                    v-if="index + 1 == list.length"
+                    @click="addDeal"
+                    class="increments mx-2"
+                    type="button"
+                  >
+                    <i class="fa fa-plus"></i>
+                  </button>
                 </div>
               </div>
             </div>
-            <div class="col-12 d-flex justify-content-end">
-              <button @click="addDeal" class="increments border" type="button">
-                +
-              </button>
-            </div>
           </div>
-          <button type="submit" class="btn btn-danger me-2">
+          <button type="submit" class="btn btn-danger mt-4" style="width:80px">
             {{ $t("SUBMIT") }}
-          </button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
-            {{ $t("CLOSE") }}
           </button>
         </form>
       </div>
@@ -146,13 +172,17 @@ export default {
         $each: helpers.forEach({
           supplier_id: { required },
           product_id: { required },
-          client_discount: { required, minValue: minValue(0), maxValue: maxValue(100) },
+          client_discount: {
+            required,
+            minValue: minValue(0),
+            maxValue: maxValue(100),
+          },
         }),
       },
     };
     onMounted(() => {
       setForm();
-    })
+    });
     const v$ = useVuelidate(rules, form);
     //Methods
     function addDeal() {
@@ -174,8 +204,7 @@ export default {
         .then((response) => {
           toast.success(t("UPDATED_SUCCESSFULLY"));
         })
-        .catch((error) => {
-        });
+        .catch((error) => {});
     }
     //Commons
     function touchlist() {
@@ -192,39 +221,35 @@ export default {
       {
         return {
           end_at: form.end_at,
-          deals: form.list.map(el=>{
+          deals: form.list.map((el) => {
             return {
-              client_discount:el.client_discount,
-              supplier_id:el.supplier_id,
-              product_id:el.product_id,
-            }
-          })
-        }
+              client_discount: el.client_discount,
+              supplier_id: el.supplier_id,
+              product_id: el.product_id,
+            };
+          }),
+        };
       }
     }
     function setForm() {
-      dealClient.getDeal().then(res => {
+      dealClient.getDeal().then((res) => {
         form.end_at = res.data.end_at;
         form.list = res.data.deals.length
           ? _.clone(res.data.deals)
           : [getElement()];
-      })
+      });
       getSuppliers();
       getProducts();
     }
     function getSuppliers() {
-      dealClient
-        .getSuppliers()
-        .then((response) => {
-          data.suppliers = response.data;
-        })
+      dealClient.getSuppliers().then((response) => {
+        data.suppliers = response.data;
+      });
     }
     function getProducts() {
-      dealClient
-        .getProducts()
-        .then((response) => {
-          data.products = response.data;
-        })
+      dealClient.getProducts().then((response) => {
+        data.products = response.data;
+      });
     }
     //Watchers
     return {
@@ -300,14 +325,10 @@ export default {
   }
 
   .increments {
+    border: none;
+    margin-top: 40px;
     font-size: 16px !important;
-    justify-content: center;
-    display: flex;
-    width: 37px;
-    text-align: center;
-    background-color: #f8f9fa;
-    border-radius: 5px;
-    align-items: center;
+    background: none !important;
   }
 
   .modal-footer {
@@ -341,7 +362,7 @@ export default {
   }
   .table-container {
     background: #ffffff;
-    box-shadow: 0 5px 20px rgb(0 0 0 / 10%);
+    box-shadow: none !important;
     padding: 30px;
     .controls {
       display: flex;

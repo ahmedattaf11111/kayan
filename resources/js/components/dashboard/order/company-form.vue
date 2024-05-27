@@ -1,8 +1,8 @@
 <template>
-  <div class="category-form">
+  <div class="company-form">
     <div
       class="modal fade"
-      id="categoryFormModal"
+      id="companyFormModal"
       tabindex="-1"
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
@@ -12,7 +12,7 @@
           <form @submit.prevent="save" enctype="multipart/form-data">
             <div class="modal-header">
               <h5 class="modal-title text-secondary" id="exampleModalLabel">
-                {{ $t("FORM") + " " + $t("CATEGORY") }}
+                {{ $t("FORM") + " " + $t("COMPANY") }}
               </h5>
               <button
                 type="button"
@@ -23,44 +23,12 @@
             </div>
             <div class="modal-body">
               <div class="row">
-                <div class="col-lg-6 mb-3">
-                  <div class="image">
-                    <img
-                      v-if="previewImage"
-                      class="border-bottom"
-                      :src="previewImage"
-                    />
-                    <img
-                      v-else
-                      class="border-bottom"
-                      src="/images/empty.jpg"
-                    />
-                    <div class="image-upload">
-                      <label class="icon" for="image">
-                        <i class="fa fa-camera"></i>
-                      </label>
-                      <label
-                        @click="deleteImage"
-                        v-if="uploadedImage"
-                        class="icon text-secondary px-2"
-                      >
-                        <i class="fa fa-window-close" aria-hidden="true"></i>
-                      </label>
-                      <input
-                        @change="uploadImage"
-                        accept="image/apng, image/avif, image/gif, image/jpeg, image/png, image/svg+xml, image/webp"
-                        type="file"
-                        id="image"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6">
+                <div class="col-lg-12">
                   <div class="row">
                     <div class="col-lg-12">
                       <div class="form-group">
+                        <label for="exampleInputEmail1">{{ $t("NAME") }}</label>
                         <input
-                        :placeholder="$t('type_category_name')"
                           type="text"
                           class="form-control"
                           v-model="v$.name.$model"
@@ -69,10 +37,7 @@
                           }"
                         />
                         <div class="invalid-feedback">
-                          <div
-                            v-for="error in v$.name.$errors"
-                            :key="error"
-                          >
+                          <div v-for="error in v$.name.$errors" :key="error">
                             {{ $t("NAME") + " " + $t(error.$validator) }}
                           </div>
                           <div v-if="!v$.name.$invalid && nameExist">
@@ -89,11 +54,7 @@
               <button type="submit" class="btn btn-danger">
                 {{ $t("SUBMIT") }}
               </button>
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
-              >
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">
                 {{ $t("CLOSE") }}
               </button>
             </div>
@@ -107,17 +68,15 @@
 <script>
 import useVuelidate from "@vuelidate/core";
 import { required, helpers } from "@vuelidate/validators";
-import categoryClient from "../../../shared/http-clients/admin/category-client";
+import companyClient from "../../../shared/http-clients/admin/company-client";
 import { computed, inject, reactive, toRefs, watch } from "vue-demi";
 import { useI18n } from "vue-i18n";
 export default {
   setup(props, context) {
     const { t, locale } = useI18n({ useScope: "global" });
-    const category_store = inject("category_store");
+    const company_store = inject("company_store");
     const toast = inject("toast");
     const data = reactive({
-      uploadedImage: null,
-      previewImage: "",
       nameExist: false,
     });
     const form = reactive({
@@ -128,29 +87,12 @@ export default {
     };
     const v$ = useVuelidate(rules, form);
     //Methods
-    function uploadImage(e) {
-      const image = e.target.files[0];
-      data.uploadedImage = image;
-      const reader = new FileReader();
-      reader.readAsDataURL(image);
-      reader.onload = (e) => {
-        data.previewImage = e.target.result;
-      };
-    }
-    function deleteImage() {
-      data.uploadedImage = null;
-      data.previewImage = props.selectedCategory ? props.selectedCategory.image : "";
-    }
     function save() {
       if (v$.value.$invalid) {
         v$.value.$touch();
         return;
       }
-      if (!props.selectedCategory) {
-        if (!data.uploadedImage) {
-          toast.error(t("IMAGE") + " " + t("required"));
-          return;
-        }
+      if (!props.selectedCompany) {
         store();
       } else {
         update();
@@ -159,56 +101,45 @@ export default {
     //Commons
     function store() {
       data.nameExist = false;
-      categoryClient
+      companyClient
         .store(getForm())
         .then((response) => {
           toast.success(t("CREATED_SUCCESSFULLY"));
           context.emit("created", response.data);
-          $("#categoryFormModal").modal("hide");
+          $("#companyFormModal").modal("hide");
         })
         .catch((error) => {
-          data.nameExist = error.response.data.errors.name
-            ? true
-            : false;
+          data.nameExist = error.response.data.errors.name ? true : false;
         });
     }
     function update() {
       data.nameExist = false;
-      categoryClient
+      companyClient
         .update(getForm())
         .then((response) => {
           toast.success(t("UPDATED_SUCCESSFULLY"));
           context.emit("updated", response.data);
-          $("#categoryFormModal").modal("hide");
+          $("#companyFormModal").modal("hide");
         })
         .catch((error) => {
-          data.nameExist = error.response.data.errors.title_ar
-            ? true
-            : false;
+          data.nameExist = error.response.data.errors.name ? true : false;
         });
     }
     function getForm() {
-      let formData = new FormData();
-      if (props.selectedCategory) {
-        formData.append("id", props.selectedCategory.id);
+      return {
+        id:props.selectedCompany?props.selectedCompany.id:null,
+        name:form.name,
       }
-      formData.append("name", form.name);
-      if (data.uploadedImage) {
-        formData.append("image", data.uploadedImage);
-      }
-      return formData;
     }
     function setForm() {
       v$.value.$reset();
-      form.name = props.selectedCategory ? props.selectedCategory.name : "";
-      data.previewImage = props.selectedCategory ? props.selectedCategory.image : "";
-      data.uploadedImage = null;
+      form.name = props.selectedCompany ? props.selectedCompany.name : "";
       data.nameExist = false;
     }
     //Watchers
     watch(
       () => {
-        category_store.onFormShow;
+        company_store.onFormShow;
       },
       (value) => {
         setForm();
@@ -219,17 +150,15 @@ export default {
       ...toRefs(data),
       ...toRefs(form),
       v$,
-      uploadImage,
-      deleteImage,
       save,
     };
   },
-  props: ["selectedCategory"],
+  props: ["selectedCompany"],
 };
 </script>
 
 <style scoped lang="scss">
-.category-form {
+.company-form {
   .form-control {
     padding: 10px;
   }

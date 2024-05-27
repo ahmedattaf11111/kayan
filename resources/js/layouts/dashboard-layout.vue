@@ -1,6 +1,6 @@
 <template>
+  <Loader />
   <div class="dashboard-layout">
-    <Loader />
     <sidebar-menu
       theme="white-theme"
       :collapsed="collapsed"
@@ -9,14 +9,26 @@
       :rtl="true"
       :menu="menu"
       :hideToggle="hideToggle"
-      @update:collapsed="collapsed = !collapsed"
-    />
+    >
+      <template v-slot:header>
+        <div class="image">
+          <img src="/images/logo.png" />
+          <span class="name">{{ $t("LOGO_NAME") }}</span>
+        </div>
+      </template>
+    </sidebar-menu>
     <div
       :class="{ expandedMargin: !collapsed, collapsedMargin: collapsed }"
       class="content"
     >
       <div class="simple-nav">
         <ul>
+          <li>
+            <a class="visit-store" href="/home">
+              {{ $t("VISIT_STORE") }}
+              <i class="fa fa-globe"></i>
+            </a>
+          </li>
           <li><avatar class="avatar" /></li>
         </ul>
       </div>
@@ -36,7 +48,7 @@ export default {
     Lang,
     Avatar,
     SidebarMenu,
-    Loader
+    Loader,
   },
   data() {
     return {
@@ -55,49 +67,50 @@ export default {
       handler(value) {
         this.menu = [
           {
-            header: this.$t("Main Navigation"),
-            hiddenOnCollapse: true,
-          },
-          {
             href: "/admin/categories",
             title: this.$t("CATEGORIES"),
-            icon: "fa fa-chart-area",
+            icon: "fa fa-link",
           },
           {
             href: "/admin/companies",
             title: this.$t("COMPANIES"),
-            icon: "fa fa-chart-area",
+            icon: "fa fa-link",
           },
           {
             href: "/admin/pharmacist-from",
             title: this.$t("PHARMACIST_FORMS"),
-            icon: "fa fa-chart-area",
+            icon: "fa fa-link",
           },
           {
             href: "/admin/products",
             title: this.$t("PRODUCTS"),
-            icon: "fa fa-chart-area",
+            icon: "fa fa-link",
           },
           {
             href: "/admin/suppliers",
             title: this.$t("SUPPLIERS"),
-            icon: "fa fa-chart-area",
+            icon: "fa fa-link",
           },
           {
             href: "/admin/prices",
             title: this.$t("PRICE"),
-            icon: "fa fa-chart-area",
+            icon: "fa fa-link",
           },
           {
             href: "/admin/deal",
             title: this.$t("ALL_DEALS"),
-            icon: "fa fa-chart-area",
+            icon: "fa fa-link",
           },
           {
             href: "/admin/sliders",
             title: this.$t("SLIDER"),
-            icon: "fa fa-chart-area",
-          }
+            icon: "fa fa-link",
+          },
+          {
+            href: "/admin/orders",
+            title: this.$t("ORDERS"),
+            icon: "fa fa-link",
+          },
         ];
       },
       immediate: true,
@@ -124,72 +137,126 @@ export default {
 </script>
 <style lang="scss">
 .dashboard-layout {
+  .visit-store {
+    gap: 11px;
+    display: flex;
+    text-decoration: none;
+    color: black;
+    align-items: center;
+    i {
+      position: relative;
+      top: 1px;
+    }
+  }
   .v-sidebar-menu {
     i.vsm--icon {
       background: none !important;
+      width: 20px !important;
+      color: #fff !important;
     }
-    .vsm--header {
-      text-align: center;
+    .vsm--item {
+      * {
+        font-size: 16px !important;
+      }
+    }
+    .image {
+      background: #182444 !important;
+      padding: 16px 20px;
+      span.name {
+        margin: 0 18px;
+        position: relative;
+        top: 3px;
+        font-size: 22px !important;
+      }
+      img {
+        width: 40px;
+        height: 40px;
+        position: relative;
+        bottom: 5px;
+      }
+    }
+    @media (max-width: "820px") {
+      .image {
+        display: none;
+      }
     }
     *,
     .vsm--toggle-btn {
-      color: #bdbdc7 !important;
+      color: #fff !important;
     }
+
     &,
-    .vsm--dropdown,
     .vsm--toggle-btn {
-      background: #363a57 !important;
+      background: #0f1a34;
+    }
+    .vsm--dropdown {
+      background: #091023 !important;
     }
     .vsm--link_open,
     .vsm--link:hover {
-      background: #6d85fb !important;
+      background: #091023 !important;
       * {
+        font-size: 16px;
         color: #fff !important;
       }
     }
+    .vsm--link {
+      padding: 10px 15px;
+    }
     .vsm--link_active {
-      * {
-        color: #fff !important;
+      .vsm--title span,
+      i.vsm--icon {
+        color: #acb6c4 !important;
       }
     }
   }
   .avatar {
     margin-bottom: 5px;
   }
-  body[dir="ltr"] & {
-    .v-sidebar-menu {
-      border-right: 1px solid #dee2e6;
-    }
-    .expandedMargin {
-      margin-left: 250px;
-    }
-    .collapsedMargin {
-      margin-left: 65px;
-    }
-  }
+
+  // body[dir="ltr"] & {
+  //   .v-sidebar-menu {
+  //     border-right: 1px solid #dee2e6;
+  //   }
+
+  //   .expandedMargin {
+  //     margin-left: 250px;
+  //   }
+
+  //   .collapsedMargin {
+  //     margin-left: 65px;
+  //   }
+  // }
+
   body[dir="rtl"] & {
     .expandedMargin {
       margin-right: 250px;
     }
+
     .collapsedMargin {
       margin-right: 65px;
     }
+
     .v-sidebar-menu {
       border-left: 1px solid #dee2e6;
     }
   }
+
   .content {
     transition: 0.3s ease;
+
     .simple-nav {
       display: flex;
       justify-content: flex-end;
-      background: #ffffff;
+      background: #fff;
       z-index: 990;
-      box-shadow: 0 5px 20px rgb(0 0 0 / 10%);
       ul {
         list-style: none;
         margin: 0;
         padding: 15px;
+        list-style: none;
+        margin: 0;
+        padding: 19px 15px 10px 15px;
         li {
           padding: 0 10px;
           display: inline-block;
